@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Theme Samples</title>
+<style>
+
+  :root {
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "Cascadia Code", "Consolas", "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: var(--font-ui);
+    background: #eee;
+    color: #222;
+  }
+
+  .switcher {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 14px 20px;
+    background: #111;
+  }
+
+  .switcher-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .switcher-row:last-child { margin-bottom: 0; }
+
+  .switcher span.row-label {
+    color: #777;
+    font-size: 11px;
+    margin-right: 6px;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    width: 46px;
+  }
+
+  .switcher button {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #222;
+    color: #ddd;
+    cursor: pointer;
+  }
+
+  .switcher button.active {
+    background: #fff;
+    color: #111;
+    border-color: #fff;
+    font-weight: 600;
+  }
+
+  .mode-toggle button.active.mode-light { background: #ffd43b; color: #111; border-color: #ffd43b; }
+  .mode-toggle button.active.mode-dark { background: #5c5f66; color: #fff; border-color: #5c5f66; }
+
+  .stage {
+    padding: 32px 20px 60px;
+  }
+
+  .theme-block {
+    display: none;
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  .theme-block.active { display: block; }
+
+  .theme-label {
+    font-family: var(--font-ui);
+    color: #666;
+    font-size: 13px;
+    margin: 0 0 10px 2px;
+    letter-spacing: .01em;
+  }
+
+  /* ---- swatch row ---- */
+  .swatches {
+    display: flex;
+    gap: 0;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.15);
+    border-bottom: none;
+  }
+
+  .swatch {
+    flex: 1;
+    min-width: 90px;
+    padding: 16px 10px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 70px;
+  }
+
+  .swatch b { display:block; font-family: var(--font-ui); font-size: 11px; margin-bottom:2px; }
+
+  /* ---- app mockup shell ---- */
+  .app {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    min-height: 560px;
+  }
+
+  .sidebar { padding: 18px 14px; }
+  .sidebar .logo { font-weight: 700; font-size: 15px; margin-bottom: 22px; letter-spacing: .02em; }
+  .nav-item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+  }
+  .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink:0; }
+
+  .main { padding: 20px 26px; }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .topbar h1 { font-size: 18px; margin: 0; font-weight: 700; }
+  .search {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    min-width: 190px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .card {
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card h3 {
+    margin: 0 0 12px;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-weight: 700;
+  }
+  .todo-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    padding: 6px 0;
+  }
+  .checkbox {
+    width: 15px; height: 15px; border-radius: 4px; flex-shrink: 0;
+  }
+  .checkbox.done { display:flex; align-items:center; justify-content:center; font-size:10px; }
+  .strike { text-decoration: line-through; opacity: .55; }
+
+  .proj-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13.5px; }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .btn-row { display:flex; gap:10px; margin-top: 4px; }
+  .btn {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: default;
+    border: 1px solid transparent;
+  }
+
+
+  /* ---- modern / dark ---- */
+  .theme-modern-dark .app { background: #1a1b1e; color: #c1c2c5; }
+  .theme-modern-dark .sidebar { background: #141517; border-right: 1px solid #2c2e33; }
+  .theme-modern-dark .logo { color: #f1f3f5; }
+  .theme-modern-dark .nav-item { color: #909296; }
+  .theme-modern-dark .nav-item.active { background: #1c3a5e; color: #74c0fc; font-weight: 600; }
+  .theme-modern-dark .nav-item .dot { background: #339af0; }
+  .theme-modern-dark .topbar h1 { color: #f1f3f5; }
+  .theme-modern-dark .search { background: #25262b; color: #909296; border: 1px solid #373a40; }
+  .theme-modern-dark .card { background: #25262b; border: 1px solid #2c2e33; }
+  .theme-modern-dark .card h3 { color: #909296; }
+  .theme-modern-dark .checkbox { border: 1.5px solid #5c5f66; }
+  .theme-modern-dark .checkbox.done { background: #37b24d; color: #fff; border-color: #37b24d; }
+  .theme-modern-dark .tag.p1 { background: #4a1a1a; color: #ff8787; }
+  .theme-modern-dark .tag.p2 { background: #4a3a10; color: #ffd43b; }
+  .theme-modern-dark .tag.p3 { background: #2c2e33; color: #909296; }
+  .theme-modern-dark .btn.primary { background: #339af0; color: #06131f; }
+  .theme-modern-dark .btn.secondary { background: #25262b; color: #c1c2c5; border: 1px solid #373a40; }
+
+  /* ---- modern / light ---- */
+  .theme-modern-light .app { background: #ffffff; color: #1a1b1e; }
+  .theme-modern-light .sidebar { background: #f8f9fa; border-right: 1px solid #e9ecef; }
+  .theme-modern-light .logo { color: #1a1b1e; }
+  .theme-modern-light .nav-item { color: #495057; }
+  .theme-modern-light .nav-item.active { background: #e7f5ff; color: #1971c2; font-weight: 600; }
+  .theme-modern-light .nav-item .dot { background: #228be6; }
+  .theme-modern-light .topbar h1 { color: #1a1b1e; }
+  .theme-modern-light .search { background: #f1f3f5; color: #868e96; border: 1px solid #dee2e6; }
+  .theme-modern-light .card { background: #f8f9fa; border: 1px solid #e9ecef; }
+  .theme-modern-light .card h3 { color: #868e96; }
+  .theme-modern-light .checkbox { border: 1.5px solid #adb5bd; }
+  .theme-modern-light .checkbox.done { background: #40c057; color: #fff; border-color: #40c057; }
+  .theme-modern-light .tag.p1 { background: #ffe3e3; color: #c92a2a; }
+  .theme-modern-light .tag.p2 { background: #fff3bf; color: #e67700; }
+  .theme-modern-light .tag.p3 { background: #e9ecef; color: #495057; }
+  .theme-modern-light .btn.primary { background: #228be6; color: #fff; }
+  .theme-modern-light .btn.secondary { background: #fff; color: #1a1b1e; border: 1px solid #ced4da; }
+
+
+  /* ---- borland / dark ---- */
+  .theme-borland-dark .app { background: #0000AA; color: #C0C0C0; font-family: var(--font-mono); border: 3px solid #C0C0C0; border-style: outset; }
+  .theme-borland-dark .sidebar { background: #0000AA; border-right: 1px solid #C0C0C0; }
+  .theme-borland-dark .logo { color: #FFFF00; }
+  .theme-borland-dark .nav-item { color: #C0C0C0; }
+  .theme-borland-dark .nav-item.active { background: #C0C0C0; color: #0000AA; font-weight: 600; }
+  .theme-borland-dark .nav-item .dot { background: #00FFFF; }
+  .theme-borland-dark .main { background: #0000AA; }
+  .theme-borland-dark .topbar h1 { color: #FFFF00; font-family: var(--font-mono); }
+  .theme-borland-dark .search { background: #000080; color: #00FFFF; border: 1px solid #C0C0C0; }
+  .theme-borland-dark .card { background: #0000AA; border: 1px solid #C0C0C0; border-style: outset; }
+  .theme-borland-dark .card h3 { color: #FFFF00; font-family: var(--font-mono); }
+  .theme-borland-dark .checkbox { border: 1.5px solid #C0C0C0; background: #000080; }
+  .theme-borland-dark .checkbox.done { background: #00AA00; color: #000000; border-color: #00AA00; }
+  .theme-borland-dark .strike { color: #C0C0C0; }
+  .theme-borland-dark .tag.p1 { background: #AA0000; color: #FFFF00; }
+  .theme-borland-dark .tag.p2 { background: #00AAAA; color: #000000; }
+  .theme-borland-dark .tag.p3 { background: #555555; color: #C0C0C0; }
+  .theme-borland-dark .btn.primary { background: #C0C0C0; color: #0000AA; border-style: outset; }
+  .theme-borland-dark .btn.secondary { background: #0000AA; color: #C0C0C0; border: 1.5px solid #C0C0C0; border-style: outset; }
+
+  /* ---- borland / light ---- */
+  .theme-borland-light .app { background: #F0F0F0; color: #000080; font-family: var(--font-mono); border: 3px solid #808080; border-style: outset; }
+  .theme-borland-light .sidebar { background: #F0F0F0; border-right: 1px solid #808080; }
+  .theme-borland-light .logo { color: #800000; }
+  .theme-borland-light .nav-item { color: #33336B; }
+  .theme-borland-light .nav-item.active { background: #C0C0C0; color: #000080; font-weight: 600; }
+  .theme-borland-light .nav-item .dot { background: #008080; }
+  .theme-borland-light .main { background: #F0F0F0; }
+  .theme-borland-light .topbar h1 { color: #800000; font-family: var(--font-mono); }
+  .theme-borland-light .search { background: #FFFFFF; color: #000080; border: 1px solid #808080; }
+  .theme-borland-light .card { background: #F0F0F0; border: 1px solid #808080; border-style: outset; }
+  .theme-borland-light .card h3 { color: #800000; font-family: var(--font-mono); }
+  .theme-borland-light .checkbox { border: 1.5px solid #808080; background: #FFFFFF; }
+  .theme-borland-light .checkbox.done { background: #008000; color: #FFFFFF; border-color: #008000; }
+  .theme-borland-light .strike { color: #6B6B99; }
+  .theme-borland-light .tag.p1 { background: #AA0000; color: #FFFFFF; }
+  .theme-borland-light .tag.p2 { background: #008080; color: #FFFFFF; }
+  .theme-borland-light .tag.p3 { background: #C0C0C0; color: #000080; }
+  .theme-borland-light .btn.primary { background: #C0C0C0; color: #000080; border-style: outset; }
+  .theme-borland-light .btn.secondary { background: #FFFFFF; color: #000080; border: 1.5px solid #808080; border-style: outset; }
+
+  /* ---- terminal / dark ---- */
+  .theme-terminal-dark .app { background: #0a0f0a; color: #33ff66; font-family: var(--font-mono); border: 1px solid #1f3d24; border-style: solid; }
+  .theme-terminal-dark .sidebar { background: #060906; border-right: 1px solid #1f3d24; }
+  .theme-terminal-dark .logo { color: #33ff66; }
+  .theme-terminal-dark .nav-item { color: #1f9e42; }
+  .theme-terminal-dark .nav-item.active { background: #12261a; color: #a6ffb8; font-weight: 600; }
+  .theme-terminal-dark .nav-item .dot { background: #33ff66; }
+  .theme-terminal-dark .main { background: #0a0f0a; }
+  .theme-terminal-dark .topbar h1 { color: #a6ffb8; font-family: var(--font-mono); }
+  .theme-terminal-dark .search { background: #060906; color: #33ff66; border: 1px solid #1f3d24; }
+  .theme-terminal-dark .card { background: #060906; border: 1px solid #1f3d24; border-style: solid; }
+  .theme-terminal-dark .card h3 { color: #1f9e42; font-family: var(--font-mono); }
+  .theme-terminal-dark .checkbox { border: 1.5px solid #1f9e42; background: transparent; }
+  .theme-terminal-dark .checkbox.done { background: #33ff66; color: #0a0f0a; border-color: #33ff66; }
+  .theme-terminal-dark .strike { color: #1f9e42; }
+  .theme-terminal-dark .tag.p1 { background: #331010; color: #ff5555; }
+  .theme-terminal-dark .tag.p2 { background: #332b10; color: #ffd60a; }
+  .theme-terminal-dark .tag.p3 { background: #0f1f13; color: #1f9e42; }
+  .theme-terminal-dark .btn.primary { background: #33ff66; color: #0a0f0a; border-style: solid; }
+  .theme-terminal-dark .btn.secondary { background: transparent; color: #33ff66; border: 1.5px solid #33ff66; border-style: solid; }
+
+  /* ---- terminal / light ---- */
+  .theme-terminal-light .app { background: #EAF4EA; color: #0B5D1E; font-family: var(--font-mono); border: 1px solid #B7D9BC; border-style: solid; }
+  .theme-terminal-light .sidebar { background: #DCEEDC; border-right: 1px solid #B7D9BC; }
+  .theme-terminal-light .logo { color: #0B5D1E; }
+  .theme-terminal-light .nav-item { color: #4C8C5A; }
+  .theme-terminal-light .nav-item.active { background: #C3E6C9; color: #0B5D1E; font-weight: 600; }
+  .theme-terminal-light .nav-item .dot { background: #0B5D1E; }
+  .theme-terminal-light .main { background: #EAF4EA; }
+  .theme-terminal-light .topbar h1 { color: #0B5D1E; font-family: var(--font-mono); }
+  .theme-terminal-light .search { background: #F4FAF4; color: #0B5D1E; border: 1px solid #B7D9BC; }
+  .theme-terminal-light .card { background: #DCEEDC; border: 1px solid #B7D9BC; border-style: solid; }
+  .theme-terminal-light .card h3 { color: #4C8C5A; font-family: var(--font-mono); }
+  .theme-terminal-light .checkbox { border: 1.5px solid #4C8C5A; background: #F4FAF4; }
+  .theme-terminal-light .checkbox.done { background: #0B5D1E; color: #EAF4EA; border-color: #0B5D1E; }
+  .theme-terminal-light .strike { color: #7FAE87; }
+  .theme-terminal-light .tag.p1 { background: #F3D3D3; color: #8A1F1F; }
+  .theme-terminal-light .tag.p2 { background: #F1E4B8; color: #8A6D1B; }
+  .theme-terminal-light .tag.p3 { background: #DCEEDC; color: #4C8C5A; }
+  .theme-terminal-light .btn.primary { background: #0B5D1E; color: #EAF4EA; border-style: solid; }
+  .theme-terminal-light .btn.secondary { background: #F4FAF4; color: #0B5D1E; border: 1.5px solid #0B5D1E; border-style: solid; }
+
+  /* ---- nord / dark ---- */
+  .theme-nord-dark .app { background: #2e3440; color: #eceff4; font-family: var(--font-ui); border: 1px solid rgba(0,0,0,.15); border-style: solid; }
+  .theme-nord-dark .sidebar { background: #292e39; border-right: 1px solid #434c5e; }
+  .theme-nord-dark .logo { color: #eceff4; }
+  .theme-nord-dark .nav-item { color: #9aa5b1; }
+  .theme-nord-dark .nav-item.active { background: #3b4252; color: #88c0d0; font-weight: 600; }
+  .theme-nord-dark .nav-item .dot { background: #88c0d0; }
+  .theme-nord-dark .main { background: #2e3440; }
+  .theme-nord-dark .topbar h1 { color: #eceff4; font-family: var(--font-ui); }
+  .theme-nord-dark .search { background: #3b4252; color: #d8dee9; border: 1px solid #4c566a; }
+  .theme-nord-dark .card { background: #3b4252; border: 1px solid #434c5e; border-style: solid; }
+  .theme-nord-dark .card h3 { color: #88c0d0; font-family: var(--font-ui); }
+  .theme-nord-dark .checkbox { border: 1.5px solid #4c566a; background: transparent; }
+  .theme-nord-dark .checkbox.done { background: #a3be8c; color: #2e3440; border-color: #a3be8c; }
+  .theme-nord-dark .strike { color: #4c566a; }
+  .theme-nord-dark .tag.p1 { background: #4c2b30; color: #bf616a; }
+  .theme-nord-dark .tag.p2 { background: #4c4530; color: #ebcb8b; }
+  .theme-nord-dark .tag.p3 { background: #434c5e; color: #d8dee9; }
+  .theme-nord-dark .btn.primary { background: #88c0d0; color: #2e3440; border-style: solid; }
+  .theme-nord-dark .btn.secondary { background: #3b4252; color: #eceff4; border: 1.5px solid #4c566a; border-style: solid; }
+
+  /* ---- nord / light ---- */
+  .theme-nord-light .app { background: #ECEFF4; color: #2E3440; font-family: var(--font-ui); border: 1px solid #D8DEE9; border-style: solid; }
+  .theme-nord-light .sidebar { background: #E5E9F0; border-right: 1px solid #D8DEE9; }
+  .theme-nord-light .logo { color: #2E3440; }
+  .theme-nord-light .nav-item { color: #4C566A; }
+  .theme-nord-light .nav-item.active { background: #D8DEE9; color: #5E81AC; font-weight: 600; }
+  .theme-nord-light .nav-item .dot { background: #5E81AC; }
+  .theme-nord-light .main { background: #ECEFF4; }
+  .theme-nord-light .topbar h1 { color: #2E3440; font-family: var(--font-ui); }
+  .theme-nord-light .search { background: #FFFFFF; color: #4C566A; border: 1px solid #D8DEE9; }
+  .theme-nord-light .card { background: #E5E9F0; border: 1px solid #D8DEE9; border-style: solid; }
+  .theme-nord-light .card h3 { color: #5E81AC; font-family: var(--font-ui); }
+  .theme-nord-light .checkbox { border: 1.5px solid #D8DEE9; background: #FFFFFF; }
+  .theme-nord-light .checkbox.done { background: #6B8E4E; color: #FFFFFF; border-color: #6B8E4E; }
+  .theme-nord-light .strike { color: #8B95A5; }
+  .theme-nord-light .tag.p1 { background: #F1D9DB; color: #953F46; }
+  .theme-nord-light .tag.p2 { background: #F3E9D2; color: #95740F; }
+  .theme-nord-light .tag.p3 { background: #E5E9F0; color: #4C566A; }
+  .theme-nord-light .btn.primary { background: #5E81AC; color: #FFFFFF; border-style: solid; }
+  .theme-nord-light .btn.secondary { background: #FFFFFF; color: #2E3440; border: 1.5px solid #D8DEE9; border-style: solid; }
+
+  /* ---- dracula / dark ---- */
+  .theme-dracula-dark .app { background: #282a36; color: #f8f8f2; font-family: var(--font-mono); border: 1px solid rgba(0,0,0,.15); border-style: solid; }
+  .theme-dracula-dark .sidebar { background: #21222c; border-right: 1px solid #44475a; }
+  .theme-dracula-dark .logo { color: #bd93f9; }
+  .theme-dracula-dark .nav-item { color: #6272a4; }
+  .theme-dracula-dark .nav-item.active { background: #44475a; color: #ff79c6; font-weight: 600; }
+  .theme-dracula-dark .nav-item .dot { background: #bd93f9; }
+  .theme-dracula-dark .main { background: #282a36; }
+  .theme-dracula-dark .topbar h1 { color: #f8f8f2; font-family: var(--font-mono); }
+  .theme-dracula-dark .search { background: #21222c; color: #6272a4; border: 1px solid #44475a; }
+  .theme-dracula-dark .card { background: #21222c; border: 1px solid #44475a; border-style: solid; }
+  .theme-dracula-dark .card h3 { color: #8be9fd; font-family: var(--font-mono); }
+  .theme-dracula-dark .checkbox { border: 1.5px solid #6272a4; background: transparent; }
+  .theme-dracula-dark .checkbox.done { background: #50fa7b; color: #282a36; border-color: #50fa7b; }
+  .theme-dracula-dark .strike { color: #6272a4; }
+  .theme-dracula-dark .tag.p1 { background: #47242c; color: #ff5555; }
+  .theme-dracula-dark .tag.p2 { background: #3d3a20; color: #f1fa8c; }
+  .theme-dracula-dark .tag.p3 { background: #44475a; color: #f8f8f2; }
+  .theme-dracula-dark .btn.primary { background: #bd93f9; color: #282a36; border-style: solid; }
+  .theme-dracula-dark .btn.secondary { background: #21222c; color: #ff79c6; border: 1.5px solid #ff79c6; border-style: solid; }
+
+  /* ---- dracula / light ---- */
+  .theme-dracula-light .app { background: #F8F8F2; color: #282A36; font-family: var(--font-mono); border: 1px solid #D6D6CE; border-style: solid; }
+  .theme-dracula-light .sidebar { background: #EFEFE9; border-right: 1px solid #D6D6CE; }
+  .theme-dracula-light .logo { color: #6D42C9; }
+  .theme-dracula-light .nav-item { color: #6272A4; }
+  .theme-dracula-light .nav-item.active { background: #E2DCF5; color: #6D42C9; font-weight: 600; }
+  .theme-dracula-light .nav-item .dot { background: #6D42C9; }
+  .theme-dracula-light .main { background: #F8F8F2; }
+  .theme-dracula-light .topbar h1 { color: #282A36; font-family: var(--font-mono); }
+  .theme-dracula-light .search { background: #FFFFFF; color: #44475A; border: 1px solid #D6D6CE; }
+  .theme-dracula-light .card { background: #EFEFE9; border: 1px solid #D6D6CE; border-style: solid; }
+  .theme-dracula-light .card h3 { color: #0B7285; font-family: var(--font-mono); }
+  .theme-dracula-light .checkbox { border: 1.5px solid #A9AFC3; background: #FFFFFF; }
+  .theme-dracula-light .checkbox.done { background: #1E9E4A; color: #FFFFFF; border-color: #1E9E4A; }
+  .theme-dracula-light .strike { color: #9098B0; }
+  .theme-dracula-light .tag.p1 { background: #FBDCDC; color: #C0392B; }
+  .theme-dracula-light .tag.p2 { background: #FBF0C2; color: #8A6D00; }
+  .theme-dracula-light .tag.p3 { background: #EFEFE9; color: #44475A; }
+  .theme-dracula-light .btn.primary { background: #6D42C9; color: #FFFFFF; border-style: solid; }
+  .theme-dracula-light .btn.secondary { background: #FFFFFF; color: #C13584; border: 1.5px solid #C13584; border-style: solid; }
+
+  /* ---- monokai / dark ---- */
+  .theme-monokai-dark .app { background: #272822; color: #f8f8f2; font-family: var(--font-mono); border: 1px solid rgba(0,0,0,.15); border-style: solid; }
+  .theme-monokai-dark .sidebar { background: #1e1f1a; border-right: 1px solid #3e3d32; }
+  .theme-monokai-dark .logo { color: #a6e22e; }
+  .theme-monokai-dark .nav-item { color: #75715e; }
+  .theme-monokai-dark .nav-item.active { background: #3e3d32; color: #66d9ef; font-weight: 600; }
+  .theme-monokai-dark .nav-item .dot { background: #a6e22e; }
+  .theme-monokai-dark .main { background: #272822; }
+  .theme-monokai-dark .topbar h1 { color: #f8f8f2; font-family: var(--font-mono); }
+  .theme-monokai-dark .search { background: #1e1f1a; color: #75715e; border: 1px solid #3e3d32; }
+  .theme-monokai-dark .card { background: #1e1f1a; border: 1px solid #3e3d32; border-style: solid; }
+  .theme-monokai-dark .card h3 { color: #fd971f; font-family: var(--font-mono); }
+  .theme-monokai-dark .checkbox { border: 1.5px solid #75715e; background: transparent; }
+  .theme-monokai-dark .checkbox.done { background: #a6e22e; color: #272822; border-color: #a6e22e; }
+  .theme-monokai-dark .strike { color: #75715e; }
+  .theme-monokai-dark .tag.p1 { background: #4a1530; color: #f92672; }
+  .theme-monokai-dark .tag.p2 { background: #453d17; color: #e6db74; }
+  .theme-monokai-dark .tag.p3 { background: #3e3d32; color: #f8f8f2; }
+  .theme-monokai-dark .btn.primary { background: #f92672; color: #f8f8f2; border-style: solid; }
+  .theme-monokai-dark .btn.secondary { background: #1e1f1a; color: #66d9ef; border: 1.5px solid #66d9ef; border-style: solid; }
+
+  /* ---- monokai / light ---- */
+  .theme-monokai-light .app { background: #F8F8F2; color: #272822; font-family: var(--font-mono); border: 1px solid #DBDACB; border-style: solid; }
+  .theme-monokai-light .sidebar { background: #EFEFE6; border-right: 1px solid #DBDACB; }
+  .theme-monokai-light .logo { color: #6B8E23; }
+  .theme-monokai-light .nav-item { color: #75715E; }
+  .theme-monokai-light .nav-item.active { background: #E3EDC9; color: #5A7A1D; font-weight: 600; }
+  .theme-monokai-light .nav-item .dot { background: #6B8E23; }
+  .theme-monokai-light .main { background: #F8F8F2; }
+  .theme-monokai-light .topbar h1 { color: #272822; font-family: var(--font-mono); }
+  .theme-monokai-light .search { background: #FFFFFF; color: #5B5A4C; border: 1px solid #DBDACB; }
+  .theme-monokai-light .card { background: #EFEFE6; border: 1px solid #DBDACB; border-style: solid; }
+  .theme-monokai-light .card h3 { color: #B5590B; font-family: var(--font-mono); }
+  .theme-monokai-light .checkbox { border: 1.5px solid #B0AE9A; background: #FFFFFF; }
+  .theme-monokai-light .checkbox.done { background: #5A7A1D; color: #FFFFFF; border-color: #5A7A1D; }
+  .theme-monokai-light .strike { color: #9C9A88; }
+  .theme-monokai-light .tag.p1 { background: #FADCE7; color: #C41E5A; }
+  .theme-monokai-light .tag.p2 { background: #FAF0C7; color: #8A6D00; }
+  .theme-monokai-light .tag.p3 { background: #EFEFE6; color: #5B5A4C; }
+  .theme-monokai-light .btn.primary { background: #C41E5A; color: #FFFFFF; border-style: solid; }
+  .theme-monokai-light .btn.secondary { background: #FFFFFF; color: #0B7285; border: 1.5px solid #0B7285; border-style: solid; }
+
+  /* ---- onedark / dark ---- */
+  .theme-onedark-dark .app { background: #282c34; color: #abb2bf; font-family: var(--font-ui); border: 1px solid rgba(0,0,0,.15); border-style: solid; }
+  .theme-onedark-dark .sidebar { background: #21252b; border-right: 1px solid #3a3f4b; }
+  .theme-onedark-dark .logo { color: #e5c07b; }
+  .theme-onedark-dark .nav-item { color: #6b717d; }
+  .theme-onedark-dark .nav-item.active { background: #2c313a; color: #61afef; font-weight: 600; }
+  .theme-onedark-dark .nav-item .dot { background: #61afef; }
+  .theme-onedark-dark .main { background: #282c34; }
+  .theme-onedark-dark .topbar h1 { color: #d7dae0; font-family: var(--font-ui); }
+  .theme-onedark-dark .search { background: #21252b; color: #6b717d; border: 1px solid #3a3f4b; }
+  .theme-onedark-dark .card { background: #21252b; border: 1px solid #3a3f4b; border-style: solid; }
+  .theme-onedark-dark .card h3 { color: #56b6c2; font-family: var(--font-ui); }
+  .theme-onedark-dark .checkbox { border: 1.5px solid #5c6370; background: transparent; }
+  .theme-onedark-dark .checkbox.done { background: #98c379; color: #282c34; border-color: #98c379; }
+  .theme-onedark-dark .strike { color: #5c6370; }
+  .theme-onedark-dark .tag.p1 { background: #4a2529; color: #e06c75; }
+  .theme-onedark-dark .tag.p2 { background: #45411f; color: #e5c07b; }
+  .theme-onedark-dark .tag.p3 { background: #3a3f4b; color: #abb2bf; }
+  .theme-onedark-dark .btn.primary { background: #61afef; color: #1c2128; border-style: solid; }
+  .theme-onedark-dark .btn.secondary { background: #21252b; color: #c678dd; border: 1.5px solid #c678dd; border-style: solid; }
+
+  /* ---- onedark / light ---- */
+  .theme-onedark-light .app { background: #FAFAFA; color: #383A42; font-family: var(--font-ui); border: 1px solid #E5E5E6; border-style: solid; }
+  .theme-onedark-light .sidebar { background: #F0F0F1; border-right: 1px solid #E5E5E6; }
+  .theme-onedark-light .logo { color: #C18401; }
+  .theme-onedark-light .nav-item { color: #A0A1A7; }
+  .theme-onedark-light .nav-item.active { background: #E5E5E6; color: #4078F2; font-weight: 600; }
+  .theme-onedark-light .nav-item .dot { background: #4078F2; }
+  .theme-onedark-light .main { background: #FAFAFA; }
+  .theme-onedark-light .topbar h1 { color: #383A42; font-family: var(--font-ui); }
+  .theme-onedark-light .search { background: #FFFFFF; color: #696C77; border: 1px solid #E5E5E6; }
+  .theme-onedark-light .card { background: #F0F0F1; border: 1px solid #E5E5E6; border-style: solid; }
+  .theme-onedark-light .card h3 { color: #0184BC; font-family: var(--font-ui); }
+  .theme-onedark-light .checkbox { border: 1.5px solid #C6C7CB; background: #FFFFFF; }
+  .theme-onedark-light .checkbox.done { background: #50A14F; color: #FFFFFF; border-color: #50A14F; }
+  .theme-onedark-light .strike { color: #A0A1A7; }
+  .theme-onedark-light .tag.p1 { background: #FBDFDD; color: #E45649; }
+  .theme-onedark-light .tag.p2 { background: #FBF0D3; color: #C18401; }
+  .theme-onedark-light .tag.p3 { background: #F0F0F1; color: #696C77; }
+  .theme-onedark-light .btn.primary { background: #4078F2; color: #FFFFFF; border-style: solid; }
+  .theme-onedark-light .btn.secondary { background: #FFFFFF; color: #A626A4; border: 1.5px solid #A626A4; border-style: solid; }
+
+  /* ---- amber / dark ---- */
+  .theme-amber-dark .app { background: #1a0f00; color: #FFB000; font-family: var(--font-mono); border: 1px solid #4d3300; border-style: solid; }
+  .theme-amber-dark .sidebar { background: #120b00; border-right: 1px solid #4d3300; }
+  .theme-amber-dark .logo { color: #FFB000; }
+  .theme-amber-dark .nav-item { color: #B37700; }
+  .theme-amber-dark .nav-item.active { background: #2e1c00; color: #FFD470; font-weight: 600; }
+  .theme-amber-dark .nav-item .dot { background: #FFB000; }
+  .theme-amber-dark .main { background: #1a0f00; }
+  .theme-amber-dark .topbar h1 { color: #FFD470; font-family: var(--font-mono); }
+  .theme-amber-dark .search { background: #120b00; color: #FFB000; border: 1px solid #4d3300; }
+  .theme-amber-dark .card { background: #120b00; border: 1px solid #4d3300; border-style: solid; }
+  .theme-amber-dark .card h3 { color: #B37700; font-family: var(--font-mono); }
+  .theme-amber-dark .checkbox { border: 1.5px solid #B37700; background: transparent; }
+  .theme-amber-dark .checkbox.done { background: #FFB000; color: #1a0f00; border-color: #FFB000; }
+  .theme-amber-dark .strike { color: #B37700; }
+  .theme-amber-dark .tag.p1 { background: #3a1300; color: #FF6B35; }
+  .theme-amber-dark .tag.p2 { background: #3a2900; color: #FFD470; }
+  .theme-amber-dark .tag.p3 { background: #2e1c00; color: #B37700; }
+  .theme-amber-dark .btn.primary { background: #FFB000; color: #1a0f00; border-style: solid; }
+  .theme-amber-dark .btn.secondary { background: transparent; color: #FFB000; border: 1.5px solid #FFB000; border-style: solid; }
+
+  /* ---- amber / light ---- */
+  .theme-amber-light .app { background: #F5E9D3; color: #7A4A00; font-family: var(--font-mono); border: 1px solid #D2B37A; border-style: solid; }
+  .theme-amber-light .sidebar { background: #EDDBB5; border-right: 1px solid #D2B37A; }
+  .theme-amber-light .logo { color: #7A4A00; }
+  .theme-amber-light .nav-item { color: #A67C3D; }
+  .theme-amber-light .nav-item.active { background: #E0C48A; color: #7A4A00; font-weight: 600; }
+  .theme-amber-light .nav-item .dot { background: #B36A00; }
+  .theme-amber-light .main { background: #F5E9D3; }
+  .theme-amber-light .topbar h1 { color: #7A4A00; font-family: var(--font-mono); }
+  .theme-amber-light .search { background: #FAF3E3; color: #7A4A00; border: 1px solid #D2B37A; }
+  .theme-amber-light .card { background: #EDDBB5; border: 1px solid #D2B37A; border-style: solid; }
+  .theme-amber-light .card h3 { color: #A67C3D; font-family: var(--font-mono); }
+  .theme-amber-light .checkbox { border: 1.5px solid #A67C3D; background: #FAF3E3; }
+  .theme-amber-light .checkbox.done { background: #7A4A00; color: #F5E9D3; border-color: #7A4A00; }
+  .theme-amber-light .strike { color: #B79A6B; }
+  .theme-amber-light .tag.p1 { background: #F2D6C4; color: #A13D1E; }
+  .theme-amber-light .tag.p2 { background: #F2E4B8; color: #8A6D00; }
+  .theme-amber-light .tag.p3 { background: #EDDBB5; color: #A67C3D; }
+  .theme-amber-light .btn.primary { background: #7A4A00; color: #F5E9D3; border-style: solid; }
+  .theme-amber-light .btn.secondary { background: #FAF3E3; color: #7A4A00; border: 1.5px solid #7A4A00; border-style: solid; }
+
+</style>
+</head>
+<body>
+
+<div class="switcher">
+
+    <div class="switcher-row">
+      <span class="row-label">Theme</span>
+      <button class="active" data-family="modern">Default</button>
+      <button data-family="borland">Cobalt DOS</button>
+      <button data-family="terminal">Phosphor</button>
+      <button data-family="nord">Frostline</button>
+      <button data-family="dracula">Nightshade</button>
+      <button data-family="monokai">Canopy</button>
+      <button data-family="onedark">Graphite</button>
+      <button data-family="amber">Amber</button>
+    </div>
+    <div class="switcher-row mode-toggle">
+      <span class="row-label">Mode</span>
+      <button class="mode-dark active" data-mode="dark">Dark</button>
+      <button class="mode-light" data-mode="light">Light</button>
+    </div>
+
+</div>
+
+<div class="stage">
+
+  <div class="theme-modern-dark theme-block" data-family="modern" data-mode="dark" data-block="modern-dark">
+    <p class="theme-label">Default &mdash; Dark &mdash; the app's own baseline dark theme, not modeled on any external product</p>
+    <div class="swatches">
+      <div class="swatch" style="background:#1a1b1e;color:#c1c2c5;"><b>Background</b>#1a1b1e</div>
+      <div class="swatch" style="background:#25262b;color:#c1c2c5;"><b>Surface</b>#25262b</div>
+      <div class="swatch" style="background:#f1f3f5;color:#1a1b1e;"><b>Text</b>#f1f3f5</div>
+      <div class="swatch" style="background:#339af0;color:#06131f;"><b>Accent</b>#339af0</div>
+      <div class="swatch" style="background:#37b24d;color:#fff;"><b>Success</b>#37b24d</div>
+      <div class="swatch" style="background:#f03e3e;color:#fff;"><b>Danger</b>#f03e3e</div>
+    </div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-modern-light theme-block" data-family="modern" data-mode="light" data-block="modern-light">
+    <p class="theme-label">Default &mdash; Light &mdash; the app's own baseline light theme, not modeled on any external product</p>
+    <div class="swatches">
+      <div class="swatch" style="background:#ffffff;color:#1a1b1e;border:1px solid #e9ecef;"><b>Background</b>#ffffff</div>
+      <div class="swatch" style="background:#f8f9fa;color:#1a1b1e;"><b>Surface</b>#f8f9fa</div>
+      <div class="swatch" style="background:#1a1b1e;color:#fff;"><b>Text</b>#1a1b1e</div>
+      <div class="swatch" style="background:#228be6;color:#fff;"><b>Accent</b>#228be6</div>
+      <div class="swatch" style="background:#40c057;color:#fff;"><b>Success</b>#40c057</div>
+      <div class="swatch" style="background:#e03131;color:#fff;"><b>Danger</b>#e03131</div>
+    </div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="theme-borland-dark theme-block" data-family="borland" data-mode="dark" data-block="borland-dark">
+    <p class="theme-label">Cobalt DOS — Dark &mdash; inspired by early-1990s Borland-style IDE color schemes (Turbo C++/Turbo Pascal)</p>
+    <div class="swatches"><div class="swatch" style="background:#0000AA;color:#C0C0C0;"><b>Background</b>#0000AA</div><div class="swatch" style="background:#0000AA;color:#C0C0C0;"><b>Surface</b>#0000AA</div><div class="swatch" style="background:#FFFF00;color:#0000AA;"><b>Heading/Logo</b>#FFFF00</div><div class="swatch" style="background:#00FFFF;color:#0000AA;"><b>Accent</b>#00FFFF</div><div class="swatch" style="background:#00AA00;color:#000000;"><b>Success</b>#00AA00</div><div class="swatch" style="background:#FFFF00;color:#0000AA;"><b>Danger</b>#FFFF00</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">▰ LAUNCHPAD.EXE</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-borland-light theme-block" data-family="borland" data-mode="light" data-block="borland-light">
+    <p class="theme-label">Cobalt DOS — Light &mdash; inspired by the same Borland-style IDE, reworked for a light background</p>
+    <div class="swatches"><div class="swatch" style="background:#F0F0F0;color:#000080;"><b>Background</b>#F0F0F0</div><div class="swatch" style="background:#F0F0F0;color:#000080;"><b>Surface</b>#F0F0F0</div><div class="swatch" style="background:#800000;color:#F0F0F0;"><b>Heading/Logo</b>#800000</div><div class="swatch" style="background:#008080;color:#FFFFFF;"><b>Accent</b>#008080</div><div class="swatch" style="background:#008000;color:#FFFFFF;"><b>Success</b>#008000</div><div class="swatch" style="background:#FFFFFF;color:#FFFFFF;"><b>Danger</b>#FFFFFF</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">▰ LAUNCHPAD.EXE</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-terminal-dark theme-block" data-family="terminal" data-mode="dark" data-block="terminal-dark">
+    <p class="theme-label">Phosphor — Dark &mdash; inspired by monochrome phosphor CRT terminal displays</p>
+    <div class="swatches"><div class="swatch" style="background:#0a0f0a;color:#33ff66;"><b>Background</b>#0a0f0a</div><div class="swatch" style="background:#060906;color:#33ff66;"><b>Surface</b>#060906</div><div class="swatch" style="background:#a6ffb8;color:#0a0f0a;"><b>Heading/Logo</b>#a6ffb8</div><div class="swatch" style="background:#33ff66;color:#0a0f0a;"><b>Accent</b>#33ff66</div><div class="swatch" style="background:#33ff66;color:#0a0f0a;"><b>Success</b>#33ff66</div><div class="swatch" style="background:#ff5555;color:#0a0f0a;"><b>Danger</b>#ff5555</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">&gt; LAUNCHPAD_</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-terminal-light theme-block" data-family="terminal" data-mode="light" data-block="terminal-light">
+    <p class="theme-label">Phosphor — Light &mdash; inspired by monochrome CRT terminals, reimagined as green-tinted paper for light mode</p>
+    <div class="swatches"><div class="swatch" style="background:#EAF4EA;color:#0B5D1E;"><b>Background</b>#EAF4EA</div><div class="swatch" style="background:#DCEEDC;color:#0B5D1E;"><b>Surface</b>#DCEEDC</div><div class="swatch" style="background:#0B5D1E;color:#EAF4EA;"><b>Heading/Logo</b>#0B5D1E</div><div class="swatch" style="background:#0B5D1E;color:#FFFFFF;"><b>Accent</b>#0B5D1E</div><div class="swatch" style="background:#0B5D1E;color:#EAF4EA;"><b>Success</b>#0B5D1E</div><div class="swatch" style="background:#8A1F1F;color:#FFFFFF;"><b>Danger</b>#8A1F1F</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">&gt; LAUNCHPAD_</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-nord-dark theme-block" data-family="nord" data-mode="dark" data-block="nord-dark">
+    <p class="theme-label">Frostline — Dark &mdash; inspired by the Nord color palette</p>
+    <div class="swatches"><div class="swatch" style="background:#2e3440;color:#eceff4;"><b>Background</b>#2e3440</div><div class="swatch" style="background:#3b4252;color:#eceff4;"><b>Surface</b>#3b4252</div><div class="swatch" style="background:#eceff4;color:#2e3440;"><b>Heading/Logo</b>#eceff4</div><div class="swatch" style="background:#88c0d0;color:#2e3440;"><b>Accent</b>#88c0d0</div><div class="swatch" style="background:#a3be8c;color:#2e3440;"><b>Success</b>#a3be8c</div><div class="swatch" style="background:#bf616a;color:#2e3440;"><b>Danger</b>#bf616a</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-nord-light theme-block" data-family="nord" data-mode="light" data-block="nord-light">
+    <p class="theme-label">Frostline — Light &mdash; inspired by the Nord color palette’s own light layer ("Snow Storm")</p>
+    <div class="swatches"><div class="swatch" style="background:#ECEFF4;color:#2E3440;"><b>Background</b>#ECEFF4</div><div class="swatch" style="background:#E5E9F0;color:#2E3440;"><b>Surface</b>#E5E9F0</div><div class="swatch" style="background:#2E3440;color:#ECEFF4;"><b>Heading/Logo</b>#2E3440</div><div class="swatch" style="background:#5E81AC;color:#FFFFFF;"><b>Accent</b>#5E81AC</div><div class="swatch" style="background:#6B8E4E;color:#FFFFFF;"><b>Success</b>#6B8E4E</div><div class="swatch" style="background:#953F46;color:#FFFFFF;"><b>Danger</b>#953F46</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-dracula-dark theme-block" data-family="dracula" data-mode="dark" data-block="dracula-dark">
+    <p class="theme-label">Nightshade — Dark &mdash; inspired by the Dracula color scheme</p>
+    <div class="swatches"><div class="swatch" style="background:#282a36;color:#f8f8f2;"><b>Background</b>#282a36</div><div class="swatch" style="background:#21222c;color:#f8f8f2;"><b>Surface</b>#21222c</div><div class="swatch" style="background:#f8f8f2;color:#282a36;"><b>Heading/Logo</b>#f8f8f2</div><div class="swatch" style="background:#bd93f9;color:#282a36;"><b>Accent</b>#bd93f9</div><div class="swatch" style="background:#50fa7b;color:#282a36;"><b>Success</b>#50fa7b</div><div class="swatch" style="background:#ff5555;color:#282a36;"><b>Danger</b>#ff5555</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-dracula-light theme-block" data-family="dracula" data-mode="light" data-block="dracula-light">
+    <p class="theme-label">Nightshade — Light &mdash; inspired by the Dracula color scheme, reworked for a light background</p>
+    <div class="swatches"><div class="swatch" style="background:#F8F8F2;color:#282A36;"><b>Background</b>#F8F8F2</div><div class="swatch" style="background:#EFEFE9;color:#282A36;"><b>Surface</b>#EFEFE9</div><div class="swatch" style="background:#282A36;color:#F8F8F2;"><b>Heading/Logo</b>#282A36</div><div class="swatch" style="background:#6D42C9;color:#FFFFFF;"><b>Accent</b>#6D42C9</div><div class="swatch" style="background:#1E9E4A;color:#FFFFFF;"><b>Success</b>#1E9E4A</div><div class="swatch" style="background:#C0392B;color:#FFFFFF;"><b>Danger</b>#C0392B</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-monokai-dark theme-block" data-family="monokai" data-mode="dark" data-block="monokai-dark">
+    <p class="theme-label">Canopy — Dark &mdash; inspired by the Monokai color scheme</p>
+    <div class="swatches"><div class="swatch" style="background:#272822;color:#f8f8f2;"><b>Background</b>#272822</div><div class="swatch" style="background:#1e1f1a;color:#f8f8f2;"><b>Surface</b>#1e1f1a</div><div class="swatch" style="background:#f8f8f2;color:#272822;"><b>Heading/Logo</b>#f8f8f2</div><div class="swatch" style="background:#a6e22e;color:#272822;"><b>Accent</b>#a6e22e</div><div class="swatch" style="background:#a6e22e;color:#272822;"><b>Success</b>#a6e22e</div><div class="swatch" style="background:#f92672;color:#272822;"><b>Danger</b>#f92672</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-monokai-light theme-block" data-family="monokai" data-mode="light" data-block="monokai-light">
+    <p class="theme-label">Canopy — Light &mdash; inspired by the Monokai color scheme, reworked for a light background</p>
+    <div class="swatches"><div class="swatch" style="background:#F8F8F2;color:#272822;"><b>Background</b>#F8F8F2</div><div class="swatch" style="background:#EFEFE6;color:#272822;"><b>Surface</b>#EFEFE6</div><div class="swatch" style="background:#272822;color:#F8F8F2;"><b>Heading/Logo</b>#272822</div><div class="swatch" style="background:#6B8E23;color:#FFFFFF;"><b>Accent</b>#6B8E23</div><div class="swatch" style="background:#5A7A1D;color:#FFFFFF;"><b>Success</b>#5A7A1D</div><div class="swatch" style="background:#C41E5A;color:#FFFFFF;"><b>Danger</b>#C41E5A</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-onedark-dark theme-block" data-family="onedark" data-mode="dark" data-block="onedark-dark">
+    <p class="theme-label">Graphite — Dark &mdash; inspired by the Atom One Dark color scheme</p>
+    <div class="swatches"><div class="swatch" style="background:#282c34;color:#abb2bf;"><b>Background</b>#282c34</div><div class="swatch" style="background:#21252b;color:#abb2bf;"><b>Surface</b>#21252b</div><div class="swatch" style="background:#d7dae0;color:#282c34;"><b>Heading/Logo</b>#d7dae0</div><div class="swatch" style="background:#61afef;color:#282c34;"><b>Accent</b>#61afef</div><div class="swatch" style="background:#98c379;color:#282c34;"><b>Success</b>#98c379</div><div class="swatch" style="background:#e06c75;color:#282c34;"><b>Danger</b>#e06c75</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-onedark-light theme-block" data-family="onedark" data-mode="light" data-block="onedark-light">
+    <p class="theme-label">Graphite — Light &mdash; inspired by the Atom One Light color scheme, the official companion to One Dark</p>
+    <div class="swatches"><div class="swatch" style="background:#FAFAFA;color:#383A42;"><b>Background</b>#FAFAFA</div><div class="swatch" style="background:#F0F0F1;color:#383A42;"><b>Surface</b>#F0F0F1</div><div class="swatch" style="background:#383A42;color:#FAFAFA;"><b>Heading/Logo</b>#383A42</div><div class="swatch" style="background:#4078F2;color:#FFFFFF;"><b>Accent</b>#4078F2</div><div class="swatch" style="background:#50A14F;color:#FFFFFF;"><b>Success</b>#50A14F</div><div class="swatch" style="background:#E45649;color:#FFFFFF;"><b>Danger</b>#E45649</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">Launchpad</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-amber-dark theme-block" data-family="amber" data-mode="dark" data-block="amber-dark">
+    <p class="theme-label">Amber — Dark &mdash; inspired by old amber CRT terminal displays</p>
+    <div class="swatches"><div class="swatch" style="background:#1a0f00;color:#FFB000;"><b>Background</b>#1a0f00</div><div class="swatch" style="background:#120b00;color:#FFB000;"><b>Surface</b>#120b00</div><div class="swatch" style="background:#FFD470;color:#1a0f00;"><b>Heading/Logo</b>#FFD470</div><div class="swatch" style="background:#FFB000;color:#1a0f00;"><b>Accent</b>#FFB000</div><div class="swatch" style="background:#FFB000;color:#1a0f00;"><b>Success</b>#FFB000</div><div class="swatch" style="background:#FF6B35;color:#1a0f00;"><b>Danger</b>#FF6B35</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">&gt; LAUNCHPAD_</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-amber-light theme-block" data-family="amber" data-mode="light" data-block="amber-light">
+    <p class="theme-label">Amber — Light &mdash; inspired by amber CRT terminals, reimagined as amber ink on aged parchment for light mode</p>
+    <div class="swatches"><div class="swatch" style="background:#F5E9D3;color:#7A4A00;"><b>Background</b>#F5E9D3</div><div class="swatch" style="background:#EDDBB5;color:#7A4A00;"><b>Surface</b>#EDDBB5</div><div class="swatch" style="background:#7A4A00;color:#F5E9D3;"><b>Heading/Logo</b>#7A4A00</div><div class="swatch" style="background:#B36A00;color:#FFFFFF;"><b>Accent</b>#B36A00</div><div class="swatch" style="background:#7A4A00;color:#F5E9D3;"><b>Success</b>#7A4A00</div><div class="swatch" style="background:#A13D1E;color:#FFFFFF;"><b>Danger</b>#A13D1E</div></div>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">&gt; LAUNCHPAD_</div>
+        <div class="nav-item active"><span class="dot"></span> Dashboard</div>
+        <div class="nav-item"><span class="dot"></span> Projects</div>
+        <div class="nav-item"><span class="dot"></span> Todos</div>
+        <div class="nav-item"><span class="dot"></span> Notes</div>
+        <div class="nav-item"><span class="dot"></span> Wins</div>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Dashboard</h1>
+          <div class="search">&#8984;K search&hellip;</div>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Todos</h3>
+            <div class="todo-row"><span class="checkbox done">&#10003;</span> <span class="strike">Fix OAuth callback bug</span></div>
+            <div class="todo-row"><span class="checkbox"></span> Write DATABASE.md migration notes</div>
+            <div class="todo-row"><span class="checkbox"></span> Review PR #114</div>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <div class="proj-row">Dev Launchpad <span class="tag p2">Active</span></div>
+            <div class="proj-row">Client Portal <span class="tag p1">Blocked</span></div>
+            <div class="proj-row">Internal Tools <span class="tag p3">Idle</span></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn primary">Add Todo</div>
+          <div class="btn secondary">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+  const state = { family: 'modern', mode: 'dark' };
+
+  function render() {
+    document.querySelectorAll('[data-family]').forEach(b => {
+      if (b.tagName === 'BUTTON') b.classList.toggle('active', b.dataset.family === state.family);
+    });
+    document.querySelectorAll('[data-mode]').forEach(b => {
+      if (b.tagName === 'BUTTON') b.classList.toggle('active', b.dataset.mode === state.mode);
+    });
+    document.querySelectorAll('.theme-block').forEach(el => {
+      el.classList.toggle('active', el.dataset.family === state.family && el.dataset.mode === state.mode);
+    });
+  }
+
+  document.querySelectorAll('.switcher-row:first-child button').forEach(btn => {
+    btn.addEventListener('click', () => { state.family = btn.dataset.family; render(); });
+  });
+  document.querySelectorAll('.mode-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => { state.mode = btn.dataset.mode; render(); });
+  });
+
+  render();
+
+</script>
+
+</body>
+</html>

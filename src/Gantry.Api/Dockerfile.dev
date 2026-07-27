@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+EXPOSE 5000
+CMD ["/bin/sh", "-c", "while true; do dotnet watch run --no-launch-profile; echo 'dotnet watch exited, restarting in 3s...'; sleep 3; done"]

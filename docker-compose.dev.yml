@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: ./src/Gantry.Api
+      dockerfile: Dockerfile.dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    volumes:
+      - ./src/Gantry.Api:/src
+      - nuget-cache:/root/.nuget/packages
+    expose:
+      - "5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./src/web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${DEV_PORT:-5150}:5173"
+    environment:
+      API_URL: http://api:5000
+    volumes:
+      - ./src/web:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  nuget-cache:

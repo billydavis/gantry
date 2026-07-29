@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ActionIcon, Badge, Box, Checkbox, ColorSwatch, Divider, Group, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Box, Checkbox, ColorSwatch, Group, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
@@ -93,59 +94,69 @@ export function DashboardPage() {
   const dueToday = todos.filter((t) => { if (!t.dueDate) return false; return new Date(t.dueDate + 'T00:00:00').getTime() === today.getTime(); });
   const pinned = todos.filter((t) => t.isPinned);
 
+  const isDesktop = useMediaQuery('(min-width: 768px)', true);
+  const showFocus = isVisible('todaysFocus');
+  const showNotes = isVisible('recentNotes') && recentNotes.length > 0;
+  const showWins = isVisible('recentWins') && recentWins.length > 0;
+
   return (
     <>
-      <Stack gap="xl">
-        {/* Header */}
-        <Group justify="space-between" align="flex-end" wrap="wrap">
-          <Box>
-            <Text size="sm" c="dimmed">
-              {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
-            </Text>
-            <Title order={2} style={{ color: 'var(--g-heading)' }}>
-              Good{getTimeOfDay()}, Billy.
-            </Title>
-          </Box>
+      {/* Header */}
+      <Group justify="space-between" align="flex-end" wrap="wrap" mb="xl">
+        <Box>
+          <Text size="sm" c="dimmed">
+            {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+          </Text>
+          <Title order={2} style={{ color: 'var(--g-heading)' }}>
+            Good{getTimeOfDay()}, Billy.
+          </Title>
+        </Box>
 
-          <Group gap="md" align="center">
-            {pinned.length > 0 && <Text size="sm" style={{ color: 'var(--g-accent)' }}>{pinned.length} pinned</Text>}
-            {overdue.length > 0 && <Text size="sm" c="red">{overdue.length} overdue</Text>}
-            {dueToday.length > 0 && <Text size="sm" c="yellow">{dueToday.length} due today</Text>}
+        <Group gap="md" align="center">
+          {pinned.length > 0 && <Text size="sm" style={{ color: 'var(--g-accent)' }}>{pinned.length} pinned</Text>}
+          {overdue.length > 0 && <Text size="sm" c="red">{overdue.length} overdue</Text>}
+          {dueToday.length > 0 && <Text size="sm" c="yellow">{dueToday.length} due today</Text>}
 
-            <Popover opened={configOpen} onChange={setConfigOpen} position="bottom-end" withinPortal>
-              <Popover.Target>
-                <Tooltip label="Configure widgets" disabled={configOpen} withinPortal>
-                  <ActionIcon variant="subtle" size="sm" onClick={() => setConfigOpen(v => !v)} style={{ color: 'var(--g-text-muted)' }}>
-                    <IconSettings size={16} />
-                  </ActionIcon>
-                </Tooltip>
-              </Popover.Target>
-              <Popover.Dropdown style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', minWidth: 190 }}>
-                <Text size="xs" c="dimmed" mb={10} fw={600} tt="uppercase" style={{ letterSpacing: '0.05em' }}>Widgets</Text>
-                <Stack gap={8}>
-                  {(Object.keys(WIDGET_LABELS) as (keyof typeof WIDGET_LABELS)[]).map((id) => (
-                    <Checkbox
-                      key={id}
-                      label={WIDGET_LABELS[id]}
-                      checked={isVisible(id)}
-                      onChange={() => toggle(id)}
-                      size="sm"
-                      styles={{ label: { color: 'var(--g-text)', cursor: 'pointer' } }}
-                    />
-                  ))}
-                </Stack>
-              </Popover.Dropdown>
-            </Popover>
-          </Group>
+          <Popover opened={configOpen} onChange={setConfigOpen} position="bottom-end" withinPortal>
+            <Popover.Target>
+              <Tooltip label="Configure widgets" disabled={configOpen} withinPortal>
+                <ActionIcon variant="subtle" size="sm" onClick={() => setConfigOpen(v => !v)} style={{ color: 'var(--g-text-muted)' }}>
+                  <IconSettings size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Popover.Target>
+            <Popover.Dropdown style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', minWidth: 190 }}>
+              <Text size="xs" c="dimmed" mb={10} fw={600} tt="uppercase" style={{ letterSpacing: '0.05em' }}>Widgets</Text>
+              <Stack gap={8}>
+                {(Object.keys(WIDGET_LABELS) as (keyof typeof WIDGET_LABELS)[]).map((id) => (
+                  <Checkbox
+                    key={id}
+                    label={WIDGET_LABELS[id]}
+                    checked={isVisible(id)}
+                    onChange={() => toggle(id)}
+                    size="sm"
+                    styles={{ label: { color: 'var(--g-text)', cursor: 'pointer' } }}
+                  />
+                ))}
+              </Stack>
+            </Popover.Dropdown>
+          </Popover>
         </Group>
+      </Group>
 
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-
-        {/* Quick Launch */}
-        {isVisible('quickLaunch') && (
-          <>
+      {/* Two-column content grid */}
+      <Box style={{
+        display: 'grid',
+        gridTemplateColumns: isDesktop && showFocus ? '1fr 340px' : '1fr',
+        gap: 24,
+        alignItems: 'start',
+      }}>
+        {/* Left column: context widgets */}
+        <Stack gap="lg">
+          {/* Quick Launch */}
+          {isVisible('quickLaunch') && (
             <Box>
-              <Group justify="space-between" align="center" mb="sm">
+              <Group justify="space-between" align="center" mb="xs">
                 <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
                   Quick Launch
                 </Text>
@@ -201,15 +212,12 @@ export function DashboardPage() {
                 </Box>
               )}
             </Box>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-          </>
-        )}
+          )}
 
-        {/* Active Projects */}
-        {isVisible('activeProjects') && activeProjects.length > 0 && (
-          <>
+          {/* Active Projects */}
+          {isVisible('activeProjects') && activeProjects.length > 0 && (
             <Box>
-              <Group justify="space-between" align="center" mb="sm">
+              <Group justify="space-between" align="center" mb="xs">
                 <Group gap="xs">
                   <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
                     Active Projects
@@ -256,15 +264,102 @@ export function DashboardPage() {
                 </Text>
               )}
             </Box>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-          </>
-        )}
+          )}
 
-        {/* Recently Opened Projects */}
-        {isVisible('recentProjects') && recentProjects.length > 0 && (
-          <>
+          {/* Recent Notes + Recent Wins: side by side */}
+          {(showNotes || showWins) && (
+            <Box style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 16,
+              alignItems: 'start',
+            }}>
+              {showNotes && (
+                <Box>
+                  <Group justify="space-between" align="center" mb="xs">
+                    <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                      Recent Notes
+                    </Text>
+                    <Tooltip label="New note">
+                      <ActionIcon variant="subtle" size="sm" onClick={() => setNoteDrawerOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
+                        <IconPlus size={14} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Group>
+                  <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
+                    {recentNotes.map((note, i) => {
+                      const label = note.title ?? (note.date
+                        ? new Date(note.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+                        : 'Untitled');
+                      return (
+                        <Box key={note.id} onClick={() => navigate(`/notes/${note.id}`)}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                            borderBottom: i < recentNotes.length - 1 ? '1px solid var(--g-border)' : 'none',
+                            cursor: 'pointer',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <IconNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+                          <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
+                          {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
+                          <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+                            {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          </Text>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              )}
+
+              {showWins && (
+                <Box>
+                  <Group justify="space-between" align="center" mb="xs">
+                    <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                      Recent Wins
+                    </Text>
+                    <Tooltip label="Log win">
+                      <ActionIcon variant="subtle" size="sm" onClick={() => setWinModalOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
+                        <IconPlus size={14} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Group>
+                  <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
+                    {recentWins.map((win, i) => (
+                      <Box key={win.id}
+                        onClick={() => { setEditingWin(win); setWinModalOpen(true); }}
+                        style={{
+                          display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px',
+                          borderBottom: i < recentWins.length - 1 ? '1px solid var(--g-border)' : 'none',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <IconTrophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+                        <Box style={{ flex: 1, minWidth: 0 }}>
+                          <Text size="sm" fw={500} style={{ color: 'var(--g-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {win.title}
+                          </Text>
+                          {win.projectName && <Text size="xs" c="dimmed">{win.projectName}</Text>}
+                        </Box>
+                        <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+                          {new Date(win.date + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </Text>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {/* Recently Opened Projects */}
+          {isVisible('recentProjects') && recentProjects.length > 0 && (
             <Box>
-              <Group justify="space-between" align="center" mb="sm">
+              <Group justify="space-between" align="center" mb="xs">
                 <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
                   Recently Opened
                 </Text>
@@ -291,108 +386,19 @@ export function DashboardPage() {
                 ))}
               </Box>
             </Box>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-          </>
-        )}
+          )}
+        </Stack>
 
-        {/* Recent Notes */}
-        {isVisible('recentNotes') && recentNotes.length > 0 && (
-          <>
-            <Box>
-              <Group justify="space-between" align="center" mb="sm">
-                <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-                  Recent Notes
-                </Text>
-                <Tooltip label="New note">
-                  <ActionIcon variant="subtle" size="sm" onClick={() => setNoteDrawerOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
-                    <IconPlus size={14} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-              <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
-                {recentNotes.map((note, i) => {
-                  const label = note.title ?? (note.date
-                    ? new Date(note.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
-                    : 'Untitled');
-                  return (
-                    <Box key={note.id} onClick={() => navigate(`/notes/${note.id}`)}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
-                        borderBottom: i < recentNotes.length - 1 ? '1px solid var(--g-border)' : 'none',
-                        cursor: 'pointer',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <IconNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
-                      <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
-                      {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
-                      <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
-                        {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                      </Text>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Box>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-          </>
-        )}
-
-        {/* Recent Wins */}
-        {isVisible('recentWins') && recentWins.length > 0 && (
-          <>
-            <Box>
-              <Group justify="space-between" align="center" mb="sm">
-                <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-                  Recent Wins
-                </Text>
-                <Tooltip label="Log win">
-                  <ActionIcon variant="subtle" size="sm" onClick={() => setWinModalOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
-                    <IconPlus size={14} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-              <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
-                {recentWins.map((win, i) => (
-                  <Box key={win.id}
-                    onClick={() => { setEditingWin(win); setWinModalOpen(true); }}
-                    style={{
-                      display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px',
-                      borderBottom: i < recentWins.length - 1 ? '1px solid var(--g-border)' : 'none',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <IconTrophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
-                    <Box style={{ flex: 1, minWidth: 0 }}>
-                      <Text size="sm" fw={500} style={{ color: 'var(--g-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {win.title}
-                      </Text>
-                      {win.projectName && <Text size="xs" c="dimmed">{win.projectName}</Text>}
-                    </Box>
-                    <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
-                      {new Date(win.date + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                    </Text>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-          </>
-        )}
-
-        {/* Today's Focus */}
-        {isVisible('todaysFocus') && (
-          <Box style={{ maxWidth: 680 }}>
+        {/* Right column: Today's Focus (sticky) */}
+        {showFocus && (
+          <Box style={{ position: 'sticky', top: 16 }}>
             <Text fw={600} size="sm" tt="uppercase" mb="md" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
               Today's Focus
             </Text>
             <TodoList />
           </Box>
         )}
-      </Stack>
+      </Box>
 
       <ResourceFormModal
         opened={resourceFormOpen}

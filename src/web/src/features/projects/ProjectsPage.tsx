@@ -36,6 +36,14 @@ const statusLabels: Record<ProjectStatus, string> = {
 
 type Filter = 'Active' | 'OnHold' | 'Archived' | 'All';
 
+const FILTER_STORAGE_KEY = 'gantry-projects-filter';
+const VALID_FILTERS: Filter[] = ['Active', 'OnHold', 'Archived', 'All'];
+
+function loadFilter(): Filter {
+  const raw = localStorage.getItem(FILTER_STORAGE_KEY);
+  return VALID_FILTERS.includes(raw as Filter) ? (raw as Filter) : 'All';
+}
+
 type TreeEntry = { project: Project; depth: number };
 
 function buildTree(projects: Project[]): TreeEntry[] {
@@ -67,7 +75,11 @@ function buildTree(projects: Project[]): TreeEntry[] {
 export function ProjectsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState<Filter>('Active');
+  const [filter, setFilterState] = useState<Filter>(loadFilter);
+  const setFilter = (next: Filter) => {
+    setFilterState(next);
+    localStorage.setItem(FILTER_STORAGE_KEY, next);
+  };
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
 

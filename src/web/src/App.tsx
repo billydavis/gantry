@@ -9,6 +9,7 @@ import { NoteDetailPage } from './features/notes/NoteDetailPage';
 import { WinsPage } from './features/wins/WinsPage';
 import { TimelinePage } from './features/wins/TimelinePage';
 import { SearchPage } from './features/search/SearchPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/wins" element={<WinsPage />} />
         <Route path="/timeline" element={<TimelinePage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </AppLayout>
   );

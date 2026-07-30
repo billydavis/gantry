@@ -4,7 +4,7 @@ import {
   SegmentedControl, Stack, Text, TextInput, Tooltip,
 } from '@mantine/core';
 import {
-  IconCircle, IconCircleCheck, IconCircleDashed, IconCircleX,
+  IconChevronDown, IconChevronRight, IconCircle, IconCircleCheck, IconCircleDashed, IconCircleX,
   IconClock, IconEdit, IconPin, IconPinFilled, IconPlus, IconTrash,
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -64,6 +64,7 @@ export function TodoList({ projectId }: Props) {
   const [quickAdd, setQuickAdd] = useState('');
   const [editingTodo, setEditingTodo] = useState<Todo | undefined>();
   const [formOpen, setFormOpen] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const queryParams = { projectId, includeCompleted: filter === 'All' };
 
@@ -179,118 +180,143 @@ export function TodoList({ projectId }: Props) {
             {filter === 'Open' ? 'No open todos.' : 'No todos yet.'}
           </Text>
         ) : (
-          <Stack gap={2}>
+          <Stack gap={8}>
             {todos.map((todo) => {
               const isComplete = todo.status === 'Complete';
               const due = todo.dueDate ? formatDue(todo.dueDate) : null;
+
+              const hasDescription = !!todo.description;
+              const isExpanded = expandedId === todo.id;
+              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || hasDescription);
 
               return (
                 <Box
                   key={todo.id}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 10px',
                     borderRadius: 6,
                     border: `1px solid ${todo.isPinned ? 'var(--g-accent)' : 'var(--g-border)'}`,
                     background: todo.isPinned ? 'color-mix(in srgb, var(--g-accent) 8%, var(--g-surface))' : 'var(--g-surface)',
                     opacity: isComplete ? 0.55 : 1,
                   }}
                 >
-                  {/* Status toggle */}
-                  <Tooltip label={isComplete ? 'Re-open' : `Mark complete (${todo.status})`}>
-                    <ActionIcon
-                      variant="subtle"
-                      size="sm"
-                      onClick={() => toggleComplete(todo)}
-                      style={{ color: statusColor[todo.status], flexShrink: 0 }}
-                    >
-                      {statusIcon[todo.status]}
-                    </ActionIcon>
-                  </Tooltip>
-
-                  {/* Title + meta */}
-                  <Box style={{ flex: 1, minWidth: 0 }}>
-                    <Text
-                      size="sm"
-                      style={{
-                        color: 'var(--g-text)',
-                        textDecoration: isComplete ? 'line-through' : 'none',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {todo.title}
-                    </Text>
-                    <Group gap={6} mt={2}>
-                      {!projectId && todo.projectName && todo.projectId && (
-                        <Badge
-                          size="xs"
-                          variant="outline"
-                          color="gray"
-                          style={{ borderColor: 'var(--g-border)', color: 'var(--g-text-muted)', cursor: 'pointer' }}
-                          onClick={(e) => { e.stopPropagation(); navigate(`/projects/${todo.projectId}`); }}
+                  <Box style={{ padding: '10px 12px' }}>
+                    {/* Primary row — checkbox, title, actions. The familiar todo-app pattern. */}
+                    <Group gap={10} align="flex-start" wrap="nowrap">
+                      <Tooltip label={isComplete ? 'Re-open' : `Mark complete (${todo.status})`}>
+                        <ActionIcon
+                          variant="subtle"
+                          size="sm"
+                          onClick={() => toggleComplete(todo)}
+                          style={{ color: statusColor[todo.status], flexShrink: 0, marginTop: 1 }}
                         >
-                          {todo.projectName}
+                          {statusIcon[todo.status]}
+                        </ActionIcon>
+                      </Tooltip>
+
+                      <Text
+                        fw={600}
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          color: 'var(--g-text)',
+                          fontSize: 16,
+                          lineHeight: 1.3,
+                          textDecoration: isComplete ? 'line-through' : 'none',
+                          whiteSpace: 'normal',
+                          overflowWrap: 'break-word',
+                          cursor: hasDescription ? 'pointer' : 'default',
+                        }}
+                        onClick={() => hasDescription && setExpandedId(isExpanded ? null : todo.id)}
+                      >
+                        {todo.title}
+                      </Text>
+
+                      <Group gap={2} style={{ flexShrink: 0 }}>
+                        <Tooltip label={todo.isPinned ? 'Unpin' : 'Pin to top'}>
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            onClick={() => pinMutation.mutate(todo.id)}
+                            style={{ color: todo.isPinned ? 'var(--g-accent)' : 'var(--g-text-muted)' }}
+                          >
+                            {todo.isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
+                          </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Edit">
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            onClick={() => openEdit(todo)}
+                            style={{ color: 'var(--g-text-muted)' }}
+                          >
+                            <IconEdit size={14} />
+                          </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Delete">
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            color="red"
+                            onClick={() => deleteMutation.mutate(todo.id)}
+                          >
+                            <IconTrash size={14} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </Group>
+                    </Group>
+
+                    {/* Secondary row — facts about the todo, indented under the title */}
+                    {hasMeta && (
+                      <Group gap={6} wrap="wrap" mt={8} style={{ paddingLeft: 34 }}>
+                        {due && (
+                          <Badge size="xs" color={due.color} variant="light">{due.label}</Badge>
+                        )}
+                        <Badge size="xs" color={priorityColor[todo.priority]} variant="dot">
+                          {todo.priority}
                         </Badge>
-                      )}
-                      {due && (
-                        <Badge size="xs" color={due.color} variant="light">{due.label}</Badge>
-                      )}
-                      {todo.estimatedMinutes && (
-                        <Text size="xs" c="dimmed">{formatMinutes(todo.estimatedMinutes)}</Text>
-                      )}
-                      <Box onClick={(e) => e.stopPropagation()}>
+                        {!projectId && todo.projectName && todo.projectId && (
+                          <Badge
+                            size="xs"
+                            variant="outline"
+                            color="gray"
+                            style={{ borderColor: 'var(--g-border)', color: 'var(--g-text-muted)', cursor: 'pointer' }}
+                            onClick={() => navigate(`/projects/${todo.projectId}`)}
+                          >
+                            {todo.projectName}
+                          </Badge>
+                        )}
+                        {todo.estimatedMinutes && (
+                          <Text size="xs" c="dimmed">{formatMinutes(todo.estimatedMinutes)}</Text>
+                        )}
                         <TagPicker
                           selectedTags={todo.tags}
                           entityType="todos"
                           entityId={todo.id}
                           onChanged={invalidate}
                         />
+                        {hasDescription && (
+                          <Tooltip label={isExpanded ? 'Hide description' : 'Show description'}>
+                            <ActionIcon
+                              variant="subtle"
+                              size="xs"
+                              onClick={() => setExpandedId(isExpanded ? null : todo.id)}
+                              style={{ color: 'var(--g-text-muted)' }}
+                            >
+                              {isExpanded ? <IconChevronDown size={13} /> : <IconChevronRight size={13} />}
+                            </ActionIcon>
+                          </Tooltip>
+                        )}
+                      </Group>
+                    )}
+
+                    {isExpanded && hasDescription && (
+                      <Box style={{ paddingLeft: 34, paddingTop: 8 }}>
+                        <Text size="sm" c="dimmed" style={{ whiteSpace: 'pre-wrap' }}>
+                          {todo.description}
+                        </Text>
                       </Box>
-                    </Group>
+                    )}
                   </Box>
-
-                  {/* Priority — hidden on mobile */}
-                  <Badge size="xs" color={priorityColor[todo.priority]} variant="dot" style={{ flexShrink: 0 }} visibleFrom="sm">
-                    {todo.priority}
-                  </Badge>
-
-                  {/* Actions */}
-                  <Group gap={2} style={{ flexShrink: 0 }}>
-                    <Tooltip label={todo.isPinned ? 'Unpin' : 'Pin to top'}>
-                      <ActionIcon
-                        variant="subtle"
-                        size="sm"
-                        onClick={() => pinMutation.mutate(todo.id)}
-                        style={{ color: todo.isPinned ? 'var(--g-accent)' : 'var(--g-text-muted)' }}
-                      >
-                        {todo.isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Edit">
-                      <ActionIcon
-                        variant="subtle"
-                        size="sm"
-                        onClick={() => openEdit(todo)}
-                        style={{ color: 'var(--g-text-muted)' }}
-                      >
-                        <IconEdit size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Delete">
-                      <ActionIcon
-                        variant="subtle"
-                        size="sm"
-                        color="red"
-                        onClick={() => deleteMutation.mutate(todo.id)}
-                      >
-                        <IconTrash size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
                 </Box>
               );
             })}

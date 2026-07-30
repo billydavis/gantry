@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-29T00:00:00Z",
+  "title": "Design System: Gantry",
+  "extensions": {
+    "colorMeta": {
+      "g-accent": { "role": "primary", "displayName": "Signal Blue", "canonical": "#339af0", "tonalRamp": ["#06131f", "#0d2338", "#153352", "#1c4a75", "#256498", "#339af0", "#66b6f4", "#a9d8fa"] },
+      "g-background": { "role": "neutral", "displayName": "Void", "canonical": "#1a1b1e", "tonalRamp": ["#000000", "#0d0d0f", "#141518", "#1a1b1e", "#232427", "#2c2e33", "#5a5c63", "#c1c2c5"] },
+      "g-sidebar": { "role": "neutral", "displayName": "Undertow", "canonical": "#141517", "tonalRamp": ["#000000", "#0a0b0c", "#141517", "#1c1d20", "#25262b", "#2c2e33", "#5a5c63", "#c1c2c5"] },
+      "g-surface": { "role": "neutral", "displayName": "Slate Panel", "canonical": "#25262b", "tonalRamp": ["#000000", "#0f1012", "#191a1d", "#25262b", "#2c2e33", "#3a3c42", "#6b6d74", "#c1c2c5"] },
+      "g-border": { "role": "neutral", "displayName": "Seam", "canonical": "#2c2e33", "tonalRamp": ["#000000", "#111214", "#1c1d20", "#2c2e33", "#3a3c42", "#4a4c53", "#7a7c83", "#c1c2c5"] },
+      "g-text": { "role": "neutral", "displayName": "Ash Text", "canonical": "#c1c2c5", "tonalRamp": ["#25262b", "#3e3f44", "#5c5d63", "#7a7b82", "#909296", "#a7a8ac", "#c1c2c5", "#f1f3f5"] },
+      "g-text-muted": { "role": "neutral", "displayName": "Dim Ash", "canonical": "#909296", "tonalRamp": ["#1a1b1e", "#38393c", "#565759", "#747578", "#909296", "#adaeb1", "#cbccce", "#e9eaea"] },
+      "g-heading": { "role": "neutral", "displayName": "Bright Snow", "canonical": "#f1f3f5", "tonalRamp": ["#1a1b1e", "#4a4c50", "#7a7c81", "#a9abb0", "#d0d2d4", "#e2e4e6", "#f1f3f5", "#ffffff"] },
+      "g-nav-active-bg": { "role": "secondary", "displayName": "Deep Harbor", "canonical": "#1c3a5e", "tonalRamp": ["#040a10", "#0a1826", "#122741", "#1c3a5e", "#2a527f", "#3d70a6", "#6a9bc9", "#a9c8e6"] },
+      "g-nav-active-text": { "role": "secondary", "displayName": "Harbor Light", "canonical": "#74c0fc", "tonalRamp": ["#06131f", "#0d2338", "#153352", "#1c4a75", "#3a7cb8", "#74c0fc", "#a9d8fa", "#d6ecfe"] },
+      "g-success": { "role": "tertiary", "displayName": "Signal Green", "canonical": "#37b24d", "tonalRamp": ["#08210d", "#123f19", "#1d5e26", "#277d33", "#31a041", "#37b24d", "#6ecb7f", "#a8e2b3"] },
+      "g-danger": { "role": "tertiary", "displayName": "Signal Red", "canonical": "#f03e3e", "tonalRamp": ["#2d0808", "#5c1010", "#8a1818", "#b82020", "#d92c2c", "#f03e3e", "#f57a7a", "#fab6b6"] }
+    },
+    "typographyMeta": {
+      "heading": { "displayName": "Heading", "purpose": "Page titles only, e.g. Title order={2}." },
+      "body": { "displayName": "Body", "purpose": "Default text color and weight for content and inputs." },
+      "mono": { "displayName": "Mono", "purpose": "Active font family for the 5 monospace-flavored themes (Cobalt DOS, Phosphor, Nightshade, Canopy, Amber)." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Mantine default transition easing used for hover/border-color state changes (e.g. quick-launch pill hover)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main call-to-action, e.g. 'New Project'.",
+      "html": "<button class=\"ds-btn-primary\">New Project</button>",
+      "css": ".ds-btn-primary { background: #339af0; color: #06131f; padding: 8px 16px; font-weight: 500; font-size: 14px; border: none; border-radius: 4px; transition: background 0.15s ease; } .ds-btn-primary:hover { background: #4dabf7; } .ds-btn-primary:focus-visible { outline: 2px solid #74c0fc; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Icon Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Row-level actions (edit, pin, delete) — quiet until interacted with.",
+      "html": "<button class=\"ds-btn-ghost\" aria-label=\"Edit\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7\"/><path d=\"M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z\"/></svg></button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #909296; border: none; padding: 6px; border-radius: 4px; display: inline-flex; transition: color 0.15s ease, background 0.15s ease; } .ds-btn-ghost:hover { color: #c1c2c5; background: rgba(255,255,255,0.06); } .ds-btn-ghost:focus-visible { outline: 2px solid #74c0fc; outline-offset: 2px; }"
+    },
+    {
+      "name": "List Row (Todo)",
+      "kind": "custom",
+      "refersTo": "list-row",
+      "description": "Two-tier signature pattern: primary row is checkbox + title + actions (familiar todo affordance, actions fixed top-right); secondary row is facts only (due, priority, project, tags), indented under the title. Actions and info badges never share a wrapping row.",
+      "html": "<div class=\"ds-row\"><div class=\"ds-row-primary\"><span class=\"ds-row-check\">○</span><div class=\"ds-row-title\">Fix connection pool exhaustion under load</div><div class=\"ds-row-actions\">···</div></div><div class=\"ds-row-meta\"><span class=\"ds-badge\">2d overdue</span><span class=\"ds-badge ds-badge-muted\">High</span></div></div>",
+      "css": ".ds-row { background: #25262b; border: 1px solid #2c2e33; border-radius: 6px; padding: 10px 12px; } .ds-row-primary { display: flex; align-items: flex-start; gap: 10px; } .ds-row-check { flex-shrink: 0; color: #909296; margin-top: 1px; } .ds-row-title { flex: 1; min-width: 0; color: #c1c2c5; font-size: 16px; font-weight: 600; line-height: 1.3; } .ds-row-actions { flex-shrink: 0; color: #909296; } .ds-row-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; padding-left: 34px; } .ds-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: rgba(240,62,62,0.15); color: #f03e3e; } .ds-badge-muted { background: transparent; border: 1px solid #2c2e33; color: #909296; }"
+    },
+    {
+      "name": "Panel Container",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Top-level widget/section wrapper (Quick Launch, Recent Notes, etc).",
+      "html": "<div class=\"ds-panel\">Panel content</div>",
+      "css": ".ds-panel { background: #25262b; border: 1px solid #2c2e33; border-radius: 8px; overflow: hidden; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard form field, e.g. quick-add todo.",
+      "html": "<input class=\"ds-input\" placeholder=\"Quick add… press Enter to save\" />",
+      "css": ".ds-input { background: #1a1b1e; color: #c1c2c5; border: 1px solid #2c2e33; border-radius: 4px; padding: 6px 10px; font-size: 14px; } .ds-input:focus-visible { outline: 2px solid #339af0; outline-offset: 1px; border-color: #339af0; }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar navigation link, active vs inactive.",
+      "html": "<a class=\"ds-nav-item ds-nav-item-active\">Dashboard</a>",
+      "css": ".ds-nav-item { display: block; color: #909296; padding: 8px 12px; border-radius: 6px; font-size: 14px; transition: background 0.15s ease, color 0.15s ease; } .ds-nav-item:hover { color: #c1c2c5; } .ds-nav-item-active { background: #1c3a5e; color: #74c0fc; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ready Room",
+    "overview": "Gantry is a calm instrument panel you glance at before starting work, not a dashboard you have to interpret. It exists so one person can answer 'what should I be working on right now?' without hopping between five other tools, and later mine the accumulated record for a self-review. Every screen should read at a glance: hierarchy comes from spacing, type scale, and weight, never from decoration competing for attention.\n\nThe system explicitly rejects generic SaaS card-grid clichés, the overly dense spreadsheet feel of an admin data grid, and every AI-slop default: hero-metric templates, gradient text, glassmorphism-as-decoration, side-stripe accent borders. This is a personal daily-use tool for one person, not enterprise software performing scale it doesn't have.\n\nColor is deliberately decoupled from layout. Gantry ships 8 complete themes, each with a dark and light variant, all swapped live via a single set of --g-* CSS custom properties. Layout rules apply identically across all 16 palette variants; only the hex values change.",
+    "keyCharacteristics": [
+      "Flat surfaces, tonal layering instead of shadows",
+      "One accent color used sparingly — never as a wash",
+      "Type-scale-and-weight hierarchy, not boxes-around-things",
+      "8px radius on containers, 6px on list rows, consistent across all 8 themes",
+      "Fully theme-agnostic component styling: everything routes through --g-* variables"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "--g-accent appears on buttons, active nav state, and links — never as a background wash, never repeated for emphasis elsewhere on the same screen.", "section": "colors" },
+      { "name": "The Theme-Agnostic Rule", "body": "No component may hardcode a hex value. Every color reference goes through a --g-* variable so all 8 themes render every screen correctly without per-theme conditional styling.", "section": "colors" },
+      { "name": "The One Loud Line Rule", "body": "Each row or card has exactly one line of text set larger/heavier than the rest — the title. Everything else stays at 12-13px muted weight so the title is unmistakably the anchor.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces never gain a shadow, at rest or on hover. If something needs to read as 'on top,' give it a tonal shift and a border, not a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put the single most important piece of information (a todo/note/win title) on its own full-width line, larger and heavier than everything else in the row.",
+      "Do route every color through a --g-* CSS variable — never a literal hex — so all 8 themes render correctly.",
+      "Do use 8px radius for containers, 6px for list rows, 4px for buttons, consistently.",
+      "Do convey depth with tone (--g-surface vs --g-background) and a 1px --g-border, never a shadow.",
+      "Do keep the accent color rare: buttons, active nav, links. That's it."
+    ],
+    "donts": [
+      "Don't build generic SaaS card-grid clichés: identical bordered cards with icon + heading + text, repeated endlessly.",
+      "Don't make dense lists feel like a spreadsheet — this is a personal dashboard, not an admin data grid.",
+      "Don't use side-stripe borders, gradient text, glassmorphism, hero-metric templates, or any other AI-slop default.",
+      "Don't squeeze a title into a shared horizontal row with action icons where it can get clipped or shrunk — it needs its own line and the full row width.",
+      "Don't add a box-shadow anywhere. Flat is the system.",
+      "Don't hardcode a hex value in a component. If a color isn't already a --g-* token, that's a sign the design doesn't belong yet."
+    ]
+  }
+}

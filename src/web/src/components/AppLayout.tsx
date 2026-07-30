@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppShell, Burger, Group, NavLink, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconFolder, IconLayoutDashboard, IconNote, IconNotes, IconSearch, IconTimeline, IconTrophy } from '@tabler/icons-react';
+import { IconFolder, IconLayoutDashboard, IconNote, IconNotes, IconSearch, IconSettings, IconTimeline, IconTrophy } from '@tabler/icons-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { CommandPalette } from './CommandPalette';
@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
   { label: 'Scratch Pad', icon: <IconNotes size={18} />,         href: '/notes/scratchpad' },
   { label: 'Wins',      icon: <IconTrophy size={18} />,          href: '/wins' },
   { label: 'Timeline',  icon: <IconTimeline size={18} />,        href: '/timeline' },
+  { label: 'Settings',  icon: <IconSettings size={18} />,        href: '/settings' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

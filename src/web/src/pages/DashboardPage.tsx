@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionIcon, Badge, Box, Checkbox, ColorSwatch, Group, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, ColorSwatch, Group, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
@@ -11,7 +11,7 @@ import { WinFormModal } from '../features/wins/WinFormModal';
 import {
   IconBrandGit, IconDatabase, IconEdit, IconExternalLink, IconFile,
   IconFolder, IconGlobe, IconLayoutDashboard, IconLink, IconNetwork,
-  IconNote, IconPlus, IconServerCog, IconSettings, IconTrash, IconTrophy,
+  IconNote, IconPlus, IconServerCog, IconSettings, IconSparkles, IconTrash, IconTrophy,
 } from '@tabler/icons-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
@@ -21,6 +21,7 @@ import { type Resource, type ResourceType } from '../features/resources/types';
 import { WIDGET_LABELS, useDashboardWidgets } from '../hooks/useDashboardWidgets';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { useRecentProjects } from '../hooks/useRecentProjects';
+import { sampleDataApi } from '../features/sampleData/api';
 
 const typeIcon: Record<ResourceType, React.ReactNode> = {
   Website:       <IconGlobe size={18} />,
@@ -79,6 +80,15 @@ export function DashboardPage() {
     onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
+  const loadSampleDataMutation = useMutation({
+    mutationFn: sampleDataApi.load,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      notifications.show({ message: 'Sample data loaded', color: 'green' });
+    },
+    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
+  });
+
   const { data: todos = [] } = useQuery({
     queryKey: todoKeys.list({}),
     queryFn: () => todosApi.list({}),
@@ -99,8 +109,36 @@ export function DashboardPage() {
   const showNotes = isVisible('recentNotes') && recentNotes.length > 0;
   const showWins = isVisible('recentWins') && recentWins.length > 0;
 
+  const isWorkspaceEmpty =
+    allProjects.length === 0 && todos.length === 0 && globalResources.length === 0 &&
+    recentNotes.length === 0 && recentWins.length === 0;
+
   return (
     <>
+      {isWorkspaceEmpty && (
+        <Alert
+          icon={<IconSparkles size={18} />}
+          color="blue"
+          mb="lg"
+          styles={{ root: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' } }}
+        >
+          <Group justify="space-between" align="center" wrap="wrap" gap="sm">
+            <Box>
+              <Text fw={600} style={{ color: 'var(--g-text)' }}>Your dashboard is empty</Text>
+              <Text size="sm" c="dimmed">Load sample data to see how projects, resources, notes, and wins fit together.</Text>
+            </Box>
+            <Button
+              size="xs"
+              variant="light"
+              loading={loadSampleDataMutation.isPending}
+              onClick={() => loadSampleDataMutation.mutate()}
+            >
+              Load sample data
+            </Button>
+          </Group>
+        </Alert>
+      )}
+
       {/* Header */}
       <Group justify="space-between" align="flex-end" wrap="wrap" mb="xl">
         <Box>

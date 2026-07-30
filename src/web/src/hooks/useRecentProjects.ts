@@ -29,5 +29,10 @@ export function useRecentProjects() {
     });
   };
 
-  return { recent, push };
+  const clear = () => {
+    localStorage.removeItem(KEY);
+    setRecent([]);
+  };
+
+  return { recent, push, clear };
 }

@@ -105,4 +105,4 @@ Post-v1 ideas tracked in [`ROADMAP.md`](ROADMAP.md): GitHub integration, calenda
 
 ## License
 
-Personal use. Not published under an open-source license.
+MIT License. See [LICENSE](LICENSE) for details.

@@ -138,6 +138,7 @@ function DangerZoneSection() {
             <Text fw={500} style={{ color: 'var(--g-text)' }}>Flush Database</Text>
             <Text size="sm" c="dimmed">
               Permanently deletes all projects, todos, resources, notes, wins, and tags, resetting the dashboard to empty.
+              Your Profile and Appearance settings are not affected.
             </Text>
           </Box>
           <Button color="red" variant="outline" onClick={() => setFlushModalOpen(true)}>

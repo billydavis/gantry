@@ -69,7 +69,12 @@ export function WinsPage() {
               <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
                 {label}
               </Text>
-              <Badge variant="light" color="gray" size="sm">{monthWins.length}</Badge>
+              <Badge
+                size="sm"
+                styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
+              >
+                {monthWins.length}
+              </Badge>
             </Group>
             <Stack gap="sm">
               {monthWins.map((win) => (

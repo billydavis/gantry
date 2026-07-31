@@ -156,6 +156,13 @@ export function DashboardPage() {
               variant="light"
               loading={loadSampleDataMutation.isPending}
               onClick={() => loadSampleDataMutation.mutate()}
+              styles={{
+                root: {
+                  background: 'color-mix(in srgb, var(--g-accent) 15%, transparent)',
+                  color: 'var(--g-accent)',
+                  border: '1px solid transparent',
+                },
+              }}
             >
               Load sample data
             </Button>
@@ -290,7 +297,12 @@ export function DashboardPage() {
                   <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
                     Active Projects
                   </Text>
-                  <Badge variant="light" color="gray" size="sm">{activeProjects.length}</Badge>
+                  <Badge
+                    size="sm"
+                    styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
+                  >
+                    {activeProjects.length}
+                  </Badge>
                 </Group>
                 <Tooltip label="All projects">
                   <ActionIcon variant="subtle" size="sm" onClick={() => navigate('/projects')} style={{ color: 'var(--g-text-muted)' }}>

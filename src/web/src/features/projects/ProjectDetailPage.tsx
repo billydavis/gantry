@@ -251,7 +251,10 @@ export function ProjectDetailPage() {
                 >
                   Sub-projects
                 </Text>
-                <Badge variant="light" color="gray" size="sm">
+                <Badge
+                  size="sm"
+                  styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
+                >
                   {subProjects.length}
                 </Badge>
               </Group>
@@ -340,7 +343,12 @@ export function ProjectDetailPage() {
                 Environments
               </Text>
               {environments.length > 0 && (
-                <Badge variant="light" color="gray" size="sm">{environments.length}</Badge>
+                <Badge
+                  size="sm"
+                  styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
+                >
+                  {environments.length}
+                </Badge>
               )}
             </Group>
             <Tooltip label="Add environment">

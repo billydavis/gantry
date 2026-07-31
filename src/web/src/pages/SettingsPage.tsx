@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Group, Stack, Tabs, Text, TextInput, Title } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { IconPalette, IconShieldExclamation, IconUser } from '@tabler/icons-react';
@@ -103,7 +104,7 @@ function AppearanceSection() {
         border: '1px solid var(--g-border)',
         borderRadius: 8,
         padding: 20,
-        maxWidth: 480,
+        maxWidth: 720,
       }}
     >
       <Text fw={600} size="sm" tt="uppercase" mb={4} style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
@@ -153,12 +154,14 @@ function DangerZoneSection() {
 }
 
 export function SettingsPage() {
+  const isDesktop = useMediaQuery('(min-width: 768px)', true);
+
   return (
     <>
       <Title order={2} mb="xl" style={{ color: 'var(--g-heading)' }}>Settings</Title>
 
-      <Tabs defaultValue="profile" orientation="vertical" variant="pills">
-        <Tabs.List miw={160} mr="xl">
+      <Tabs defaultValue="profile" orientation={isDesktop ? 'vertical' : 'horizontal'} variant="pills">
+        <Tabs.List miw={isDesktop ? 160 : undefined} mr={isDesktop ? 'xl' : 0} mb={isDesktop ? 0 : 'lg'}>
           <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>Profile</Tabs.Tab>
           <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>Appearance</Tabs.Tab>
           <Tabs.Tab value="danger" leftSection={<IconShieldExclamation size={16} />}>Danger Zone</Tabs.Tab>

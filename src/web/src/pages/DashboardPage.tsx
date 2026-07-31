@@ -164,7 +164,7 @@ export function DashboardPage() {
       )}
 
       {/* Header */}
-      <Group justify="space-between" align="flex-end" wrap="wrap" mb="xl">
+      <Group justify="space-between" align="flex-end" wrap="wrap" mb="xs">
         <Box>
           <Text size="sm" c="dimmed">
             {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -207,7 +207,7 @@ export function DashboardPage() {
       </Group>
 
       {quote && (
-        <Text size="sm" fs="italic" c="dimmed" mb="xl" style={{ maxWidth: 640 }}>
+        <Text size="sm" fs="italic" mb="xl" style={{ color: 'var(--g-text-muted)', maxWidth: 640 }}>
           "{quote.quote}" — {quote.author}
         </Text>
       )}

@@ -75,6 +75,21 @@ APP_PORT=5150          # host port the app is served on
 POSTGRES_PASSWORD=...  # change this if exposing outside localhost
 ```
 
+## Upgrading
+
+To pick up a new version, pull the latest code and rebuild:
+
+```sh
+git pull
+docker compose up --build -d
+```
+
+Database migrations run automatically on API startup — no manual migration step needed.
+
+**Do not run `docker compose down -v`** to upgrade. The `-v` flag deletes the Postgres data volume, permanently wiping your projects, todos, notes, wins, and settings. Plain `docker compose down` (no `-v`) stops the containers and is safe — the data volume is preserved and picked back up on the next `up`.
+
+If you ever do need a clean slate on purpose, `docker compose down -v` is the way to do it — just be sure that's what you want first.
+
 ## Development
 
 **Backend** (`src/Gantry.Api`):

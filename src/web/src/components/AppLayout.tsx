@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { ActionIcon, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
+import { ActionIcon, Avatar, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
 import {
   IconCheckbox, IconFolder, IconFolderPlus, IconLayoutDashboard, IconNote,
-  IconNotes, IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy,
+  IconNotes, IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy, IconUser,
 } from '@tabler/icons-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { ThemeSwitcher } from './ThemeSwitcher';
 import { CommandPalette } from './CommandPalette';
 import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { TodoFormModal } from '../features/todos/TodoFormModal';
 import { ProjectFormModal } from '../features/projects/ProjectFormModal';
+import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
+import { gravatarUrl } from '../utils/gravatar';
 
 interface NavItem {
   label: string;
@@ -26,7 +28,6 @@ const navItems: NavItem[] = [
   { label: 'Scratch Pad', icon: <IconNotes size={18} />,         href: '/notes/scratchpad' },
   { label: 'Wins',      icon: <IconTrophy size={18} />,          href: '/wins' },
   { label: 'Timeline',  icon: <IconTimeline size={18} />,        href: '/timeline' },
-  { label: 'Settings',  icon: <IconSettings size={18} />,        href: '/settings' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -38,6 +39,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [winOpen, setWinOpen] = useState(false);
   const [todoOpen, setTodoOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
+
+  const { data: appSettings } = useQuery({
+    queryKey: appSettingsKeys.all,
+    queryFn: appSettingsApi.get,
+  });
+  const settingsActive = location.pathname.startsWith('/settings');
 
   return (
     <>
@@ -149,7 +156,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               })}
             </Stack>
 
-            <ThemeSwitcher />
+            <UnstyledButton
+              component={Link}
+              to="/settings"
+              onClick={closeMobile}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 8px',
+                borderRadius: 6,
+                color: settingsActive ? 'var(--g-nav-active-text)' : 'var(--g-text-muted)',
+                background: settingsActive ? 'var(--g-nav-active-bg)' : 'transparent',
+              }}
+            >
+              <Avatar src={gravatarUrl(appSettings?.email, 40)} radius="xl" size={22}>
+                {appSettings?.displayName ? appSettings.displayName.charAt(0).toUpperCase() : <IconUser size={13} />}
+              </Avatar>
+              <Text size="sm" style={{ flex: 1 }}>Settings</Text>
+              <IconSettings size={15} />
+            </UnstyledButton>
           </Stack>
         </AppShell.Navbar>
 

@@ -1,5 +1,6 @@
 ﻿using Gantry.Api.Data;
 using Gantry.Api.Features.Admin;
+using Gantry.Api.Features.AppSettings;
 using Gantry.Api.Features.Environments;
 using Gantry.Api.Features.Notes;
 using Gantry.Api.Features.Projects;
@@ -41,5 +42,6 @@ app.MapTagEndpoints();
 app.MapSearchEndpoints();
 app.MapSampleDataEndpoints();
 app.MapAdminEndpoints();
+app.MapAppSettingsEndpoints();
 
 app.Run();

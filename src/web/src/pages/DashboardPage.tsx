@@ -22,6 +22,7 @@ import { WIDGET_LABELS, useDashboardWidgets } from '../hooks/useDashboardWidgets
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { useRecentProjects } from '../hooks/useRecentProjects';
 import { sampleDataApi } from '../features/sampleData/api';
+import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 
 const typeIcon: Record<ResourceType, React.ReactNode> = {
   Website:       <IconGlobe size={18} />,
@@ -82,6 +83,11 @@ export function DashboardPage() {
   const { data: allProjects = [] } = useQuery({
     queryKey: projectKeys.list(),
     queryFn: projectsApi.list,
+  });
+
+  const { data: appSettings } = useQuery({
+    queryKey: appSettingsKeys.all,
+    queryFn: appSettingsApi.get,
   });
 
   const activeProjects = allProjects.filter((p) => p.status === 'Active');
@@ -158,7 +164,7 @@ export function DashboardPage() {
             {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
           </Text>
           <Title order={2} style={{ color: 'var(--g-heading)' }}>
-            Good{getTimeOfDay()}, Billy.
+            Good{getTimeOfDay()}{appSettings?.displayName ? `, ${appSettings.displayName}` : ''}.
           </Title>
         </Box>
 

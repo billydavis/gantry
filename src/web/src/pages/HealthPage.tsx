@@ -1,6 +1,6 @@
 import { Center, Stack, Text, Badge, Title, Loader, Paper, Divider } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
-import { ThemeSwitcher } from '../components/ThemeSwitcher'
+import { ThemePicker } from '../components/ThemePicker'
 
 export function HealthPage() {
   const { data, isLoading, isError } = useQuery({
@@ -27,7 +27,7 @@ export function HealthPage() {
         )}
         <Divider w="100%" />
         <Paper p="md" w="100%" withBorder>
-          <ThemeSwitcher />
+          <ThemePicker />
         </Paper>
       </Stack>
     </Center>

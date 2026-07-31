@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Note> Notes => Set<Note>();
     public DbSet<Win> Wins => Set<Win>();
     public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<AppSettings> AppSettings => Set<AppSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -137,6 +138,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey(e => e.ProjectId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<AppSettings>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DisplayName).HasMaxLength(100);
+            entity.Property(e => e.Email).HasMaxLength(320);
+            entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
         });
 
         modelBuilder.Entity<ProjectEnvironment>(entity =>

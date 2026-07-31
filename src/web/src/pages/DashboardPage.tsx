@@ -23,6 +23,7 @@ import { projectsApi, projectKeys } from '../features/projects/api';
 import { useRecentProjects } from '../hooks/useRecentProjects';
 import { sampleDataApi } from '../features/sampleData/api';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
+import { quoteKeys, quotesApi } from '../features/quotes/api';
 
 const typeIcon: Record<ResourceType, React.ReactNode> = {
   Website:       <IconGlobe size={18} />,
@@ -88,6 +89,11 @@ export function DashboardPage() {
   const { data: appSettings } = useQuery({
     queryKey: appSettingsKeys.all,
     queryFn: appSettingsApi.get,
+  });
+
+  const { data: quote } = useQuery({
+    queryKey: quoteKeys.today,
+    queryFn: quotesApi.today,
   });
 
   const activeProjects = allProjects.filter((p) => p.status === 'Active');
@@ -199,6 +205,12 @@ export function DashboardPage() {
           </Popover>
         </Group>
       </Group>
+
+      {quote && (
+        <Text size="sm" fs="italic" c="dimmed" mb="xl" style={{ maxWidth: 640 }}>
+          "{quote.quote}" — {quote.author}
+        </Text>
+      )}
 
       {/* Two-column content grid */}
       <Box style={{

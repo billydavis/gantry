@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Win> Wins => Set<Win>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<AppSettings> AppSettings => Set<AppSettings>();
+    public DbSet<DailyQuote> DailyQuotes => Set<DailyQuote>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -146,6 +147,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.DisplayName).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(320);
             entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+        });
+
+        modelBuilder.Entity<DailyQuote>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Quote).IsRequired();
+            entity.Property(e => e.Author).IsRequired();
+            entity.Property(e => e.CreatedUtc).HasColumnType("timestamptz");
+            entity.HasIndex(e => e.Date).IsUnique();
         });
 
         modelBuilder.Entity<ProjectEnvironment>(entity =>

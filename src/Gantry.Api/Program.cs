@@ -4,6 +4,7 @@ using Gantry.Api.Features.AppSettings;
 using Gantry.Api.Features.Environments;
 using Gantry.Api.Features.Notes;
 using Gantry.Api.Features.Projects;
+using Gantry.Api.Features.Quotes;
 using Gantry.Api.Features.Resources;
 using Gantry.Api.Features.SampleData;
 using Gantry.Api.Features.Search;
@@ -21,6 +22,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>();
+
+builder.Services.AddHttpClient("ZenQuotes", client =>
+{
+    client.BaseAddress = new Uri("https://zenquotes.io");
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
 
 var app = builder.Build();
 
@@ -43,5 +50,6 @@ app.MapSearchEndpoints();
 app.MapSampleDataEndpoints();
 app.MapAdminEndpoints();
 app.MapAppSettingsEndpoints();
+app.MapQuoteEndpoints();
 
 app.Run();

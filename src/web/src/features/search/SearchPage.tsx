@@ -16,8 +16,8 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
 const TYPE_COLOR: Record<string, string> = {
   Project:  'var(--g-accent)',
   Todo:     'var(--g-success)',
-  Note:     '#74c0fc',
-  Win:      '#ffa94d',
+  Note:     'var(--g-nav-active-text)',
+  Win:      'var(--g-accent)',
   Resource: 'var(--g-text-muted)',
 };
 

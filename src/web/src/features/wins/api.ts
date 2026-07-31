@@ -1,3 +1,4 @@
+import { api } from '../../api/client';
 import type { CreateWinRequest, TimelineItem, UpdateWinRequest, Win } from './types';
 
 export const winKeys = {
@@ -9,52 +10,23 @@ export const winKeys = {
   timeline: (year: number, month: number) => ['timeline', year, month] as const,
 };
 
-const base = '/api';
-
 export const winsApi = {
-  list: async (params?: { projectId?: string; limit?: number }): Promise<Win[]> => {
+  list: (params?: { projectId?: string; limit?: number }) => {
     const qs = new URLSearchParams();
     if (params?.projectId) qs.set('projectId', params.projectId);
     if (params?.limit) qs.set('limit', String(params.limit));
-    const res = await fetch(`${base}/wins?${qs}`);
-    if (!res.ok) throw new Error('Failed to load wins');
-    return res.json();
+    const query = qs.toString();
+    return api.get<Win[]>(`/wins${query ? `?${query}` : ''}`);
   },
 
-  getById: async (id: string): Promise<Win> => {
-    const res = await fetch(`${base}/wins/${id}`);
-    if (!res.ok) throw new Error('Win not found');
-    return res.json();
-  },
+  getById: (id: string) => api.get<Win>(`/wins/${id}`),
 
-  create: async (req: CreateWinRequest): Promise<Win> => {
-    const res = await fetch(`${base}/wins`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req),
-    });
-    if (!res.ok) throw new Error('Failed to create win');
-    return res.json();
-  },
+  create: (req: CreateWinRequest) => api.post<Win>('/wins', req),
 
-  update: async (id: string, req: UpdateWinRequest): Promise<Win> => {
-    const res = await fetch(`${base}/wins/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req),
-    });
-    if (!res.ok) throw new Error('Failed to update win');
-    return res.json();
-  },
+  update: (id: string, req: UpdateWinRequest) => api.put<Win>(`/wins/${id}`, req),
 
-  delete: async (id: string): Promise<void> => {
-    const res = await fetch(`${base}/wins/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete win');
-  },
+  delete: (id: string) => api.delete<void>(`/wins/${id}`),
 
-  timeline: async (year: number, month: number): Promise<TimelineItem[]> => {
-    const res = await fetch(`${base}/timeline?year=${year}&month=${month}`);
-    if (!res.ok) throw new Error('Failed to load timeline');
-    return res.json();
-  },
+  timeline: (year: number, month: number) =>
+    api.get<TimelineItem[]>(`/timeline?year=${year}&month=${month}`),
 };

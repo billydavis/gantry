@@ -1,3 +1,4 @@
+import { api } from '../../api/client';
 import type { SearchResult, Tag } from './types';
 
 export const tagKeys = {
@@ -6,52 +7,21 @@ export const tagKeys = {
   search: (q: string) => ['search', q] as const,
 };
 
-const base = '/api';
-
 export const tagsApi = {
-  list: async (): Promise<Tag[]> => {
-    const res = await fetch(`${base}/tags`);
-    if (!res.ok) throw new Error('Failed to load tags');
-    return res.json();
-  },
+  list: () => api.get<Tag[]>('/tags'),
 
-  create: async (name: string, color?: string): Promise<Tag> => {
-    const res = await fetch(`${base}/tags`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, color }),
-    });
-    if (!res.ok) throw new Error('Failed to create tag');
-    return res.json();
-  },
+  create: (name: string, color?: string) => api.post<Tag>('/tags', { name, color }),
 
-  update: async (id: string, name: string, color?: string): Promise<Tag> => {
-    const res = await fetch(`${base}/tags/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, color }),
-    });
-    if (!res.ok) throw new Error('Failed to update tag');
-    return res.json();
-  },
+  update: (id: string, name: string, color?: string) =>
+    api.put<Tag>(`/tags/${id}`, { name, color }),
 
-  delete: async (id: string): Promise<void> => {
-    const res = await fetch(`${base}/tags/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete tag');
-  },
+  delete: (id: string) => api.delete<void>(`/tags/${id}`),
 
-  assign: async (entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins', entityId: string, tagIds: string[]): Promise<void> => {
-    const res = await fetch(`${base}/${entityType}/${entityId}/tags`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tagIds }),
-    });
-    if (!res.ok) throw new Error('Failed to assign tags');
-  },
+  assign: (
+    entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins',
+    entityId: string,
+    tagIds: string[]
+  ) => api.put<void>(`/${entityType}/${entityId}/tags`, { tagIds }),
 
-  search: async (q: string): Promise<SearchResult[]> => {
-    const res = await fetch(`${base}/search?q=${encodeURIComponent(q)}`);
-    if (!res.ok) throw new Error('Search failed');
-    return res.json();
-  },
+  search: (q: string) => api.get<SearchResult[]>(`/search?q=${encodeURIComponent(q)}`),
 };

@@ -3,7 +3,7 @@ import {
   ActionIcon, Box, Group, Loader, Stack, Text, Tooltip,
 } from '@mantine/core';
 import {
-  IconBrandGit, IconDatabase, IconEdit, IconExternalLink,
+  IconBrandGit, IconCheck, IconCopy, IconDatabase, IconEdit, IconExternalLink,
   IconFile, IconFolder, IconGlobe, IconLayoutDashboard,
   IconNetwork, IconPlus, IconServerCog, IconTrash,
 } from '@tabler/icons-react';
@@ -28,12 +28,24 @@ const typeIcon: Record<ResourceType, React.ReactNode> = {
   Other:         <IconExternalLink size={16} />,
 };
 
+function isUrl(location: string): boolean {
+  return /^https?:\/\//i.test(location);
+}
+
 function openLocation(location: string) {
   if (location.startsWith('\\\\') || location.startsWith('//')) {
     window.open(`file:${location.replace(/\\/g, '/')}`, '_blank');
   } else {
     window.open(location, '_blank', 'noopener,noreferrer');
   }
+}
+
+function copyLocation(location: string) {
+  navigator.clipboard.writeText(location).then(() => {
+    notifications.show({ message: 'URL copied to clipboard', color: 'green', icon: <IconCheck size={16} /> });
+  }).catch(() => {
+    notifications.show({ message: 'Failed to copy URL', color: 'red' });
+  });
 }
 
 function ResourceRow({
@@ -87,6 +99,13 @@ function ResourceRow({
       </Box>
       <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>{RESOURCE_TYPE_LABELS[resource.type]}</Text>
       <Group gap={2} style={{ flexShrink: 0 }}>
+        {isUrl(resource.location) && (
+          <Tooltip label="Copy URL">
+            <ActionIcon variant="subtle" size="sm" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
+              <IconCopy size={14} />
+            </ActionIcon>
+          </Tooltip>
+        )}
         <Tooltip label="Edit">
           <ActionIcon variant="subtle" size="sm" onClick={() => onEdit(resource)} style={{ color: 'var(--g-text-muted)' }}>
             <IconEdit size={14} />

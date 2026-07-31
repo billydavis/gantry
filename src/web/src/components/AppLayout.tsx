@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { AppShell, Burger, Group, NavLink, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
+import { ActionIcon, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconFolder, IconLayoutDashboard, IconNote, IconNotes, IconSearch, IconSettings, IconTimeline, IconTrophy } from '@tabler/icons-react';
+import {
+  IconCheckbox, IconFolder, IconFolderPlus, IconLayoutDashboard, IconNote,
+  IconNotes, IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy,
+} from '@tabler/icons-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { CommandPalette } from './CommandPalette';
+import { NoteDrawer } from '../features/notes/NoteDrawer';
+import { WinFormModal } from '../features/wins/WinFormModal';
+import { TodoFormModal } from '../features/todos/TodoFormModal';
+import { ProjectFormModal } from '../features/projects/ProjectFormModal';
 
 interface NavItem {
   label: string;
@@ -27,6 +34,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [mobileOpen, { toggle: toggleMobile, close: closeMobile }] = useDisclosure(false);
   const [searchValue, setSearchValue] = useState('');
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [winOpen, setWinOpen] = useState(false);
+  const [todoOpen, setTodoOpen] = useState(false);
+  const [projectOpen, setProjectOpen] = useState(false);
 
   return (
     <>
@@ -62,25 +73,56 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </Group>
             </UnstyledButton>
 
-            {/* Search */}
-            <TextInput
-              placeholder="Search… (or ⌘K)"
-              size="xs"
-              mb="sm"
-              leftSection={<IconSearch size={13} />}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.currentTarget.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && searchValue.trim().length >= 2) {
-                  navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
-                  setSearchValue('');
-                  closeMobile();
-                }
-              }}
-              styles={{
-                input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)', fontSize: 13 },
-              }}
-            />
+            {/* Search + quick add */}
+            <Group gap={6} mb="sm" align="center" wrap="nowrap">
+              <TextInput
+                placeholder="Search… (or ⌘K)"
+                size="xs"
+                style={{ flex: 1 }}
+                leftSection={<IconSearch size={13} />}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.currentTarget.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchValue.trim().length >= 2) {
+                    navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+                    setSearchValue('');
+                    closeMobile();
+                  }
+                }}
+                styles={{
+                  input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)', fontSize: 13 },
+                }}
+              />
+              <Menu shadow="md" width={180} position="bottom-end">
+                <Menu.Target>
+                  <Tooltip label="Quick add">
+                    <ActionIcon
+                      variant="filled"
+                      size="md"
+                      style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)', flexShrink: 0 }}
+                    >
+                      <IconPlus size={15} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Menu.Target>
+                <Menu.Dropdown
+                  style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)' }}
+                >
+                  <Menu.Item leftSection={<IconFolderPlus size={15} />} onClick={() => { setProjectOpen(true); closeMobile(); }}>
+                    New Project
+                  </Menu.Item>
+                  <Menu.Item leftSection={<IconCheckbox size={15} />} onClick={() => { setTodoOpen(true); closeMobile(); }}>
+                    New Todo
+                  </Menu.Item>
+                  <Menu.Item leftSection={<IconNote size={15} />} onClick={() => { setNoteOpen(true); closeMobile(); }}>
+                    New Note
+                  </Menu.Item>
+                  <Menu.Item leftSection={<IconTrophy size={15} />} onClick={() => { setWinOpen(true); closeMobile(); }}>
+                    Log Win
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
 
             {/* Nav items */}
             <Stack gap={2} style={{ flex: 1 }}>
@@ -115,6 +157,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </AppShell>
 
       <CommandPalette />
+
+      <ProjectFormModal opened={projectOpen} onClose={() => setProjectOpen(false)} />
+      <TodoFormModal opened={todoOpen} onClose={() => setTodoOpen(false)} />
+      <NoteDrawer opened={noteOpen} onClose={() => setNoteOpen(false)} />
+      <WinFormModal opened={winOpen} onClose={() => setWinOpen(false)} />
     </>
   );
 }

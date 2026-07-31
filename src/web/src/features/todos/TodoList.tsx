@@ -30,7 +30,7 @@ const statusIcon: Record<TodoStatus, React.ReactNode> = {
 const statusColor: Record<TodoStatus, string> = {
   Todo:       'var(--g-text-muted)',
   InProgress: 'var(--g-accent)',
-  Waiting:    '#eab308',
+  Waiting:    'var(--mantine-color-yellow-6)',
   Blocked:    'var(--g-danger)',
   Complete:   'var(--g-success)',
 };

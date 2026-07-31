@@ -9,7 +9,7 @@ import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import {
-  IconBrandGit, IconDatabase, IconEdit, IconExternalLink, IconFile,
+  IconBrandGit, IconCheck, IconCopy, IconDatabase, IconEdit, IconExternalLink, IconFile,
   IconFolder, IconGlobe, IconLayoutDashboard, IconLink, IconNetwork,
   IconNote, IconPlus, IconServerCog, IconSettings, IconSparkles, IconTrash, IconTrophy,
 } from '@tabler/icons-react';
@@ -42,6 +42,18 @@ function openLocation(location: string) {
   } else {
     window.open(location, '_blank', 'noopener,noreferrer');
   }
+}
+
+function isUrl(location: string): boolean {
+  return /^https?:\/\//i.test(location);
+}
+
+function copyLocation(location: string) {
+  navigator.clipboard.writeText(location).then(() => {
+    notifications.show({ message: 'URL copied to clipboard', color: 'green', icon: <IconCheck size={16} /> });
+  }).catch(() => {
+    notifications.show({ message: 'Failed to copy URL', color: 'red' });
+  });
 }
 
 export function DashboardPage() {
@@ -476,6 +488,13 @@ function QuickLaunchPill({ resource, onEdit, onDelete }: { resource: Resource; o
       </Box>
       {hovered && (
         <Group gap={2} style={{ marginLeft: 4 }}>
+          {isUrl(resource.location) && (
+            <Tooltip label="Copy URL">
+              <ActionIcon variant="subtle" size="xs" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
+                <IconCopy size={12} />
+              </ActionIcon>
+            </Tooltip>
+          )}
           <Tooltip label="Edit">
             <ActionIcon variant="subtle" size="xs" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
               <IconEdit size={12} />

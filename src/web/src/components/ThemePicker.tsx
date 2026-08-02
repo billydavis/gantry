@@ -88,7 +88,6 @@ export function ThemePicker() {
                     display: 'flex',
                     overflow: 'hidden',
                     flexShrink: 0,
-                    boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.12)',
                     border: isActive ? '2px solid var(--g-text)' : '2px solid var(--g-border)',
                     outline: isActive ? `2px solid ${previewTokens.accent}` : 'none',
                     outlineOffset: 2,

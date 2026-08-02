@@ -119,7 +119,7 @@ export function CommandPalette() {
         nothingFound={trimmed.length >= 2 ? 'No results found' : 'Type to search…'}
         searchProps={{ placeholder: 'Search or jump to…' }}
         styles={{
-          root:    { '--spotlight-overlay-bg': 'rgba(0,0,0,0.6)' },
+          root:    { '--spotlight-overlay-bg': 'color-mix(in srgb, var(--g-background) 60%, transparent)' },
           content: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' },
           search:  { background: 'var(--g-background)', color: 'var(--g-text)', borderColor: 'var(--g-border)' },
           action:  { color: 'var(--g-text)' },

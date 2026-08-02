@@ -71,7 +71,7 @@ export function SearchPage() {
                 key={r.id}
                 onClick={() => handleClick(r)}
                 style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 16px',
+                  display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px',
                   borderBottom: i < items.length - 1 ? '1px solid var(--g-border)' : 'none',
                   cursor: 'pointer',
                 }}

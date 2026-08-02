@@ -100,7 +100,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)', fontSize: 13 },
                 }}
               />
-              <Menu shadow="md" width={180} position="bottom-end">
+              <Menu width={180} position="bottom-end">
                 <Menu.Target>
                   <Tooltip label="Quick add">
                     <ActionIcon

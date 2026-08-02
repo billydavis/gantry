@@ -36,7 +36,7 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 | **Tags** | Assign to anything; search by tag across all entity types |
 | **Global search** | Full-text + tag search across projects, todos, notes, resources, and wins |
 | **Command palette** | `Ctrl+K` to jump anywhere or create anything |
-| **Themes** | 8 themes × dark/light — Default, Cobalt DOS, Phosphor, Frostline, Nightshade, Canopy, Graphite, Amber |
+| **Themes** | 12 themes × dark/light — Default, Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Graphite, Amber, Sundial, Terracotta, Petal, Rosewood |
 | **PWA** | Installable, offline-capable service worker |
 | **Mobile** | Responsive layout with collapsible sidebar |
 

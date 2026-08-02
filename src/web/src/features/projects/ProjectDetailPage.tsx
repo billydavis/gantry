@@ -6,7 +6,6 @@ import {
   Breadcrumbs,
   Button,
   ColorSwatch,
-  Divider,
   Group,
   Skeleton,
   Stack,
@@ -14,6 +13,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconEdit, IconFolder, IconFolderOpen, IconPlus, IconTrash } from '@tabler/icons-react';
 import { TodoList } from '../todos/TodoList';
 import { ResourceList } from '../resources/ResourceList';
@@ -76,6 +76,7 @@ export function ProjectDetailPage() {
   const [activeNote, setActiveNote] = useState<Note | undefined>();
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [editingWin, setEditingWin] = useState<Win | undefined>();
+  const [selectedEnvId, setSelectedEnvId] = useState<string | null>(null);
 
   const { data: project, isLoading } = useQuery({
     queryKey: projectKeys.detail(id!),
@@ -110,6 +111,8 @@ export function ProjectDetailPage() {
     queryFn: () => projectsApi.getById(project!.parentProjectId!),
     enabled: !!project?.parentProjectId,
   });
+
+  const isDesktop = useMediaQuery('(min-width: 900px)', true);
 
   if (isLoading) {
     return (
@@ -195,162 +198,18 @@ export function ProjectDetailPage() {
           onChanged={() => queryClient.invalidateQueries({ queryKey: projectKeys.detail(project.id) })}
         />
 
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
+        <Text size="xs" c="dimmed">
+          Created {new Date(project.createdUtc).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+          {' · '}
+          Updated {new Date(project.updatedUtc).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+        </Text>
 
-        {/* Overview */}
-        <Stack gap="md">
-          <Text
-            fw={600}
-            size="sm"
-            tt="uppercase"
-            style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}
-          >
-            Overview
-          </Text>
-          <Box
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-              gap: 12,
-            }}
-          >
-            <OverviewCard label="Status" value={statusLabels[project.status]} />
-            <OverviewCard
-              label="Created"
-              value={new Date(project.createdUtc).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
-            />
-            <OverviewCard
-              label="Last Updated"
-              value={new Date(project.updatedUtc).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
-            />
-            {parentProject && (
-              <OverviewCard label="Parent Project" value={parentProject.name} />
-            )}
-          </Box>
-        </Stack>
-
-        {/* Sub-projects */}
-        {subProjects.length > 0 && (
-          <>
-            <Divider style={{ borderColor: 'var(--g-border)' }} />
-            <Stack gap="sm">
-              <Group gap="xs" align="center">
-                <Text
-                  fw={600}
-                  size="sm"
-                  tt="uppercase"
-                  style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}
-                >
-                  Sub-projects
-                </Text>
-                <Badge
-                  size="sm"
-                  styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
-                >
-                  {subProjects.length}
-                </Badge>
-              </Group>
-              <Box
-                style={{
-                  background: 'var(--g-surface)',
-                  border: '1px solid var(--g-border)',
-                  borderRadius: 8,
-                  overflow: 'hidden',
-                }}
-              >
-                {subProjects.map(({ project: child, depth }) => (
-                  <Box
-                    key={child.id}
-                    onClick={() => navigate(`/projects/${child.id}`)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '10px 16px',
-                      paddingLeft: 16 + depth * 24,
-                      cursor: 'pointer',
-                      borderBottom: '1px solid var(--g-border)',
-                      transition: 'background 120ms',
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = 'var(--g-background)')
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = 'transparent')
-                    }
-                  >
-                    <Group gap="sm" wrap="nowrap">
-                      {depth > 0 && (
-                        <Text size="sm" style={{ color: 'var(--g-border)', flexShrink: 0 }}>
-                          ↳
-                        </Text>
-                      )}
-                      {child.color ? (
-                        <ColorSwatch color={child.color} size={12} style={{ flexShrink: 0 }} />
-                      ) : (
-                        <IconFolderOpen size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
-                      )}
-                      <Text
-                        size="sm"
-                        fw={depth === 0 ? 500 : 400}
-                        style={{ color: depth === 0 ? 'var(--g-text)' : 'var(--g-text-muted)' }}
-                      >
-                        {child.name}
-                      </Text>
-                      {child.description && (
-                        <Text size="xs" c="dimmed" lineClamp={1} style={{ maxWidth: 320 }}>
-                          {child.description}
-                        </Text>
-                      )}
-                    </Group>
-                    <Badge
-                      color={statusColors[child.status]}
-                      variant="light"
-                      size="xs"
-                      style={{ flexShrink: 0 }}
-                    >
-                      {statusLabels[child.status]}
-                    </Badge>
-                  </Box>
-                ))}
-              </Box>
-            </Stack>
-          </>
-        )}
-
-        {/* Todo List */}
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-        <Stack gap="sm">
-          <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-            Todo List
-          </Text>
-          <TodoList projectId={project.id} />
-        </Stack>
-        {/* Environments */}
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-        <Stack gap="sm">
-          <Group justify="space-between" align="center">
-            <Group gap="xs">
-              <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-                Environments
-              </Text>
-              {environments.length > 0 && (
-                <Badge
-                  size="sm"
-                  styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
-                >
-                  {environments.length}
-                </Badge>
-              )}
-            </Group>
+        {/* Environments — a selectable scope filter for Quick Links below */}
+        <Box>
+          <Group justify="space-between" align="center" mb="xs">
+            <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+              Environments
+            </Text>
             <Tooltip label="Add environment">
               <ActionIcon variant="subtle" size="sm" onClick={() => { setEditingEnv(undefined); setEnvFormOpen(true); }}
                 style={{ color: 'var(--g-text-muted)' }}>
@@ -359,96 +218,167 @@ export function ProjectDetailPage() {
             </Tooltip>
           </Group>
           {environments.length === 0 ? (
-            <Text size="sm" c="dimmed">No environments. Add one to group resources by deployment target.</Text>
+            <Text size="sm" c="dimmed">No environments yet. Add one to scope Quick Links by deployment target.</Text>
           ) : (
-            <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Group gap={8} wrap="wrap">
+              <EnvChip
+                label="All"
+                active={selectedEnvId === null}
+                onClick={() => setSelectedEnvId(null)}
+              />
               {environments.map((env) => (
-                <Box
+                <EnvChip
                   key={env.id}
+                  label={env.name}
+                  baseUrl={env.baseUrl}
+                  active={selectedEnvId === env.id}
+                  onClick={() => setSelectedEnvId(selectedEnvId === env.id ? null : env.id)}
+                  onEdit={() => { setEditingEnv(env); setEnvFormOpen(true); }}
+                  onDelete={() => deleteEnvMutation.mutate(env.id)}
+                />
+              ))}
+            </Group>
+          )}
+        </Box>
+
+        {/* Two-column widget grid — mirrors the main Dashboard's layout */}
+        <Box style={{
+          display: 'grid',
+          gridTemplateColumns: isDesktop ? '1fr 340px' : '1fr',
+          gap: 24,
+          alignItems: 'start',
+        }}>
+          {/* Left column: active work */}
+          <Stack gap="lg">
+            <Box>
+              <Text fw={600} size="sm" tt="uppercase" mb="xs" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                Todo List
+              </Text>
+              <TodoList projectId={project.id} />
+            </Box>
+
+            <Box style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 16,
+              alignItems: 'start',
+            }}>
+              <Box>
+                <Group justify="space-between" align="center" mb="xs">
+                  <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                    Notes
+                  </Text>
+                  <Tooltip label="New note">
+                    <ActionIcon variant="subtle" size="sm"
+                      onClick={() => { setActiveNote(undefined); setNoteDrawerOpen(true); }}
+                      style={{ color: 'var(--g-text-muted)' }}>
+                      <IconPlus size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+                <ProjectNotesList
+                  projectId={project.id}
+                  onEdit={(note) => { setActiveNote(note); setNoteDrawerOpen(true); }}
+                />
+              </Box>
+
+              <Box>
+                <Group justify="space-between" align="center" mb="xs">
+                  <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                    Wins
+                  </Text>
+                  <Tooltip label="Log win">
+                    <ActionIcon variant="subtle" size="sm"
+                      onClick={() => { setEditingWin(undefined); setWinModalOpen(true); }}
+                      style={{ color: 'var(--g-text-muted)' }}>
+                      <IconPlus size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+                <ProjectWinsList
+                  projectId={project.id}
+                  onEdit={(win) => { setEditingWin(win); setWinModalOpen(true); }}
+                />
+              </Box>
+            </Box>
+          </Stack>
+
+          {/* Right column: Quick Links (the reason this rail is here) + project structure (sticky) */}
+          <Stack gap="lg" style={{ position: 'sticky', top: 16 }}>
+            <Box>
+              <Text fw={600} size="sm" tt="uppercase" mb="xs" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                Quick Links
+              </Text>
+              <ResourceList projectId={project.id} environments={environments} selectedEnvironmentId={selectedEnvId} />
+            </Box>
+
+            {subProjects.length > 0 && (
+              <Box>
+                <Group gap="xs" align="center" mb="xs">
+                  <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
+                    Sub-projects
+                  </Text>
+                  <Badge
+                    size="sm"
+                    styles={{ root: { background: 'var(--g-background)', color: 'var(--g-text-muted)', border: '1px solid var(--g-border)' } }}
+                  >
+                    {subProjects.length}
+                  </Badge>
+                </Group>
+                <Box
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '6px 12px',
                     background: 'var(--g-surface)',
                     border: '1px solid var(--g-border)',
-                    borderRadius: 6,
+                    borderRadius: 8,
+                    overflow: 'hidden',
                   }}
                 >
-                  <Box>
-                    <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>{env.name}</Text>
-                    {env.baseUrl && (
-                      <Text size="xs" style={{ color: 'var(--g-text-muted)', fontFamily: 'monospace' }}>{env.baseUrl}</Text>
-                    )}
-                  </Box>
-                  <Group gap={2}>
-                    <Tooltip label="Edit">
-                      <ActionIcon variant="subtle" size="xs" style={{ color: 'var(--g-text-muted)' }}
-                        onClick={() => { setEditingEnv(env); setEnvFormOpen(true); }}>
-                        <IconEdit size={12} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Delete">
-                      <ActionIcon variant="subtle" size="xs" color="red"
-                        onClick={() => deleteEnvMutation.mutate(env.id)}>
-                        <IconTrash size={12} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
+                  {subProjects.map(({ project: child, depth }, i) => (
+                    <Box
+                      key={child.id}
+                      onClick={() => navigate(`/projects/${child.id}`)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '10px 14px',
+                        paddingLeft: 14 + depth * 20,
+                        cursor: 'pointer',
+                        borderBottom: i < subProjects.length - 1 ? '1px solid var(--g-border)' : 'none',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      {depth > 0 && (
+                        <Text size="sm" style={{ color: 'var(--g-border)', flexShrink: 0 }}>
+                          ↳
+                        </Text>
+                      )}
+                      {child.color ? (
+                        <ColorSwatch color={child.color} size={10} style={{ flexShrink: 0 }} />
+                      ) : (
+                        <IconFolderOpen size={12} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                      )}
+                      <Text
+                        size="sm"
+                        fw={depth === 0 ? 500 : 400}
+                        style={{
+                          flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                          color: depth === 0 ? 'var(--g-text)' : 'var(--g-text-muted)',
+                        }}
+                      >
+                        {child.name}
+                      </Text>
+                      <Badge color={statusColors[child.status]} variant="light" size="xs" style={{ flexShrink: 0 }}>
+                        {statusLabels[child.status]}
+                      </Badge>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
-          )}
-        </Stack>
-
-        {/* Quick Links / Resources */}
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-        <Stack gap="sm">
-          <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-            Quick Links
-          </Text>
-          <ResourceList projectId={project.id} environments={environments} />
-        </Stack>
-        {/* Notes */}
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-        <Stack gap="sm">
-          <Group justify="space-between" align="center">
-            <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-              Notes
-            </Text>
-            <Tooltip label="New note">
-              <ActionIcon variant="subtle" size="sm"
-                onClick={() => { setActiveNote(undefined); setNoteDrawerOpen(true); }}
-                style={{ color: 'var(--g-text-muted)' }}>
-                <IconPlus size={14} />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-          <ProjectNotesList
-            projectId={project.id}
-            onEdit={(note) => { setActiveNote(note); setNoteDrawerOpen(true); }}
-          />
-        </Stack>
-        {/* Wins */}
-        <Divider style={{ borderColor: 'var(--g-border)' }} />
-        <Stack gap="sm">
-          <Group justify="space-between" align="center">
-            <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-              Wins
-            </Text>
-            <Tooltip label="Log win">
-              <ActionIcon variant="subtle" size="sm"
-                onClick={() => { setEditingWin(undefined); setWinModalOpen(true); }}
-                style={{ color: 'var(--g-text-muted)' }}>
-                <IconPlus size={14} />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-          <ProjectWinsList
-            projectId={project.id}
-            onEdit={(win) => { setEditingWin(win); setWinModalOpen(true); }}
-          />
-        </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Box>
       </Stack>
 
       <ProjectFormModal
@@ -483,22 +413,53 @@ export function ProjectDetailPage() {
   );
 }
 
-function OverviewCard({ label, value }: { label: string; value: string }) {
+function EnvChip({ label, baseUrl, active, onClick, onEdit, onDelete }: {
+  label: string;
+  baseUrl?: string | null;
+  active: boolean;
+  onClick: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
   return (
     <Box
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        background: 'var(--g-surface)',
-        border: '1px solid var(--g-border)',
-        borderRadius: 8,
-        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '6px 12px',
+        background: active ? 'color-mix(in srgb, var(--g-accent) 12%, var(--g-surface))' : 'var(--g-surface)',
+        border: `1px solid ${active ? 'var(--g-accent)' : 'var(--g-border)'}`,
+        borderRadius: 6,
+        cursor: 'pointer',
+        userSelect: 'none',
+        transition: 'border-color 120ms, background 120ms',
       }}
     >
-      <Text size="xs" c="dimmed" mb={4}>
+      <Text size="sm" fw={500} style={{ color: active ? 'var(--g-accent)' : 'var(--g-text)' }}>
         {label}
       </Text>
-      <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>
-        {value}
-      </Text>
+      {baseUrl && (
+        <Text size="xs" style={{ color: 'var(--g-text-muted)', fontFamily: 'monospace' }}>{baseUrl}</Text>
+      )}
+      {onEdit && onDelete && hovered && (
+        <Group gap={2} onClick={(e) => e.stopPropagation()}>
+          <Tooltip label="Edit">
+            <ActionIcon variant="subtle" size="xs" style={{ color: 'var(--g-text-muted)' }} onClick={onEdit}>
+              <IconEdit size={12} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Delete">
+            <ActionIcon variant="subtle" size="xs" color="red" onClick={onDelete}>
+              <IconTrash size={12} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      )}
     </Box>
   );
 }

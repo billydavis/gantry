@@ -50,7 +50,7 @@ export function WinsPage() {
         {!isLoading && wins.length === 0 && (
           <Box style={{
             textAlign: 'center', padding: '60px 20px',
-            background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 12,
+            background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
             <IconTrophy size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No wins logged yet</Text>
@@ -108,7 +108,7 @@ function WinCard({ win, onEdit, onDelete }: { win: Win; onEdit: () => void; onDe
   return (
     <Box style={{
       background: 'var(--g-surface)', border: '1px solid var(--g-border)',
-      borderRadius: 10, padding: '16px 20px',
+      borderRadius: 6, padding: '10px 14px',
     }}>
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>

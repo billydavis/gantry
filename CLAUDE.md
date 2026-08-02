@@ -82,10 +82,10 @@ Logic stays in `Endpoint.cs` by default. Extract a named class (e.g. `ProjectCre
 
 ### Theming
 
-Eight themes (Default, Cobalt DOS, Phosphor, Frostline, Nightshade, Canopy, Graphite, Amber), each with a dark and light variant. See `THEMES.md` for the full list and internal ID mapping.
+Twelve themes (Default, Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Graphite, Amber, Sundial, Terracotta, Petal, Rosewood), each with a dark and light variant. See `THEMES.md` for the full list and internal ID mapping.
 
 **Infrastructure** (`src/web/src/themes/`):
-- `theme-defs.ts` — `ThemeTokens` type + all 16 token sets (8 themes × 2 modes)
+- `theme-defs.ts` — `ThemeTokens` type + all 24 token sets (12 themes × 2 modes)
 - `ThemeProvider.tsx` — wraps `MantineProvider`; exposes `useAppTheme()` hook; persists selection to `localStorage` under `gantry-theme` and `gantry-color-scheme`
 - `cssVariablesResolver` injects `--g-*` CSS variables (available everywhere) and overrides Mantine's body/surface variables so Mantine components pick up the active theme automatically
 

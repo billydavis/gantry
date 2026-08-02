@@ -72,7 +72,7 @@ export function TimelinePage() {
       {!isLoading && items.length === 0 && (
         <Box style={{
           textAlign: 'center', padding: '60px 20px',
-          background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 12,
+          background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
         }}>
           <Text fw={500} style={{ color: 'var(--g-text)' }}>Nothing recorded this month</Text>
           <Text size="sm" c="dimmed">Complete todos or log wins to see them here.</Text>
@@ -111,7 +111,7 @@ function TimelineRow({ item, onNavigate }: { item: TimelineItem; onNavigate: () 
       style={{
         display: 'flex', alignItems: 'flex-start', gap: 10,
         padding: '10px 14px',
-        background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
+        background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 6,
         cursor: 'pointer',
       }}
       onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}

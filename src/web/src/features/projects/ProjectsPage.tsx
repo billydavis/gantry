@@ -9,12 +9,11 @@ import {
   Menu,
   SegmentedControl,
   Stack,
-  Table,
   Text,
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconArchive, IconDots, IconEdit, IconFolderPlus, IconPlayerPause, IconRefresh } from '@tabler/icons-react';
+import { IconArchive, IconDots, IconEdit, IconFolder, IconFolderPlus, IconPlayerPause, IconRefresh } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -149,128 +148,133 @@ export function ProjectsPage() {
 
   const isEmpty = mainTree.length === 0 && archivedTree.length === 0;
 
-  const renderRow = ({ project, depth }: TreeEntry) => {
+  const renderRow = ({ project, depth }: TreeEntry, isLast: boolean) => {
     const isChild = depth > 0;
     return (
-      <Table.Tr
+      <Box
         key={project.id}
-        style={{ cursor: 'pointer' }}
         onClick={() => navigate(`/projects/${project.id}`)}
+        style={{
+          padding: '10px 14px',
+          borderBottom: isLast ? 'none' : '1px solid var(--g-border)',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
       >
-        <Table.Td>
-          <Group gap="xs" wrap="nowrap" style={{ paddingLeft: depth * 24 }}>
-            {isChild && (
-              <Text size="sm" style={{ color: 'var(--g-border)', lineHeight: 1, flexShrink: 0 }}>
-                ↳
-              </Text>
-            )}
-            {project.color ? (
-              <ColorSwatch color={project.color} size={isChild ? 10 : 14} style={{ flexShrink: 0 }} />
-            ) : (
-              <Box
-                w={isChild ? 10 : 14}
-                h={isChild ? 10 : 14}
-                style={{ borderRadius: 3, background: 'var(--g-border)', flexShrink: 0 }}
-              />
-            )}
-            <Text
-              size="sm"
-              fw={isChild ? 400 : 500}
-              style={{ color: isChild ? 'var(--g-text-muted)' : 'var(--g-text)' }}
-            >
-              {project.name}
+        {/* Primary row — swatch, name, status, actions pinned top-right */}
+        <Group gap={10} align="center" wrap="nowrap" style={{ paddingLeft: depth * 24 }}>
+          {isChild && (
+            <Text size="sm" style={{ color: 'var(--g-border)', lineHeight: 1, flexShrink: 0 }}>
+              ↳
             </Text>
-          </Group>
-        </Table.Td>
-        <Table.Td visibleFrom="md">
-          <Text size="sm" c="dimmed" lineClamp={1}>
-            {project.description ?? '—'}
+          )}
+          {project.color ? (
+            <ColorSwatch color={project.color} size={isChild ? 10 : 14} style={{ flexShrink: 0 }} />
+          ) : (
+            <IconFolder size={isChild ? 12 : 14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+          )}
+          <Text
+            fw={isChild ? 400 : 500}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              color: isChild ? 'var(--g-text-muted)' : 'var(--g-text)',
+              fontSize: 14,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {project.name}
           </Text>
-        </Table.Td>
-        <Table.Td>
-          <Badge color={statusColors[project.status]} variant="light" size="sm">
+          <Badge color={statusColors[project.status]} variant="light" size="sm" style={{ flexShrink: 0 }}>
             {statusLabels[project.status]}
           </Badge>
-        </Table.Td>
-        <Table.Td visibleFrom="sm">
-          <Text size="xs" c="dimmed">
+          <Text size="xs" c="dimmed" visibleFrom="sm" style={{ flexShrink: 0, width: 76, textAlign: 'right' }}>
             {new Date(project.updatedUtc).toLocaleDateString()}
           </Text>
-        </Table.Td>
-        <Table.Td onClick={(e) => e.stopPropagation()}>
-          <Menu shadow="md" width={160} position="bottom-end">
-            <Menu.Target>
-              <Tooltip label="Actions">
-                <ActionIcon variant="subtle" size="sm" style={{ color: 'var(--g-text-muted)' }}>
-                  <IconDots size={16} />
-                </ActionIcon>
-              </Tooltip>
-            </Menu.Target>
-            <Menu.Dropdown
-              styles={{
-                dropdown: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' },
-              }}
-            >
-              <Menu.Item
-                leftSection={<IconEdit size={14} />}
-                onClick={() => openEdit(project)}
-                styles={{ item: { color: 'var(--g-text)' } }}
+          <Box onClick={(e) => e.stopPropagation()} style={{ flexShrink: 0 }}>
+            <Menu width={160} position="bottom-end">
+              <Menu.Target>
+                <Tooltip label="Actions">
+                  <ActionIcon variant="subtle" size="sm" style={{ color: 'var(--g-text-muted)' }}>
+                    <IconDots size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              </Menu.Target>
+              <Menu.Dropdown
+                styles={{
+                  dropdown: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' },
+                }}
               >
-                Edit
-              </Menu.Item>
-              {project.status === 'Active' && (
                 <Menu.Item
-                  leftSection={<IconPlayerPause size={14} />}
-                  onClick={() => holdMutation.mutate(project.id)}
+                  leftSection={<IconEdit size={14} />}
+                  onClick={() => openEdit(project)}
                   styles={{ item: { color: 'var(--g-text)' } }}
                 >
-                  Put On Hold
+                  Edit
                 </Menu.Item>
-              )}
-              {project.status === 'OnHold' && (
-                <Menu.Item
-                  leftSection={<IconRefresh size={14} />}
-                  onClick={() => reactivateMutation.mutate(project.id)}
-                  styles={{ item: { color: 'var(--g-text)' } }}
-                >
-                  Reactivate
-                </Menu.Item>
-              )}
-              {project.status !== 'Archived' ? (
-                <Menu.Item
-                  leftSection={<IconArchive size={14} />}
-                  onClick={() => archiveMutation.mutate(project.id)}
-                  styles={{ item: { color: 'var(--g-text-muted)' } }}
-                >
-                  Archive
-                </Menu.Item>
-              ) : (
-                <Menu.Item
-                  leftSection={<IconRefresh size={14} />}
-                  onClick={() => reactivateMutation.mutate(project.id)}
-                  styles={{ item: { color: 'var(--g-text)' } }}
-                >
-                  Reactivate
-                </Menu.Item>
-              )}
-            </Menu.Dropdown>
-          </Menu>
-        </Table.Td>
-      </Table.Tr>
+                {project.status === 'Active' && (
+                  <Menu.Item
+                    leftSection={<IconPlayerPause size={14} />}
+                    onClick={() => holdMutation.mutate(project.id)}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
+                    Put On Hold
+                  </Menu.Item>
+                )}
+                {project.status === 'OnHold' && (
+                  <Menu.Item
+                    leftSection={<IconRefresh size={14} />}
+                    onClick={() => reactivateMutation.mutate(project.id)}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
+                    Reactivate
+                  </Menu.Item>
+                )}
+                {project.status !== 'Archived' ? (
+                  <Menu.Item
+                    leftSection={<IconArchive size={14} />}
+                    onClick={() => archiveMutation.mutate(project.id)}
+                    styles={{ item: { color: 'var(--g-text-muted)' } }}
+                  >
+                    Archive
+                  </Menu.Item>
+                ) : (
+                  <Menu.Item
+                    leftSection={<IconRefresh size={14} />}
+                    onClick={() => reactivateMutation.mutate(project.id)}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
+                    Reactivate
+                  </Menu.Item>
+                )}
+              </Menu.Dropdown>
+            </Menu>
+          </Box>
+        </Group>
+
+        {/* Secondary row — description, indented under the name */}
+        {project.description && (
+          <Text
+            size="xs"
+            c="dimmed"
+            visibleFrom="md"
+            style={{
+              paddingLeft: depth * 24 + (isChild ? 34 : 24),
+              marginTop: 2,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {project.description}
+          </Text>
+        )}
+      </Box>
     );
   };
-
-  const tableHeader = (
-    <Table.Thead>
-      <Table.Tr>
-        <Table.Th style={{ color: 'var(--g-text-muted)', fontWeight: 500 }}>Name</Table.Th>
-        <Table.Th style={{ color: 'var(--g-text-muted)', fontWeight: 500 }} visibleFrom="md">Description</Table.Th>
-        <Table.Th style={{ color: 'var(--g-text-muted)', fontWeight: 500 }}>Status</Table.Th>
-        <Table.Th style={{ color: 'var(--g-text-muted)', fontWeight: 500 }} visibleFrom="sm">Updated</Table.Th>
-        <Table.Th />
-      </Table.Tr>
-    </Table.Thead>
-  );
 
   return (
     <>
@@ -331,12 +335,7 @@ export function ProjectsPage() {
                   overflow: 'hidden',
                 }}
               >
-                <Table.ScrollContainer minWidth={320}>
-                  <Table highlightOnHover>
-                    {tableHeader}
-                    <Table.Tbody>{mainTree.map(renderRow)}</Table.Tbody>
-                  </Table>
-                </Table.ScrollContainer>
+                {mainTree.map((entry, i) => renderRow(entry, i === mainTree.length - 1))}
               </Box>
             )}
 
@@ -356,12 +355,7 @@ export function ProjectsPage() {
                     opacity: 0.7,
                   }}
                 >
-                  <Table.ScrollContainer minWidth={320}>
-                    <Table highlightOnHover>
-                      {tableHeader}
-                      <Table.Tbody>{archivedTree.map(renderRow)}</Table.Tbody>
-                    </Table>
-                  </Table.ScrollContainer>
+                  {archivedTree.map((entry, i) => renderRow(entry, i === archivedTree.length - 1))}
                 </Box>
               </Box>
             )}

@@ -52,18 +52,18 @@ Gantry is a calm instrument panel you glance at before starting work, not a dash
 
 The system explicitly rejects generic SaaS card-grid clichés (identical bordered tiles with icon + heading + text, repeated endlessly), the overly dense spreadsheet feel of an admin data grid, and every AI-slop default: hero-metric templates, gradient text, glassmorphism-as-decoration, side-stripe accent borders. This is a personal daily-use tool for one person, not enterprise software performing scale it doesn't have.
 
-Color is deliberately decoupled from layout. Gantry ships 8 complete themes (Default, Cobalt DOS, Phosphor, Frostline, Nightshade, Canopy, Graphite, Amber), each with a dark and light variant, all swapped live via a single set of `--g-*` CSS custom properties. This document captures the **Default / dark** palette as the canonical reference values — the token *names* and the layout rules apply identically across all 16 palette variants; only the hex values change.
+Color is deliberately decoupled from layout. Gantry ships 12 complete themes (Default, Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Graphite, Amber, Sundial, Terracotta, Petal, Rosewood), each with a dark and light variant, all swapped live via a single set of `--g-*` CSS custom properties. This document captures the **Default / dark** palette as the canonical reference values — the token *names* and the layout rules apply identically across all 24 palette variants; only the hex values change.
 
 **Key Characteristics:**
 - Flat surfaces, tonal layering instead of shadows
 - One accent color used sparingly (buttons, active nav state, links) — never as a wash
 - Type-scale-and-weight hierarchy, not boxes-around-things
-- 8px radius on containers, 6px on list rows, consistent across all 8 themes
+- 8px radius on containers, 6px on list rows, consistent across all 12 themes
 - Fully theme-agnostic component styling: everything routes through `--g-*` variables, never a hardcoded hex
 
 ## 2. Colors
 
-The Default theme's dark palette is a desaturated blue-gray neutral scale with a single cyan-blue accent used sparingly — this pattern (tinted neutrals + one accent) repeats across all 8 themes with different hues and, in a few themes (Cobalt DOS, Phosphor, Amber), different structural choices like outset borders or monospace type.
+The Default theme's dark palette is a desaturated blue-gray neutral scale with a single cyan-blue accent used sparingly — this pattern (tinted neutrals + one accent) repeats across all 12 themes with different hues and, in a few themes (Cobalt DOS, Phosphor, Amber), different structural choices like outset borders or monospace type.
 
 ### Primary
 - **Signal Blue** (`--g-accent`, #339af0): The one accent. Used on primary buttons, active nav item text, links, and pinned-item borders. Nowhere else.
@@ -82,12 +82,12 @@ The Default theme's dark palette is a desaturated blue-gray neutral scale with a
 ### Named Rules
 **The One Accent Rule.** `--g-accent` appears on buttons, active nav state, and links — never as a background wash, never repeated for emphasis elsewhere on the same screen.
 
-**The Theme-Agnostic Rule.** No component may hardcode a hex value. Every color reference goes through a `--g-*` variable so all 8 themes render every screen correctly without per-theme conditional styling.
+**The Theme-Agnostic Rule.** No component may hardcode a hex value. Every color reference goes through a `--g-*` variable so all 12 themes render every screen correctly without per-theme conditional styling.
 
 ## 3. Typography
 
-**UI Font:** `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` (Default, Frostline, Nord, Graphite themes)
-**Mono Font:** `"Cascadia Code", Consolas, "Courier New", monospace` (Cobalt DOS, Phosphor, Nightshade, Canopy, Amber themes)
+**UI Font:** `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` (Default, Graphite, Petal, Rosewood themes)
+**Mono Font:** `"Cascadia Code", Consolas, "Courier New", monospace` (Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Amber, Sundial, Terracotta themes)
 
 **Character:** Each theme picks one font family for both heading and body — there is no separate display face. The mono themes lean into a terminal/CRT character; the sans themes stay neutral system-UI. Hierarchy is carried entirely by size and weight, not by font pairing.
 
@@ -141,7 +141,7 @@ Gantry is flat by default. No `box-shadow` is used anywhere in the codebase. Dep
 
 ### Do:
 - **Do** put the single most important piece of information (a todo/note/win title) on its own full-width line, larger and heavier than everything else in the row.
-- **Do** route every color through a `--g-*` CSS variable — never a literal hex — so all 8 themes render correctly.
+- **Do** route every color through a `--g-*` CSS variable — never a literal hex — so all 12 themes render correctly.
 - **Do** use 8px radius for containers, 6px for list rows, 4px for buttons, consistently.
 - **Do** convey depth with tone (`--g-surface` vs `--g-background`) and a 1px `--g-border`, never a shadow.
 - **Do** keep the accent color rare: buttons, active nav, links. That's it.

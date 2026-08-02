@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  ActionIcon, Box, Group, Loader, Stack, Text, Tooltip,
+  ActionIcon, Badge, Box, Group, Loader, Stack, Text, Tooltip,
 } from '@mantine/core';
 import {
   IconBrandGit, IconCheck, IconCopy, IconDatabase, IconEdit, IconExternalLink,
@@ -54,12 +54,16 @@ function ResourceRow({
   onDelete,
   isLast,
   onTagsChanged,
+  environmentName,
+  environmentHue,
 }: {
   resource: Resource;
   onEdit: (r: Resource) => void;
   onDelete: (id: string) => void;
   isLast: boolean;
   onTagsChanged: () => void;
+  environmentName?: string;
+  environmentHue?: number;
 }) {
   return (
     <Box
@@ -97,7 +101,23 @@ function ResourceRow({
           />
         </Box>
       </Box>
-      <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>{RESOURCE_TYPE_LABELS[resource.type]}</Text>
+      {environmentName && (
+        <Badge
+          size="xs"
+          variant="outline"
+          styles={{
+            root: {
+              borderColor: 'var(--g-accent)',
+              color: 'var(--g-accent)',
+              background: 'color-mix(in srgb, var(--g-accent) 15%, transparent)',
+              filter: `hue-rotate(${environmentHue ?? 0}deg)`,
+              flexShrink: 0,
+            },
+          }}
+        >
+          {environmentName}
+        </Badge>
+      )}
       <Group gap={2} style={{ flexShrink: 0 }}>
         {isUrl(resource.location) && (
           <Tooltip label="Copy URL">
@@ -121,12 +141,13 @@ function ResourceRow({
   );
 }
 
-function ResourceGroup({ label, resources, onEdit, onDelete, onTagsChanged }: {
+function ResourceGroup({ label, resources, onEdit, onDelete, onTagsChanged, envMetaById }: {
   label: string;
   resources: Resource[];
   onEdit: (r: Resource) => void;
   onDelete: (id: string) => void;
   onTagsChanged: () => void;
+  envMetaById: Map<string, { name: string; hue: number }>;
 }) {
   return (
     <Stack gap={4}>
@@ -135,7 +156,10 @@ function ResourceGroup({ label, resources, onEdit, onDelete, onTagsChanged }: {
       </Text>
       <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
         {resources.map((r, i) => (
-          <ResourceRow key={r.id} resource={r} onEdit={onEdit} onDelete={onDelete} isLast={i === resources.length - 1} onTagsChanged={onTagsChanged} />
+          <ResourceRow key={r.id} resource={r} onEdit={onEdit} onDelete={onDelete} isLast={i === resources.length - 1}
+            onTagsChanged={onTagsChanged}
+            environmentName={r.environmentId ? envMetaById.get(r.environmentId)?.name : undefined}
+            environmentHue={r.environmentId ? envMetaById.get(r.environmentId)?.hue : undefined} />
         ))}
       </Box>
     </Stack>
@@ -145,9 +169,16 @@ function ResourceGroup({ label, resources, onEdit, onDelete, onTagsChanged }: {
 interface Props {
   projectId?: string;
   environments?: ProjectEnvironment[];
+  /**
+   * Controlled environment scope. When omitted, resources are auto-grouped into a
+   * section per environment plus "General" (the original behavior). When provided,
+   * grouping is skipped in favor of a flat list scoped to that environment (plus
+   * environment-less resources, which apply everywhere) — `null` means "All".
+   */
+  selectedEnvironmentId?: string | null;
 }
 
-export function ResourceList({ projectId, environments = [] }: Props) {
+export function ResourceList({ projectId, environments = [], selectedEnvironmentId }: Props) {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Resource | undefined>();
@@ -177,17 +208,40 @@ export function ResourceList({ projectId, environments = [] }: Props) {
     ? Math.max(...resources.map((r) => r.sortOrder)) + 1
     : 0;
 
-  // Group resources by environment when environments are provided
-  const grouped = environments.length > 0;
+  // Each environment gets a hue-rotated variant of the accent color as its badge color,
+  // cycling every 6 (60deg steps) so colors repeat gracefully once there are many environments.
+  const envMetaById = new Map(
+    environments.map((e, i) => [e.id, { name: e.name, hue: (i % 6) * 60 }])
+  );
+
+  const isControlled = selectedEnvironmentId !== undefined;
+  const isScopedToOneEnv = isControlled && selectedEnvironmentId !== null;
+  const scopedResources = isScopedToOneEnv
+    ? resources.filter((r) => r.environmentId === selectedEnvironmentId || !r.environmentId)
+    : resources;
+
+  // Common (environment-less) links always show. When a single environment is selected,
+  // common links sort to the end (the environment-specific links are what you came for);
+  // otherwise ("All") common links sort to the top. Name is the tiebreaker either way.
+  const sortedResources = [...scopedResources].sort((a, b) => {
+    const aCommon = !a.environmentId;
+    const bCommon = !b.environmentId;
+    if (aCommon !== bCommon) {
+      const commonFirst = aCommon ? -1 : 1;
+      return isScopedToOneEnv ? -commonFirst : commonFirst;
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  // Group resources by environment when environments are provided and no scope is controlled
+  const grouped = environments.length > 0 && !isControlled;
   const byEnv = grouped
     ? environments.map((env) => ({
         env,
-        items: resources.filter((r) => r.environmentId === env.id),
+        items: resources.filter((r) => r.environmentId === env.id).sort((a, b) => a.name.localeCompare(b.name)),
       })).filter((g) => g.items.length > 0)
     : [];
-  const unassigned = grouped
-    ? resources.filter((r) => !r.environmentId)
-    : resources;
+  const unassigned = resources.filter((r) => !r.environmentId).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>
@@ -202,8 +256,10 @@ export function ResourceList({ projectId, environments = [] }: Props) {
 
         {isLoading ? (
           <Loader size="xs" />
-        ) : resources.length === 0 ? (
-          <Text size="sm" c="dimmed">No resources yet.</Text>
+        ) : scopedResources.length === 0 ? (
+          <Text size="sm" c="dimmed">
+            {isControlled && selectedEnvironmentId !== null ? 'No quick links for this environment yet.' : 'No resources yet.'}
+          </Text>
         ) : grouped ? (
           <Stack gap="lg">
             {byEnv.map(({ env, items }) => (
@@ -214,6 +270,7 @@ export function ResourceList({ projectId, environments = [] }: Props) {
                 onEdit={openEdit}
                 onDelete={(id) => deleteMutation.mutate(id)}
                 onTagsChanged={invalidate}
+                envMetaById={envMetaById}
               />
             ))}
             {unassigned.length > 0 && (
@@ -223,14 +280,17 @@ export function ResourceList({ projectId, environments = [] }: Props) {
                 onEdit={openEdit}
                 onDelete={(id) => deleteMutation.mutate(id)}
                 onTagsChanged={invalidate}
+                envMetaById={envMetaById}
               />
             )}
           </Stack>
         ) : (
           <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
-            {resources.map((r, i) => (
+            {sortedResources.map((r, i) => (
               <ResourceRow key={r.id} resource={r} onEdit={openEdit}
-                onDelete={(id) => deleteMutation.mutate(id)} isLast={i === resources.length - 1} onTagsChanged={invalidate} />
+                onDelete={(id) => deleteMutation.mutate(id)} isLast={i === sortedResources.length - 1} onTagsChanged={invalidate}
+                environmentName={r.environmentId ? envMetaById.get(r.environmentId)?.name : undefined}
+                environmentHue={r.environmentId ? envMetaById.get(r.environmentId)?.hue : undefined} />
             ))}
           </Box>
         )}

@@ -66,7 +66,7 @@ export function FlushDatabaseModal({ opened, onClose }: Props) {
         />
 
         <Group justify="flex-end" gap="sm">
-          <Button variant="subtle" onClick={handleClose}>Cancel</Button>
+          <Button variant="subtle" onClick={handleClose} style={{ color: 'var(--g-text-muted)' }}>Cancel</Button>
           <Button
             color="red"
             disabled={confirmation !== FLUSH_CONFIRMATION_PHRASE}

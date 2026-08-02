@@ -115,16 +115,32 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Menu.Dropdown
                   style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)' }}
                 >
-                  <Menu.Item leftSection={<IconFolderPlus size={15} />} onClick={() => { setProjectOpen(true); closeMobile(); }}>
+                  <Menu.Item
+                    leftSection={<IconFolderPlus size={15} />}
+                    onClick={() => { setProjectOpen(true); closeMobile(); }}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
                     New Project
                   </Menu.Item>
-                  <Menu.Item leftSection={<IconCheckbox size={15} />} onClick={() => { setTodoOpen(true); closeMobile(); }}>
+                  <Menu.Item
+                    leftSection={<IconCheckbox size={15} />}
+                    onClick={() => { setTodoOpen(true); closeMobile(); }}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
                     New Todo
                   </Menu.Item>
-                  <Menu.Item leftSection={<IconNote size={15} />} onClick={() => { setNoteOpen(true); closeMobile(); }}>
+                  <Menu.Item
+                    leftSection={<IconNote size={15} />}
+                    onClick={() => { setNoteOpen(true); closeMobile(); }}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
                     New Note
                   </Menu.Item>
-                  <Menu.Item leftSection={<IconTrophy size={15} />} onClick={() => { setWinOpen(true); closeMobile(); }}>
+                  <Menu.Item
+                    leftSection={<IconTrophy size={15} />}
+                    onClick={() => { setWinOpen(true); closeMobile(); }}
+                    styles={{ item: { color: 'var(--g-text)' } }}
+                  >
                     Log Win
                   </Menu.Item>
                 </Menu.Dropdown>

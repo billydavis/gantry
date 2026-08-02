@@ -90,6 +90,12 @@ Database migrations run automatically on API startup — no manual migration ste
 
 If you ever do need a clean slate on purpose, `docker compose down -v` is the way to do it — just be sure that's what you want first.
 
+## Backups
+
+Settings → Data lets you create a full database backup (via `pg_dump`) before upgrading, and restore back to one if something goes wrong. Backups are stored on their own Docker volume, separate from the Postgres data volume, so they survive even a `docker compose down -v`.
+
+You can also use Download / Upload to move your data to a new machine: download a backup from the old install, copy the file over however you like, then upload and restore it on the new one. This works across app versions — restoring runs pending migrations automatically — but keep `POSTGRES_USER` and `POSTGRES_DB` in `.env` the same on both machines. A mismatch doesn't break the restore, but `pg_restore` will print harmless ownership warnings for the old username it doesn't recognize.
+
 ## Development
 
 **Backend** (`src/Gantry.Api`):

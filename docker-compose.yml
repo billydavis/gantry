@@ -20,6 +20,9 @@ services:
     build: ./src/Gantry.Api
     environment:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Backups__Directory: /app/backups
+    volumes:
+      - backups:/app/backups
     expose:
       - "5000"
     depends_on:
@@ -37,3 +40,4 @@ services:
 
 volumes:
   pgdata:
+  backups:

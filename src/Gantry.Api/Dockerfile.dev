@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0
 WORKDIR /src
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 EXPOSE 5000

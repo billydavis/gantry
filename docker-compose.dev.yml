@@ -7,9 +7,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Backups__Directory: /backups
     volumes:
       - ./src/Gantry.Api:/src
       - nuget-cache:/root/.nuget/packages
+      - backups-dev:/backups
     expose:
       - "5000"
     depends_on:
@@ -34,3 +36,4 @@ services:
 
 volumes:
   nuget-cache:
+  backups-dev:

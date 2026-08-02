@@ -3,8 +3,9 @@ import { Avatar, Box, Button, Group, Stack, Tabs, Text, TextInput, Title } from 
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { IconPalette, IconShieldExclamation, IconUser } from '@tabler/icons-react';
+import { IconAlertTriangle, IconDatabase, IconPalette, IconUser } from '@tabler/icons-react';
 import { FlushDatabaseModal } from '../features/admin/FlushDatabaseModal';
+import { BackupsSection } from '../features/backups/BackupsSection';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 import { ThemePicker } from '../components/ThemePicker';
 import { gravatarUrl } from '../utils/gravatar';
@@ -117,39 +118,41 @@ function AppearanceSection() {
   );
 }
 
-function DangerZoneSection() {
+function DataSection() {
   const [flushModalOpen, setFlushModalOpen] = useState(false);
 
   return (
-    <Box
-      style={{
-        background: 'var(--g-surface)',
-        border: '1px solid var(--g-danger)',
-        borderRadius: 8,
-        padding: 20,
-        maxWidth: 640,
-      }}
-    >
-      <Text fw={600} size="sm" tt="uppercase" mb={4} c="red" style={{ letterSpacing: '0.05em' }}>
-        Danger Zone
-      </Text>
-      <Stack gap="md" mt="sm">
-        <Group justify="space-between" align="center" wrap="wrap">
-          <Box>
-            <Text fw={500} style={{ color: 'var(--g-text)' }}>Flush Database</Text>
-            <Text size="sm" c="dimmed">
-              Permanently deletes all projects, todos, resources, notes, wins, and tags, resetting the dashboard to empty.
-              Your Profile and Appearance settings are not affected.
-            </Text>
-          </Box>
+    <Stack gap="xl">
+      <BackupsSection />
+
+      <Box
+        style={{
+          background: 'color-mix(in srgb, var(--g-danger) 7%, var(--g-surface))',
+          border: '1px solid var(--g-border)',
+          borderRadius: 6,
+          padding: 16,
+          maxWidth: 720,
+        }}
+      >
+        <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
+          <Group gap="sm" align="flex-start" wrap="nowrap">
+            <IconAlertTriangle size={18} style={{ color: 'var(--g-danger)', marginTop: 2, flexShrink: 0 }} />
+            <Box>
+              <Text fw={500} style={{ color: 'var(--g-text)' }}>Flush Database</Text>
+              <Text size="sm" c="dimmed">
+                Permanently deletes all projects, todos, resources, notes, wins, and tags, resetting the dashboard to empty.
+                Your Profile and Appearance settings are not affected.
+              </Text>
+            </Box>
+          </Group>
           <Button color="red" variant="outline" onClick={() => setFlushModalOpen(true)}>
             Flush Database
           </Button>
         </Group>
-      </Stack>
+      </Box>
 
       <FlushDatabaseModal opened={flushModalOpen} onClose={() => setFlushModalOpen(false)} />
-    </Box>
+    </Stack>
   );
 }
 
@@ -160,11 +163,18 @@ export function SettingsPage() {
     <>
       <Title order={2} mb="xl" style={{ color: 'var(--g-heading)' }}>Settings</Title>
 
-      <Tabs defaultValue="profile" orientation={isDesktop ? 'vertical' : 'horizontal'} variant="pills">
+      <Tabs
+        defaultValue="profile"
+        orientation={isDesktop ? 'vertical' : 'horizontal'}
+        variant="pills"
+        vars={() => ({
+          root: { '--tabs-color': 'var(--g-nav-active-bg)', '--tabs-text-color': 'var(--g-nav-active-text)' },
+        })}
+      >
         <Tabs.List miw={isDesktop ? 160 : undefined} mr={isDesktop ? 'xl' : 0} mb={isDesktop ? 0 : 'lg'}>
           <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>Profile</Tabs.Tab>
           <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>Appearance</Tabs.Tab>
-          <Tabs.Tab value="danger" leftSection={<IconShieldExclamation size={16} />}>Danger Zone</Tabs.Tab>
+          <Tabs.Tab value="data" leftSection={<IconDatabase size={16} />}>Data</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="profile">
@@ -173,8 +183,8 @@ export function SettingsPage() {
         <Tabs.Panel value="appearance">
           <AppearanceSection />
         </Tabs.Panel>
-        <Tabs.Panel value="danger">
-          <DangerZoneSection />
+        <Tabs.Panel value="data">
+          <DataSection />
         </Tabs.Panel>
       </Tabs>
     </>

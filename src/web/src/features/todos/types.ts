@@ -9,6 +9,7 @@ export interface Todo {
   projectName: string | null;
   title: string;
   description: string | null;
+  link: string | null;
   status: TodoStatus;
   priority: Priority;
   isPinned: boolean;
@@ -24,6 +25,7 @@ export interface CreateTodoRequest {
   projectId?: string | null;
   title: string;
   description?: string | null;
+  link?: string | null;
   priority?: Priority;
   estimatedMinutes?: number | null;
   dueDate?: string | null;
@@ -33,6 +35,7 @@ export interface UpdateTodoRequest {
   projectId?: string | null;
   title: string;
   description?: string | null;
+  link?: string | null;
   status?: TodoStatus;
   priority?: Priority;
   estimatedMinutes?: number | null;

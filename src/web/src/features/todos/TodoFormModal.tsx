@@ -13,6 +13,7 @@ const schema = z.object({
   projectId: z.string().uuid().nullable().optional(),
   title: z.string().min(1, 'Title is required').max(500),
   description: z.string().nullable().optional(),
+  link: z.string().max(2000).nullable().optional(),
   priority: z.enum(['Low', 'Medium', 'High']),
   status: z.enum(['Todo', 'InProgress', 'Waiting', 'Blocked', 'Complete']).optional(),
   estimatedMinutes: z.number().int().positive().nullable().optional(),
@@ -68,6 +69,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
       projectId: null,
       title: '',
       description: null,
+      link: null,
       priority: 'Medium',
       estimatedMinutes: null,
       dueDate: null,
@@ -80,6 +82,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
         projectId: todo?.projectId ?? projectId ?? null,
         title: todo?.title ?? '',
         description: todo?.description ?? null,
+        link: todo?.link ?? null,
         priority: (todo?.priority ?? 'Medium') as Priority,
         status: todo?.status as TodoStatus | undefined,
         estimatedMinutes: todo?.estimatedMinutes ?? null,
@@ -116,6 +119,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
           projectId: resolvedProjectId,
           title: values.title,
           description: values.description ?? null,
+          link: values.link ?? null,
           status: values.status,
           priority: values.priority,
           estimatedMinutes: values.estimatedMinutes ?? null,
@@ -127,6 +131,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
         projectId: resolvedProjectId,
         title: values.title,
         description: values.description ?? null,
+        link: values.link ?? null,
         priority: values.priority,
         estimatedMinutes: values.estimatedMinutes ?? null,
         dueDate: values.dueDate ?? null,
@@ -163,6 +168,14 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
             rows={3}
             styles={inputStyles}
             {...register('description')}
+          />
+
+          <TextInput
+            label="Link"
+            placeholder="https://dev.azure.com/…"
+            error={errors.link?.message}
+            styles={inputStyles}
+            {...register('link')}
           />
 
           <Select

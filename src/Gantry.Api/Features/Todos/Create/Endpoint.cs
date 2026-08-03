@@ -20,6 +20,7 @@ public static class Endpoint
             ProjectId = request.ProjectId,
             Title = request.Title,
             Description = request.Description,
+            Link = request.Link,
             Status = TodoStatus.Todo,
             Priority = Enum.TryParse<Priority>(request.Priority, true, out var p) ? p : Priority.Medium,
             EstimatedMinutes = request.EstimatedMinutes,

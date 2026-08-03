@@ -5,7 +5,7 @@ import {
 } from '@mantine/core';
 import {
   IconChevronDown, IconChevronRight, IconCircle, IconCircleCheck, IconCircleDashed, IconCircleX,
-  IconClock, IconEdit, IconPin, IconPinFilled, IconPlus, IconTrash,
+  IconClock, IconEdit, IconExternalLink, IconPin, IconPinFilled, IconPlus, IconTrash,
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -181,7 +181,7 @@ export function TodoList({ projectId }: Props) {
 
               const hasDescription = !!todo.description;
               const isExpanded = expandedId === todo.id;
-              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || hasDescription);
+              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || hasDescription || todo.link);
 
               return (
                 <Box
@@ -281,6 +281,18 @@ export function TodoList({ projectId }: Props) {
                         )}
                         {todo.estimatedMinutes && (
                           <Text size="xs" c="dimmed">{formatMinutes(todo.estimatedMinutes)}</Text>
+                        )}
+                        {todo.link && (
+                          <Tooltip label={todo.link}>
+                            <ActionIcon
+                              variant="subtle"
+                              size="xs"
+                              onClick={() => window.open(todo.link!, '_blank', 'noopener,noreferrer')}
+                              style={{ color: 'var(--g-text-muted)' }}
+                            >
+                              <IconExternalLink size={13} />
+                            </ActionIcon>
+                          </Tooltip>
                         )}
                         <TagPicker
                           selectedTags={todo.tags}

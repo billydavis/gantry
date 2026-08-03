@@ -4,6 +4,7 @@ public record Request(
     Guid? ProjectId,
     string Title,
     string? Description,
+    string? Link,
     string? Status,
     string? Priority,
     int? EstimatedMinutes,

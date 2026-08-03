@@ -14,6 +14,9 @@ public class Validator : AbstractValidator<Request>
             .NotEmpty().WithMessage("Title is required.")
             .MaximumLength(500).WithMessage("Title must not exceed 500 characters.");
 
+        RuleFor(x => x.Link)
+            .MaximumLength(2000).WithMessage("Link must not exceed 2000 characters.");
+
         RuleFor(x => x.Status)
             .Must(s => s is null || ValidStatuses.Contains(s, StringComparer.OrdinalIgnoreCase))
             .WithMessage($"Status must be one of: {string.Join(", ", ValidStatuses)}.");

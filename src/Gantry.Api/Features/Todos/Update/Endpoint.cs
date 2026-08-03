@@ -22,6 +22,7 @@ public static class Endpoint
         todo.ProjectId = request.ProjectId;
         todo.Title = request.Title;
         todo.Description = request.Description;
+        todo.Link = request.Link;
         todo.EstimatedMinutes = request.EstimatedMinutes;
         todo.DueDate = request.DueDate;
 

@@ -7,6 +7,7 @@ public class Todo
     public Project? Project { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? Link { get; set; }
     public TodoStatus Status { get; set; } = TodoStatus.Todo;
     public Priority Priority { get; set; } = Priority.Medium;
     public int? EstimatedMinutes { get; set; }

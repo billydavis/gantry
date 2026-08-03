@@ -1,7 +1,6 @@
 import { ActionIcon, Box, Loader, Text, Tooltip } from '@mantine/core';
 import { IconNote, IconTrash } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { noteKeys, notesApi } from './api';
 import type { Note } from './types';
 
@@ -21,7 +20,6 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
   const deleteMutation = useMutation({
     mutationFn: notesApi.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: noteKeys.list({ projectId }) }),
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   if (isLoading) return <Loader size="xs" />;

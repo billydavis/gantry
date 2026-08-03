@@ -23,46 +23,17 @@ import { noteKeys } from '../notes/api';
 import { ProjectWinsList } from '../wins/ProjectWinsList';
 import { WinFormModal } from '../wins/WinFormModal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { projectsApi, projectKeys } from './api';
 import { ProjectFormModal } from './ProjectFormModal';
-import type { Project, ProjectStatus } from './types';
+import { statusColors, statusLabels } from './statusMeta';
+import { buildProjectTree } from './projectTree';
 import type { Note } from '../notes/types';
 import type { Win } from '../wins/types';
 import { environmentsApi, environmentKeys } from '../environments/api';
 import { EnvironmentFormModal } from '../environments/EnvironmentFormModal';
 import { TagPicker } from '../tags/TagPicker';
 import { useRecentProjects } from '../../hooks/useRecentProjects';
-
-const statusColors: Record<ProjectStatus, string> = {
-  Active: 'green',
-  OnHold: 'yellow',
-  Archived: 'gray',
-};
-
-const statusLabels: Record<ProjectStatus, string> = {
-  Active: 'Active',
-  OnHold: 'On Hold',
-  Archived: 'Archived',
-};
-
-type TreeEntry = { project: Project; depth: number };
-
-function buildSubTree(all: Project[], rootId: string): TreeEntry[] {
-  const result: TreeEntry[] = [];
-  const walk = (parentId: string, depth: number) => {
-    const children = all
-      .filter((p) => p.parentProjectId === parentId)
-      .sort((a, b) => a.name.localeCompare(b.name));
-    for (const child of children) {
-      result.push({ project: child, depth });
-      walk(child.id, depth + 1);
-    }
-  };
-  walk(rootId, 0);
-  return result;
-}
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -99,7 +70,6 @@ export function ProjectDetailPage() {
   const deleteEnvMutation = useMutation({
     mutationFn: environmentsApi.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: environmentKeys.byProject(id!) }),
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   useEffect(() => {
@@ -136,7 +106,7 @@ export function ProjectDetailPage() {
     );
   }
 
-  const subProjects = buildSubTree(allProjects, project.id);
+  const subProjects = buildProjectTree(allProjects, project.id);
 
   return (
     <>

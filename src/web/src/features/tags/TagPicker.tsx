@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { ActionIcon, Box, Group, Popover, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconPlus, IconTag } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { tagKeys, tagsApi } from './api';
 import { TagBadge } from './TagBadge';
 import type { Tag } from './types';
@@ -35,7 +34,6 @@ export function TagPicker({ selectedTags, entityType, entityId, onChanged }: Pro
   const assignMutation = useMutation({
     mutationFn: (tagIds: string[]) => tagsApi.assign(entityType, entityId, tagIds),
     onSuccess: () => { onChanged?.(); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const createMutation = useMutation({
@@ -47,7 +45,6 @@ export function TagPicker({ selectedTags, entityType, entityId, onChanged }: Pro
       setNewName('');
       setCreateOpen(false);
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const toggle = (tag: Tag) => {

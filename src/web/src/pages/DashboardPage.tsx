@@ -9,15 +9,15 @@ import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import {
-  IconBrandGit, IconCheck, IconCopy, IconDatabase, IconEdit, IconExternalLink, IconFile,
-  IconFolder, IconGlobe, IconLayoutDashboard, IconLink, IconNetwork,
-  IconNote, IconPlus, IconServerCog, IconSettings, IconSparkles, IconTrash, IconTrophy,
+  IconCopy, IconEdit, IconFolder, IconLink,
+  IconNote, IconPlus, IconSettings, IconSparkles, IconTrash, IconTrophy,
 } from '@tabler/icons-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
 import { resourcesApi, resourceKeys } from '../features/resources/api';
 import { ResourceFormModal } from '../features/resources/ResourceFormModal';
 import { type Resource, type ResourceType } from '../features/resources/types';
+import { copyLocation, isUrl, openLocation, typeIcon } from '../features/resources/locationUtils';
 import { WIDGET_LABELS, useDashboardWidgets } from '../hooks/useDashboardWidgets';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { useRecentProjects } from '../hooks/useRecentProjects';
@@ -25,38 +25,7 @@ import { sampleDataApi } from '../features/sampleData/api';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 import { quoteKeys, quotesApi } from '../features/quotes/api';
 
-const typeIcon: Record<ResourceType, React.ReactNode> = {
-  Website:       <IconGlobe size={18} />,
-  UncShare:      <IconNetwork size={18} />,
-  LocalFolder:   <IconFolder size={18} />,
-  LocalFile:     <IconFile size={18} />,
-  GitRepository: <IconBrandGit size={18} />,
-  Documentation: <IconExternalLink size={18} />,
-  Environment:   <IconServerCog size={18} />,
-  Dashboard:     <IconLayoutDashboard size={18} />,
-  Database:      <IconDatabase size={18} />,
-  Other:         <IconExternalLink size={18} />,
-};
-
-function openLocation(location: string) {
-  if (location.startsWith('\\\\') || location.startsWith('//')) {
-    window.open(`file:${location.replace(/\\/g, '/')}`, '_blank');
-  } else {
-    window.open(location, '_blank', 'noopener,noreferrer');
-  }
-}
-
-function isUrl(location: string): boolean {
-  return /^https?:\/\//i.test(location);
-}
-
-function copyLocation(location: string) {
-  navigator.clipboard.writeText(location).then(() => {
-    notifications.show({ message: 'URL copied to clipboard', color: 'green', icon: <IconCheck size={16} /> });
-  }).catch(() => {
-    notifications.show({ message: 'Failed to copy URL', color: 'red' });
-  });
-}
+const TYPE_ICON = typeIcon(18);
 
 export function DashboardPage() {
   const queryClient = useQueryClient();
@@ -101,7 +70,6 @@ export function DashboardPage() {
   const deleteMutation = useMutation({
     mutationFn: resourcesApi.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: resourceKeys.global() }),
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const loadSampleDataMutation = useMutation({
@@ -110,7 +78,6 @@ export function DashboardPage() {
       queryClient.invalidateQueries();
       notifications.show({ message: 'Sample data loaded', color: 'green' });
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const { data: todos = [] } = useQuery({
@@ -513,7 +480,7 @@ function QuickLaunchPill({ resource, onEdit, onDelete }: { resource: Resource; o
       onMouseLeave={() => setHovered(false)}
     >
       <Box onClick={() => openLocation(resource.location)} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flex: 1 }}>
-        <Box style={{ color: 'var(--g-accent)' }}>{typeIcon[resource.type as ResourceType]}</Box>
+        <Box style={{ color: 'var(--g-accent)' }}>{TYPE_ICON[resource.type as ResourceType]}</Box>
         <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>{resource.name}</Text>
       </Box>
       {hovered && (

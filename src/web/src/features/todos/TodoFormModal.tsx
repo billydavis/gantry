@@ -93,14 +93,12 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
   const createMutation = useMutation({
     mutationFn: todosApi.create,
     onSuccess: () => { invalidate(); notifications.show({ message: 'Todo created', color: 'green' }); onClose(); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Parameters<typeof todosApi.update>[1] }) =>
       todosApi.update(id, data),
     onSuccess: () => { invalidate(); notifications.show({ message: 'Todo updated', color: 'green' }); onClose(); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const isPending = createMutation.isPending || updateMutation.isPending;

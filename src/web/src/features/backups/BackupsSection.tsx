@@ -31,7 +31,6 @@ export function BackupsSection() {
       queryClient.invalidateQueries({ queryKey: ['backups'] });
       notifications.show({ message: 'Backup created', color: 'green' });
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const deleteMutation = useMutation({
@@ -41,7 +40,6 @@ export function BackupsSection() {
       notifications.show({ message: 'Backup deleted', color: 'green' });
       setDeleteTarget(null);
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const backups = data?.backups ?? [];

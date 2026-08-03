@@ -31,7 +31,6 @@ function ProfileSection() {
       queryClient.invalidateQueries({ queryKey: appSettingsKeys.all });
       notifications.show({ message: 'Profile saved', color: 'green' });
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const isDirty = displayName !== (settings?.displayName ?? '') || email !== (settings?.email ?? '');

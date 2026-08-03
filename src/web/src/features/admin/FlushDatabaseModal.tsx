@@ -27,7 +27,6 @@ export function FlushDatabaseModal({ opened, onClose }: Props) {
       handleClose();
       navigate('/');
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   function handleClose() {

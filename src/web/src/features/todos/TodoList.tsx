@@ -9,7 +9,6 @@ import {
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { notifications } from '@mantine/notifications';
 import { todosApi, todoKeys } from './api';
 import { TodoFormModal } from './TodoFormModal';
 import type { Todo, TodoStatus } from './types';
@@ -78,31 +77,26 @@ export function TodoList({ projectId }: Props) {
   const completeMutation = useMutation({
     mutationFn: todosApi.complete,
     onSuccess: invalidate,
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const reopenMutation = useMutation({
     mutationFn: todosApi.reopen,
     onSuccess: invalidate,
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: todosApi.delete,
     onSuccess: invalidate,
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const pinMutation = useMutation({
     mutationFn: todosApi.pin,
     onSuccess: invalidate,
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const createMutation = useMutation({
     mutationFn: todosApi.create,
     onSuccess: () => { invalidate(); setQuickAdd(''); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const handleQuickAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {

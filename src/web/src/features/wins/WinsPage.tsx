@@ -4,7 +4,6 @@ import {
 } from '@mantine/core';
 import { IconEdit, IconPlus, IconTrophy, IconTrash } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { winKeys, winsApi } from './api';
 import { WinFormModal } from './WinFormModal';
 import type { Win } from './types';
@@ -23,7 +22,6 @@ export function WinsPage() {
   const deleteMutation = useMutation({
     mutationFn: winsApi.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: winKeys.lists() }),
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const openCreate = () => { setEditing(undefined); setModalOpen(true); };

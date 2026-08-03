@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { environmentsApi, environmentKeys } from './api';
 import type { ProjectEnvironment } from './types';
 
@@ -58,7 +57,6 @@ export function EnvironmentFormModal({ opened, onClose, projectId, environment, 
         sortOrder: nextSortOrder,
       }),
     onSuccess: () => { invalidate(); onClose(); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const updateMutation = useMutation({
@@ -69,7 +67,6 @@ export function EnvironmentFormModal({ opened, onClose, projectId, environment, 
         sortOrder: environment!.sortOrder,
       }),
     onSuccess: () => { invalidate(); onClose(); },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const onSubmit = (values: FormValues) => {

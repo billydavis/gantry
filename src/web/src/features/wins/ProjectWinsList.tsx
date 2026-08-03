@@ -1,7 +1,6 @@
 import { ActionIcon, Box, Loader, Text, Tooltip } from '@mantine/core';
 import { IconTrophy, IconTrash } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { winKeys, winsApi } from './api';
 import type { Win } from './types';
 
@@ -21,7 +20,6 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
   const deleteMutation = useMutation({
     mutationFn: winsApi.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: winKeys.list({ projectId }) }),
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   if (isLoading) return <Loader size="xs" />;

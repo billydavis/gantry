@@ -80,7 +80,6 @@ export function WinFormModal({ opened, onClose, win, defaultProjectId }: Props) 
       notifications.show({ message: isEdit ? 'Win updated' : 'Win logged!', color: 'green' });
       onClose();
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   return (

@@ -22,7 +22,6 @@ export function UploadBackupModal({ opened, onClose }: Props) {
       notifications.show({ message: 'Backup uploaded', color: 'green' });
       handleClose();
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   function handleClose() {

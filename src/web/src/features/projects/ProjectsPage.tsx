@@ -20,18 +20,8 @@ import { notifications } from '@mantine/notifications';
 import { projectsApi, projectKeys } from './api';
 import { ProjectFormModal } from './ProjectFormModal';
 import type { Project, ProjectStatus } from './types';
-
-const statusColors: Record<ProjectStatus, string> = {
-  Active: 'green',
-  OnHold: 'yellow',
-  Archived: 'gray',
-};
-
-const statusLabels: Record<ProjectStatus, string> = {
-  Active: 'Active',
-  OnHold: 'On Hold',
-  Archived: 'Archived',
-};
+import { statusColors, statusLabels } from './statusMeta';
+import { buildProjectTree, type ProjectTreeEntry } from './projectTree';
 
 type Filter = 'Active' | 'OnHold' | 'Archived' | 'All';
 
@@ -41,34 +31,6 @@ const VALID_FILTERS: Filter[] = ['Active', 'OnHold', 'Archived', 'All'];
 function loadFilter(): Filter {
   const raw = localStorage.getItem(FILTER_STORAGE_KEY);
   return VALID_FILTERS.includes(raw as Filter) ? (raw as Filter) : 'All';
-}
-
-type TreeEntry = { project: Project; depth: number };
-
-function buildTree(projects: Project[]): TreeEntry[] {
-  const inSet = new Set(projects.map((p) => p.id));
-  const childrenOf = new Map<string | null, Project[]>();
-
-  for (const p of projects) {
-    const parentId = p.parentProjectId && inSet.has(p.parentProjectId) ? p.parentProjectId : null;
-    if (!childrenOf.has(parentId)) childrenOf.set(parentId, []);
-    childrenOf.get(parentId)!.push(p);
-  }
-
-  const result: TreeEntry[] = [];
-
-  const walk = (parentId: string | null, depth: number) => {
-    const children = (childrenOf.get(parentId) ?? []).sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
-    for (const child of children) {
-      result.push({ project: child, depth });
-      walk(child.id, depth + 1);
-    }
-  };
-
-  walk(null, 0);
-  return result;
 }
 
 export function ProjectsPage() {
@@ -93,9 +55,6 @@ export function ProjectsPage() {
       queryClient.invalidateQueries({ queryKey: projectKeys.all });
       notifications.show({ message: 'Project archived', color: 'gray' });
     },
-    onError: (err: Error) => {
-      notifications.show({ message: err.message, color: 'red' });
-    },
   });
 
   const reactivateMutation = useMutation({
@@ -104,9 +63,6 @@ export function ProjectsPage() {
       queryClient.invalidateQueries({ queryKey: projectKeys.all });
       notifications.show({ message: 'Project reactivated', color: 'green' });
     },
-    onError: (err: Error) => {
-      notifications.show({ message: err.message, color: 'red' });
-    },
   });
 
   const holdMutation = useMutation({
@@ -114,9 +70,6 @@ export function ProjectsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: projectKeys.all });
       notifications.show({ message: 'Project put on hold', color: 'yellow' });
-    },
-    onError: (err: Error) => {
-      notifications.show({ message: err.message, color: 'red' });
     },
   });
 
@@ -143,12 +96,12 @@ export function ProjectsPage() {
       ? projects.filter((p) => p.status === 'Archived')
       : [];
 
-  const mainTree = buildTree(mainProjects);
-  const archivedTree = buildTree(archivedProjects);
+  const mainTree = buildProjectTree(mainProjects);
+  const archivedTree = buildProjectTree(archivedProjects);
 
   const isEmpty = mainTree.length === 0 && archivedTree.length === 0;
 
-  const renderRow = ({ project, depth }: TreeEntry, isLast: boolean) => {
+  const renderRow = ({ project, depth }: ProjectTreeEntry, isLast: boolean) => {
     const isChild = depth > 0;
     return (
       <Box

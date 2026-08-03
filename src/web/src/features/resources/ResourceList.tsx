@@ -3,50 +3,17 @@ import {
   ActionIcon, Badge, Box, Group, Loader, Stack, Text, Tooltip,
 } from '@mantine/core';
 import {
-  IconBrandGit, IconCheck, IconCopy, IconDatabase, IconEdit, IconExternalLink,
-  IconFile, IconFolder, IconGlobe, IconLayoutDashboard,
-  IconNetwork, IconPlus, IconServerCog, IconTrash,
+  IconCopy, IconEdit, IconPlus, IconTrash,
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { resourcesApi, resourceKeys } from './api';
 import { ResourceFormModal } from './ResourceFormModal';
-import { RESOURCE_TYPE_LABELS, type Resource, type ResourceType } from './types';
+import { RESOURCE_TYPE_LABELS, type Resource } from './types';
+import { copyLocation, isUrl, openLocation, typeIcon } from './locationUtils';
 import type { ProjectEnvironment } from '../environments/types';
 import { TagPicker } from '../tags/TagPicker';
 
-const typeIcon: Record<ResourceType, React.ReactNode> = {
-  Website:       <IconGlobe size={16} />,
-  UncShare:      <IconNetwork size={16} />,
-  LocalFolder:   <IconFolder size={16} />,
-  LocalFile:     <IconFile size={16} />,
-  GitRepository: <IconBrandGit size={16} />,
-  Documentation: <IconExternalLink size={16} />,
-  Environment:   <IconServerCog size={16} />,
-  Dashboard:     <IconLayoutDashboard size={16} />,
-  Database:      <IconDatabase size={16} />,
-  Other:         <IconExternalLink size={16} />,
-};
-
-function isUrl(location: string): boolean {
-  return /^https?:\/\//i.test(location);
-}
-
-function openLocation(location: string) {
-  if (location.startsWith('\\\\') || location.startsWith('//')) {
-    window.open(`file:${location.replace(/\\/g, '/')}`, '_blank');
-  } else {
-    window.open(location, '_blank', 'noopener,noreferrer');
-  }
-}
-
-function copyLocation(location: string) {
-  navigator.clipboard.writeText(location).then(() => {
-    notifications.show({ message: 'URL copied to clipboard', color: 'green', icon: <IconCheck size={16} /> });
-  }).catch(() => {
-    notifications.show({ message: 'Failed to copy URL', color: 'red' });
-  });
-}
+const TYPE_ICON = typeIcon(16);
 
 function ResourceRow({
   resource,
@@ -78,7 +45,7 @@ function ResourceRow({
       <Tooltip label={`Open ${RESOURCE_TYPE_LABELS[resource.type]}`}>
         <ActionIcon variant="subtle" size="sm" onClick={() => openLocation(resource.location)}
           style={{ color: 'var(--g-accent)', flexShrink: 0 }}>
-          {typeIcon[resource.type]}
+          {TYPE_ICON[resource.type]}
         </ActionIcon>
       </Tooltip>
       <Box style={{ flex: 1, minWidth: 0 }}>
@@ -198,7 +165,6 @@ export function ResourceList({ projectId, environments = [], selectedEnvironment
   const deleteMutation = useMutation({
     mutationFn: resourcesApi.delete,
     onSuccess: invalidate,
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const openEdit = (resource: Resource) => { setEditing(resource); setFormOpen(true); };

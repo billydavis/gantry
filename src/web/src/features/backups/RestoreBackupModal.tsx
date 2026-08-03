@@ -29,7 +29,6 @@ export function RestoreBackupModal({ backup, currentMigrationVersion, onClose }:
       handleClose();
       navigate('/');
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   function handleClose() {

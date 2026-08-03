@@ -66,7 +66,6 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
       notifications.show({ message: 'Note saved', color: 'green' });
       onClose();
     },
-    onError: (err: Error) => notifications.show({ message: err.message, color: 'red' }),
   });
 
   const drawerTitle = isEdit

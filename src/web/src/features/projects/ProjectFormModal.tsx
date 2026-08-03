@@ -72,9 +72,6 @@ export function ProjectFormModal({ opened, onClose, project }: Props) {
       notifications.show({ message: 'Project created', color: 'green' });
       onClose();
     },
-    onError: (err: Error) => {
-      notifications.show({ message: err.message, color: 'red' });
-    },
   });
 
   const updateMutation = useMutation({
@@ -84,9 +81,6 @@ export function ProjectFormModal({ opened, onClose, project }: Props) {
       queryClient.invalidateQueries({ queryKey: projectKeys.all });
       notifications.show({ message: 'Project updated', color: 'green' });
       onClose();
-    },
-    onError: (err: Error) => {
-      notifications.show({ message: err.message, color: 'red' });
     },
   });
 

@@ -316,8 +316,8 @@ export function TodoList({ projectId }: Props) {
                     )}
 
                     {isExpanded && hasDescription && (
-                      <Box style={{ paddingLeft: 34, paddingTop: 8 }}>
-                        <Text size="sm" c="dimmed" style={{ whiteSpace: 'pre-wrap' }}>
+                      <Box style={{ paddingLeft: 34, paddingTop: 8, minWidth: 0 }}>
+                        <Text size="sm" c="dimmed" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
                           {todo.description}
                         </Text>
                       </Box>

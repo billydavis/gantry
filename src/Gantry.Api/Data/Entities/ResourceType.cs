@@ -11,5 +11,6 @@ public enum ResourceType
     Environment,
     Dashboard,
     Database,
+    RemoteDesktop,
     Other
 }

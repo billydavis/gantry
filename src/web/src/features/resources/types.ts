@@ -8,6 +8,7 @@ export type ResourceType =
   | 'Environment'
   | 'Dashboard'
   | 'Database'
+  | 'RemoteDesktop'
   | 'Other';
 
 export const RESOURCE_TYPES: ResourceType[] = [
@@ -20,6 +21,7 @@ export const RESOURCE_TYPES: ResourceType[] = [
   'Environment',
   'Dashboard',
   'Database',
+  'RemoteDesktop',
   'Other',
 ];
 
@@ -33,8 +35,13 @@ export const RESOURCE_TYPE_LABELS: Record<ResourceType, string> = {
   Environment: 'Environment',
   Dashboard: 'Dashboard',
   Database: 'Database',
+  RemoteDesktop: 'Remote Desktop',
   Other: 'Other',
 };
+
+// Types whose location cannot be opened directly (e.g. no URI handler) — clicking
+// "open" copies the location to the clipboard instead.
+export const COPY_ONLY_TYPES: ResourceType[] = ['RemoteDesktop'];
 
 import type { Tag } from '../tags/types';
 

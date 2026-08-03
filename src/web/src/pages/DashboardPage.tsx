@@ -17,7 +17,7 @@ import { TodoList } from '../features/todos/TodoList';
 import { resourcesApi, resourceKeys } from '../features/resources/api';
 import { ResourceFormModal } from '../features/resources/ResourceFormModal';
 import { type Resource, type ResourceType } from '../features/resources/types';
-import { copyLocation, isUrl, openLocation, typeIcon } from '../features/resources/locationUtils';
+import { copyLocation, openLocation, typeIcon } from '../features/resources/locationUtils';
 import { WIDGET_LABELS, useDashboardWidgets } from '../hooks/useDashboardWidgets';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { useRecentProjects } from '../hooks/useRecentProjects';
@@ -479,19 +479,17 @@ function QuickLaunchPill({ resource, onEdit, onDelete }: { resource: Resource; o
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Box onClick={() => openLocation(resource.location)} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flex: 1 }}>
+      <Box onClick={() => openLocation(resource.location, resource.type)} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flex: 1 }}>
         <Box style={{ color: 'var(--g-accent)' }}>{TYPE_ICON[resource.type as ResourceType]}</Box>
         <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>{resource.name}</Text>
       </Box>
       {hovered && (
         <Group gap={2} style={{ marginLeft: 4 }}>
-          {isUrl(resource.location) && (
-            <Tooltip label="Copy URL">
-              <ActionIcon variant="subtle" size="xs" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
-                <IconCopy size={12} />
-              </ActionIcon>
-            </Tooltip>
-          )}
+          <Tooltip label="Copy location">
+            <ActionIcon variant="subtle" size="xs" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
+              <IconCopy size={12} />
+            </ActionIcon>
+          </Tooltip>
           <Tooltip label="Edit">
             <ActionIcon variant="subtle" size="xs" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
               <IconEdit size={12} />

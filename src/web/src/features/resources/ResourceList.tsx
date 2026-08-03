@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { resourcesApi, resourceKeys } from './api';
 import { ResourceFormModal } from './ResourceFormModal';
 import { RESOURCE_TYPE_LABELS, type Resource } from './types';
-import { copyLocation, isUrl, openLocation, typeIcon } from './locationUtils';
+import { copyLocation, isCopyOnly, openLocation, typeIcon } from './locationUtils';
 import type { ProjectEnvironment } from '../environments/types';
 import { TagPicker } from '../tags/TagPicker';
 
@@ -42,15 +42,15 @@ function ResourceRow({
         borderBottom: isLast ? 'none' : '1px solid var(--g-border)',
       }}
     >
-      <Tooltip label={`Open ${RESOURCE_TYPE_LABELS[resource.type]}`}>
-        <ActionIcon variant="subtle" size="sm" onClick={() => openLocation(resource.location)}
+      <Tooltip label={isCopyOnly(resource.type) ? `Copy ${RESOURCE_TYPE_LABELS[resource.type]} location` : `Open ${RESOURCE_TYPE_LABELS[resource.type]}`}>
+        <ActionIcon variant="subtle" size="sm" onClick={() => openLocation(resource.location, resource.type)}
           style={{ color: 'var(--g-accent)', flexShrink: 0 }}>
           {TYPE_ICON[resource.type]}
         </ActionIcon>
       </Tooltip>
       <Box style={{ flex: 1, minWidth: 0 }}>
         <Text size="sm" fw={500} style={{ color: 'var(--g-text)', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-          onClick={() => openLocation(resource.location)}>
+          onClick={() => openLocation(resource.location, resource.type)}>
           {resource.name}
         </Text>
         {resource.description && (
@@ -86,13 +86,11 @@ function ResourceRow({
         </Badge>
       )}
       <Group gap={2} style={{ flexShrink: 0 }}>
-        {isUrl(resource.location) && (
-          <Tooltip label="Copy URL">
-            <ActionIcon variant="subtle" size="sm" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
-              <IconCopy size={14} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+        <Tooltip label="Copy location">
+          <ActionIcon variant="subtle" size="sm" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
+            <IconCopy size={14} />
+          </ActionIcon>
+        </Tooltip>
         <Tooltip label="Edit">
           <ActionIcon variant="subtle" size="sm" onClick={() => onEdit(resource)} style={{ color: 'var(--g-text-muted)' }}>
             <IconEdit size={14} />

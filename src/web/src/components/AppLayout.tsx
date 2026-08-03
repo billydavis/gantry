@@ -186,8 +186,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 background: settingsActive ? 'var(--g-nav-active-bg)' : 'transparent',
               }}
             >
-              <Avatar src={gravatarUrl(appSettings?.email, 40)} radius="xl" size={22}>
-                {appSettings?.displayName ? appSettings.displayName.charAt(0).toUpperCase() : <IconUser size={13} />}
+              <Avatar src={gravatarUrl(appSettings?.email, 52)} radius="xl" size={26}>
+                {appSettings?.displayName ? appSettings.displayName.charAt(0).toUpperCase() : <IconUser size={15} />}
               </Avatar>
               <Text size="sm" style={{ flex: 1 }}>Settings</Text>
               <IconSettings size={15} />

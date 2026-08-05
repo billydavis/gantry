@@ -5,6 +5,7 @@ import { ProjectsPage } from './features/projects/ProjectsPage';
 import { ProjectDetailPage } from './features/projects/ProjectDetailPage';
 import { DailyNotePage } from './features/notes/DailyNotePage';
 import { NoteDetailPage } from './features/notes/NoteDetailPage';
+import { NotesPage } from './features/notes/NotesPage';
 import { WinsPage } from './features/wins/WinsPage';
 import { TimelinePage } from './features/wins/TimelinePage';
 import { ArticlesPage } from './features/articles/ArticlesPage';
@@ -19,7 +20,7 @@ export default function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
-        <Route path="/notes" element={<DailyNotePage />} />
+        <Route path="/notes" element={<NotesPage />} />
         <Route path="/notes/daily/:date" element={<DailyNotePage />} />
         <Route path="/notes/:id" element={<NoteDetailPage />} />
         <Route path="/wins" element={<WinsPage />} />

@@ -3,8 +3,8 @@ import { ActionIcon, Avatar, AppShell, Burger, Group, Menu, NavLink, Stack, Text
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import {
-  IconCheckbox, IconFolder, IconFolderPlus, IconLayoutDashboard, IconNote,
-  IconNotes, IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy, IconUser,
+  IconBook2, IconCheckbox, IconFolder, IconFolderPlus, IconLayoutDashboard, IconNote,
+  IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy, IconUser,
 } from '@tabler/icons-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', icon: <IconLayoutDashboard size={18} />, href: '/' },
   { label: 'Projects',  icon: <IconFolder size={18} />,          href: '/projects' },
   { label: 'Notes',     icon: <IconNote size={18} />,            href: '/notes' },
-  { label: 'Scratch Pad', icon: <IconNotes size={18} />,         href: '/notes/scratchpad' },
+  { label: 'Wiki',      icon: <IconBook2 size={18} />,           href: '/wiki' },
   { label: 'Wins',      icon: <IconTrophy size={18} />,          href: '/wins' },
   { label: 'Timeline',  icon: <IconTimeline size={18} />,        href: '/timeline' },
 ];

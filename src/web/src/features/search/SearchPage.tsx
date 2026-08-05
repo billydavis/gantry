@@ -1,5 +1,5 @@
 import { Box, Group, Loader, Stack, Text, Title } from '@mantine/core';
-import { IconCheck, IconExternalLink, IconFolder, IconNote, IconTrophy } from '@tabler/icons-react';
+import { IconBook2, IconCheck, IconExternalLink, IconFolder, IconNote, IconTrophy } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { tagKeys, tagsApi } from '../tags/api';
@@ -11,6 +11,7 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
   Note:     <IconNote size={15} />,
   Win:      <IconTrophy size={15} />,
   Resource: <IconExternalLink size={15} />,
+  Article:  <IconBook2 size={15} />,
 };
 
 const TYPE_COLOR: Record<string, string> = {
@@ -19,6 +20,7 @@ const TYPE_COLOR: Record<string, string> = {
   Note:     'var(--g-nav-active-text)',
   Win:      'var(--g-accent)',
   Resource: 'var(--g-text-muted)',
+  Article:  'var(--g-accent)',
 };
 
 export function SearchPage() {
@@ -41,6 +43,7 @@ export function SearchPage() {
       case 'Win':      navigate('/wins'); break;
       case 'Todo':     navigate('/'); break;
       case 'Resource': if (r.projectId) navigate(`/projects/${r.projectId}`); break;
+      case 'Article':  navigate(`/wiki/${r.id}`); break;
     }
   };
 
@@ -111,6 +114,6 @@ function groupByType(results: SearchResult[]): { type: string; items: SearchResu
     if (!map.has(r.type)) map.set(r.type, []);
     map.get(r.type)!.push(r);
   }
-  const order = ['Project', 'Todo', 'Note', 'Win', 'Resource'];
+  const order = ['Project', 'Todo', 'Note', 'Win', 'Resource', 'Article'];
   return order.filter(t => map.has(t)).map(type => ({ type, items: map.get(type)! }));
 }

@@ -6,7 +6,6 @@ export const noteKeys = {
   lists: () => [...noteKeys.all, 'list'] as const,
   list: (params: { projectId?: string; limit?: number }) => [...noteKeys.lists(), params] as const,
   daily: (date: string) => [...noteKeys.all, 'daily', date] as const,
-  scratchpad: () => [...noteKeys.all, 'scratchpad'] as const,
   detail: (id: string) => [...noteKeys.all, id] as const,
 };
 
@@ -19,7 +18,6 @@ export const notesApi = {
     return api.get<Note[]>(`/notes${q ? `?${q}` : ''}`);
   },
   getDaily: (date: string) => api.get<Note>(`/notes/daily/${date}`),
-  getScratchPad: () => api.get<Note>('/notes/scratchpad'),
   getById: (id: string) => api.get<Note>(`/notes/${id}`),
   create: (req: CreateNoteRequest) => api.post<Note>('/notes', req),
   update: (id: string, req: UpdateNoteRequest) => api.put<Note>(`/notes/${id}`, req),

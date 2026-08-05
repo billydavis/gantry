@@ -1,11 +1,10 @@
-namespace Gantry.Api.Features.Notes;
+namespace Gantry.Api.Features.Articles;
 
-public static class NoteEndpoints
+public static class ArticleEndpoints
 {
-    public static IEndpointRouteBuilder MapNoteEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapArticleEndpoints(this IEndpointRouteBuilder app)
     {
         List.Endpoint.Map(app);
-        GetOrCreateDaily.Endpoint.Map(app);
         GetById.Endpoint.Map(app);
         Create.Endpoint.Map(app);
         Update.Endpoint.Map(app);

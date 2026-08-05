@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
 import {
-  IconCheck, IconExternalLink, IconFolder, IconLayoutDashboard,
-  IconNote, IconNotes, IconSearch, IconTimeline, IconTrophy,
+  IconBook2, IconCheck, IconExternalLink, IconFolder, IconLayoutDashboard,
+  IconNote, IconSearch, IconTimeline, IconTrophy,
 } from '@tabler/icons-react';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { tagsApi, tagKeys } from '../features/tags/api';
@@ -22,6 +22,7 @@ const RESULT_ICON: Record<SearchResult['type'], React.ReactNode> = {
   Note:     <IconNote size={18} />,
   Win:      <IconTrophy size={18} />,
   Resource: <IconExternalLink size={18} />,
+  Article:  <IconBook2 size={18} />,
 };
 
 export function CommandPalette() {
@@ -48,7 +49,7 @@ export function CommandPalette() {
       { id: 'dashboard',  label: 'Dashboard',  description: 'Go to dashboard',     leftSection: <IconLayoutDashboard size={18} />, onClick: () => navigate('/') },
       { id: 'projects',   label: 'Projects',   description: 'Browse all projects', leftSection: <IconFolder size={18} />,          onClick: () => navigate('/projects') },
       { id: 'notes',      label: 'Notes',      description: 'Open daily notes',    leftSection: <IconNote size={18} />,            onClick: () => navigate('/notes') },
-      { id: 'scratchpad', label: 'Scratch Pad', description: 'Open scratch pad',   leftSection: <IconNotes size={18} />,           onClick: () => navigate('/notes/scratchpad') },
+      { id: 'wiki',       label: 'Wiki',       description: 'Browse the wiki',     leftSection: <IconBook2 size={18} />,           onClick: () => navigate('/wiki') },
       { id: 'wins',       label: 'Wins',       description: 'View all wins',       leftSection: <IconTrophy size={18} />,          onClick: () => navigate('/wins') },
       { id: 'timeline',   label: 'Timeline',   description: 'Browse timeline',     leftSection: <IconTimeline size={18} />,        onClick: () => navigate('/timeline') },
       {
@@ -84,6 +85,7 @@ export function CommandPalette() {
       case 'Win':      navigate('/wins'); break;
       case 'Todo':     navigate('/'); break;
       case 'Resource': if (r.projectId) navigate(`/projects/${r.projectId}`); break;
+      case 'Article':  navigate(`/wiki/${r.id}`); break;
     }
   };
 

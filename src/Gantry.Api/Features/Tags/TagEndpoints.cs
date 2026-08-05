@@ -14,6 +14,7 @@ public static class TagEndpoints
         app.MapPut("/api/notes/{id:guid}/tags", Assign.Endpoint.AssignToNote);
         app.MapPut("/api/resources/{id:guid}/tags", Assign.Endpoint.AssignToResource);
         app.MapPut("/api/wins/{id:guid}/tags", Assign.Endpoint.AssignToWin);
+        app.MapPut("/api/articles/{id:guid}/tags", Assign.Endpoint.AssignToArticle);
 
         return app;
     }

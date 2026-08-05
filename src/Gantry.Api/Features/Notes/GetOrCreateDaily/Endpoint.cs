@@ -15,7 +15,7 @@ public static class Endpoint
             return Results.BadRequest("Date must be in yyyy-MM-dd format.");
 
         var note = await db.Notes
-            .FirstOrDefaultAsync(n => n.Date == parsedDate && !n.IsScratchPad && n.ProjectId == null, ct);
+            .FirstOrDefaultAsync(n => n.Date == parsedDate && n.ProjectId == null, ct);
 
         if (note is null)
         {

@@ -8,7 +8,7 @@ import type { Tag } from './types';
 
 interface Props {
   selectedTags: Tag[];
-  entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins';
+  entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins' | 'articles';
   entityId: string;
   onChanged?: () => void;
 }

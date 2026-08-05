@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProjectEnvironment> Environments => Set<ProjectEnvironment>();
     public DbSet<Note> Notes => Set<Note>();
     public DbSet<Win> Wins => Set<Win>();
+    public DbSet<Article> Articles => Set<Article>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<AppSettings> AppSettings => Set<AppSettings>();
     public DbSet<DailyQuote> DailyQuotes => Set<DailyQuote>();
@@ -90,6 +91,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<Article>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).IsRequired();
+            entity.Property(e => e.Content).HasDefaultValue(string.Empty);
+            entity.Property(e => e.CreatedUtc).HasColumnType("timestamptz");
+            entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+        });
+
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -126,6 +136,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .UsingEntity<Dictionary<string, object>>("WinTags",
                 r => r.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
                 l => l.HasOne<Win>().WithMany().HasForeignKey("WinId").OnDelete(DeleteBehavior.Cascade));
+
+        modelBuilder.Entity<Article>()
+            .HasMany(a => a.Tags).WithMany()
+            .UsingEntity<Dictionary<string, object>>("ArticleTags",
+                r => r.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
+                l => l.HasOne<Article>().WithMany().HasForeignKey("ArticleId").OnDelete(DeleteBehavior.Cascade));
 
         modelBuilder.Entity<Win>(entity =>
         {

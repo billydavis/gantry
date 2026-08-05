@@ -18,7 +18,7 @@ export const tagsApi = {
   delete: (id: string) => api.delete<void>(`/tags/${id}`),
 
   assign: (
-    entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins',
+    entityType: 'projects' | 'todos' | 'notes' | 'resources' | 'wins' | 'articles',
     entityId: string,
     tagIds: string[]
   ) => api.put<void>(`/${entityType}/${entityId}/tags`, { tagIds }),

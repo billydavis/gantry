@@ -7,7 +7,6 @@ export interface Note {
   title: string | null;
   date: string | null;
   content: string;
-  isScratchPad: boolean;
   createdUtc: string;
   updatedUtc: string;
   tags: Tag[];

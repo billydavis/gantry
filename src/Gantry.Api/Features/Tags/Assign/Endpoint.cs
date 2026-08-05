@@ -52,6 +52,15 @@ public static class Endpoint
         return Results.NoContent();
     }
 
+    public static async Task<IResult> AssignToArticle(Guid id, AssignRequest req, AppDbContext db)
+    {
+        var entity = await db.Articles.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
+        if (entity is null) return Results.NotFound();
+        await ApplyTags(entity.Tags, req.TagIds, db);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+
     private static async Task ApplyTags(ICollection<Data.Entities.Tag> current, Guid[] tagIds, AppDbContext db)
     {
         current.Clear();

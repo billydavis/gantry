@@ -2,6 +2,7 @@
 using Gantry.Api.Features.Admin;
 using Gantry.Api.Features.Admin.Backups;
 using Gantry.Api.Features.AppSettings;
+using Gantry.Api.Features.Articles;
 using Gantry.Api.Features.Environments;
 using Gantry.Api.Features.Notes;
 using Gantry.Api.Features.Projects;
@@ -75,6 +76,7 @@ app.MapResourceEndpoints();
 app.MapEnvironmentEndpoints();
 app.MapNoteEndpoints();
 app.MapWinEndpoints();
+app.MapArticleEndpoints();
 app.MapTimelineEndpoints();
 app.MapTagEndpoints();
 app.MapSearchEndpoints();

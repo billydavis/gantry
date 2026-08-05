@@ -60,7 +60,7 @@ public static class SearchEndpoints
         var notes = await db.Notes
             .Include(n => n.Project)
             .Include(n => n.Tags)
-            .Where(n => !n.IsScratchPad &&
+            .Where(n =>
                 (EF.Functions.ILike(n.Title ?? "", pattern) ||
                 EF.Functions.ILike(n.Content, pattern) ||
                 n.Tags.Any(t => EF.Functions.ILike(t.Name, pattern))))
@@ -103,6 +103,20 @@ public static class SearchEndpoints
             "Resource", r.Id, r.Name, r.Type.ToString(),
             r.Location,
             r.Project?.Name, r.ProjectId)));
+
+        var articles = await db.Articles
+            .Include(a => a.Tags)
+            .Where(a => EF.Functions.ILike(a.Title, pattern) ||
+                EF.Functions.ILike(a.Content, pattern) ||
+                EF.Functions.ILike(a.Category ?? "", pattern) ||
+                a.Tags.Any(t => EF.Functions.ILike(t.Name, pattern)))
+            .OrderByDescending(a => a.UpdatedUtc)
+            .Take(10)
+            .ToListAsync(ct);
+        results.AddRange(articles.Select(a => new SearchResult(
+            "Article", a.Id, a.Title, a.Category,
+            Snippet(a.Content, q),
+            null, null)));
 
         return Results.Ok(results);
     }

@@ -4,10 +4,11 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ProjectsPage } from './features/projects/ProjectsPage';
 import { ProjectDetailPage } from './features/projects/ProjectDetailPage';
 import { DailyNotePage } from './features/notes/DailyNotePage';
-import { ScratchPadPage } from './features/notes/ScratchPadPage';
 import { NoteDetailPage } from './features/notes/NoteDetailPage';
 import { WinsPage } from './features/wins/WinsPage';
 import { TimelinePage } from './features/wins/TimelinePage';
+import { ArticlesPage } from './features/articles/ArticlesPage';
+import { ArticleDetailPage } from './features/articles/ArticleDetailPage';
 import { SearchPage } from './features/search/SearchPage';
 import { SettingsPage } from './pages/SettingsPage';
 
@@ -19,11 +20,12 @@ export default function App() {
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/notes" element={<DailyNotePage />} />
-        <Route path="/notes/scratchpad" element={<ScratchPadPage />} />
         <Route path="/notes/daily/:date" element={<DailyNotePage />} />
         <Route path="/notes/:id" element={<NoteDetailPage />} />
         <Route path="/wins" element={<WinsPage />} />
         <Route path="/timeline" element={<TimelinePage />} />
+        <Route path="/wiki" element={<ArticlesPage />} />
+        <Route path="/wiki/:id" element={<ArticleDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>

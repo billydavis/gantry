@@ -5,7 +5,7 @@ export interface Tag {
 }
 
 export interface SearchResult {
-  type: 'Project' | 'Todo' | 'Note' | 'Win' | 'Resource';
+  type: 'Project' | 'Todo' | 'Note' | 'Win' | 'Resource' | 'Article';
   id: string;
   title: string;
   subtitle: string | null;

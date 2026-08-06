@@ -14,14 +14,16 @@ public static class Endpoint
         if (!validation.IsValid)
             return Results.ValidationProblem(validation.ToDictionary());
 
-        var note = await db.Notes.FirstOrDefaultAsync(n => n.Id == id, ct);
+        var note = await db.Notes.Include(n => n.Project).Include(n => n.Tags).FirstOrDefaultAsync(n => n.Id == id, ct);
         if (note is null) return Results.NotFound();
 
+        note.ProjectId = request.ProjectId;
         note.Title = request.Title;
         note.Content = request.Content;
         note.UpdatedUtc = DateTime.UtcNow;
 
         await db.SaveChangesAsync(ct);
+        await db.Entry(note).Reference(n => n.Project).LoadAsync(ct);
         return Results.Ok(NoteResponse.FromEntity(note));
     }
 }

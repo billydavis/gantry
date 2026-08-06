@@ -6,6 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
 import { NoteEditor } from './NoteEditor';
 import { NoteDrawer } from './NoteDrawer';
+import { SaveStatusText } from './SaveStatusText';
+import { useNoteAutosave } from './useNoteAutosave';
 
 function toDateString(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -37,6 +39,8 @@ export function DailyNotePage() {
   const prev = () => navigate(`/notes/daily/${offsetDate(activeDate, -1)}`);
   const next = () => navigate(`/notes/daily/${offsetDate(activeDate, 1)}`);
   const isToday = activeDate === today;
+
+  const { content, setContent, status } = useNoteAutosave(note);
 
   return (
     <Stack gap="md">
@@ -82,7 +86,10 @@ export function DailyNotePage() {
       {isLoading || !note ? (
         <Loader size="sm" />
       ) : (
-        <NoteEditor noteId={note.id} initialContent={note.content} minHeight={580} />
+        <>
+          <NoteEditor value={content} onChange={setContent} minHeight={580} />
+          <SaveStatusText status={status} />
+        </>
       )}
 
       <NoteDrawer opened={drawerOpen} onClose={() => setDrawerOpen(false)} />

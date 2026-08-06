@@ -19,6 +19,7 @@ export interface CreateNoteRequest {
 }
 
 export interface UpdateNoteRequest {
+  projectId?: string | null;
   title?: string | null;
   content: string;
 }

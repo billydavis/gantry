@@ -8,6 +8,9 @@ import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { notesApi, noteKeys } from './api';
 import { NoteEditor } from './NoteEditor';
+import { SaveStatusText } from './SaveStatusText';
+import { useNoteAutosave } from './useNoteAutosave';
+import { noteFieldStyles } from './noteFieldStyles';
 import { projectsApi, projectKeys } from '../projects/api';
 import { useAppTheme } from '../../themes/ThemeProvider';
 import type { Note } from './types';
@@ -51,8 +54,10 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
   const { data: projects = [] } = useQuery({
     queryKey: projectKeys.list(),
     queryFn: projectsApi.list,
-    enabled: opened && !isEdit,
+    enabled: opened,
   });
+
+  const autosave = useNoteAutosave(isEdit ? note : undefined);
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -69,7 +74,7 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
   });
 
   const drawerTitle = isEdit
-    ? (note.title || (note.date ? new Date(note.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) : 'Note'))
+    ? (autosave.title || (note.date ? new Date(note.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) : 'Note'))
     : 'New Note';
 
   return (
@@ -83,17 +88,32 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
       styles={drawerStyles}
     >
       {isEdit ? (
-        <Stack gap="xs" h="100%">
-          {note.projectName && (
-            <Text size="xs" style={{ color: 'var(--g-text-muted)' }}>{note.projectName}</Text>
-          )}
+        <Stack gap="md" h="100%">
+          <TextInput
+            label="Title"
+            placeholder="Optional — leave blank for an untitled note"
+            value={autosave.title}
+            onChange={(e) => autosave.setTitle(e.currentTarget.value)}
+            styles={noteFieldStyles}
+          />
+          <Select
+            label="Project"
+            placeholder="None (general note)"
+            clearable
+            searchable
+            data={projects.map((p) => ({ value: p.id, label: p.name }))}
+            value={autosave.projectId}
+            onChange={autosave.setProjectId}
+            styles={noteFieldStyles}
+          />
           <TagPicker
             selectedTags={note.tags}
             entityType="notes"
             entityId={note.id}
             onChanged={() => queryClient.invalidateQueries({ queryKey: noteKeys.lists() })}
           />
-          <NoteEditor noteId={note.id} initialContent={note.content} minHeight={560} />
+          <NoteEditor value={autosave.content} onChange={autosave.setContent} minHeight={480} />
+          <SaveStatusText status={autosave.status} />
         </Stack>
       ) : (
         <Stack gap="md">
@@ -102,7 +122,7 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
             placeholder="Optional — leave blank for an untitled note"
             value={title}
             onChange={(e) => setTitle(e.currentTarget.value)}
-            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            styles={noteFieldStyles}
           />
           <Select
             label="Project"
@@ -111,7 +131,7 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
             data={projects.map((p) => ({ value: p.id, label: p.name }))}
             value={projectId}
             onChange={setProjectId}
-            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            styles={noteFieldStyles}
           />
           <Stack gap={4}>
             <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>Content</Text>

@@ -7,6 +7,7 @@ import { noteKeys, notesApi } from './api';
 import { NoteDrawer } from './NoteDrawer';
 import type { Note } from './types';
 import { TagBadge } from '../tags/TagBadge';
+import { markdownPreview } from '../../utils/markdownPreview';
 
 function noteLabel(note: Note): string {
   return note.title
@@ -150,6 +151,11 @@ function NoteCard({ note, onOpen, onDelete }: { note: Note; onOpen: () => void; 
             </Group>
             {note.projectName && (
               <Text size="xs" style={{ color: 'var(--g-text-muted)' }}>{note.projectName}</Text>
+            )}
+            {markdownPreview(note.content) && (
+              <Text size="sm" lineClamp={2} style={{ color: 'var(--g-text-muted)' }}>
+                {markdownPreview(note.content)}
+              </Text>
             )}
             {note.tags.length > 0 && (
               <Group gap={4} wrap="wrap" onClick={(e) => e.stopPropagation()}>

@@ -7,6 +7,7 @@ import { articleKeys, articlesApi } from './api';
 import { ArticleFormModal } from './ArticleFormModal';
 import type { Article } from './types';
 import { TagBadge } from '../tags/TagBadge';
+import { markdownPreview } from '../../utils/markdownPreview';
 
 export function ArticlesPage() {
   const navigate = useNavigate();
@@ -96,6 +97,11 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: () => void
           <IconBook2 size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{article.title}</Text>
+            {markdownPreview(article.content) && (
+              <Text size="sm" lineClamp={2} style={{ color: 'var(--g-text-muted)' }}>
+                {markdownPreview(article.content)}
+              </Text>
+            )}
             {article.tags.length > 0 && (
               <Group gap={4} wrap="wrap" onClick={(e) => e.stopPropagation()}>
                 {article.tags.map((tag) => <TagBadge key={tag.id} tag={tag} />)}

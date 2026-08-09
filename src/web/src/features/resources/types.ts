@@ -41,7 +41,7 @@ export const RESOURCE_TYPE_LABELS: Record<ResourceType, string> = {
 
 // Types whose location cannot be opened directly (e.g. no URI handler) — clicking
 // "open" copies the location to the clipboard instead.
-export const COPY_ONLY_TYPES: ResourceType[] = ['RemoteDesktop'];
+export const COPY_ONLY_TYPES: ResourceType[] = ['RemoteDesktop', 'Database'];
 
 import type { Tag } from '../tags/types';
 

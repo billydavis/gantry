@@ -14,6 +14,10 @@
   </p>
 </div>
 
+<p align="center">
+  <img src="gantry-promo.webp" alt="Gantry dashboard screenshot" width="800" />
+</p>
+
 ---
 
 ## What it is

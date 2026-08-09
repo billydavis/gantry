@@ -39,7 +39,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: process.env.API_URL ?? 'http://localhost:5000',
+        target: process.env.API_URL ?? 'http://localhost:5279',
         changeOrigin: true,
       },
     },

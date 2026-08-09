@@ -104,6 +104,12 @@ You can also use Download / Upload to move your data to a new machine: download 
 
 **Backend** (`src/Gantry.Api`):
 
+The dev connection string isn't checked in — it's stored via [user-secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets) so no credentials ever land in the repo. Set it once per machine:
+
+```sh
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=gantry;Username=gantry;Password=<your .env POSTGRES_PASSWORD>"
+```
+
 ```sh
 dotnet run                            # API on :5000
 dotnet ef migrations add <Name>       # new migration

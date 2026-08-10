@@ -21,6 +21,8 @@ import { useRecentProjects } from '../hooks/useRecentProjects';
 import { sampleDataApi } from '../features/sampleData/api';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 import { quoteKeys, quotesApi } from '../features/quotes/api';
+import { MarkdownViewerModal } from '../components/MarkdownViewerModal';
+import type { Note } from '../features/notes/types';
 
 const TYPE_ICON = typeIcon(18);
 
@@ -33,6 +35,7 @@ export function DashboardPage() {
   const [resourceFormOpen, setResourceFormOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<Resource | undefined>();
   const [noteDrawerOpen, setNoteDrawerOpen] = useState(false);
+  const [viewNoteTarget, setViewNoteTarget] = useState<Note | null>(null);
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [editingWin, setEditingWin] = useState<import('../features/wins/types').Win | undefined>();
   const [configOpen, setConfigOpen] = useState(false);
@@ -336,7 +339,7 @@ export function DashboardPage() {
                         ? new Date(note.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
                         : 'Untitled');
                       return (
-                        <Box key={note.id} onClick={() => navigate(`/notes/${note.id}`)}
+                        <Box key={note.id} onClick={() => setViewNoteTarget(note)}
                           style={{
                             display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                             borderBottom: i < recentNotes.length - 1 ? '1px solid var(--g-border)' : 'none',
@@ -453,6 +456,16 @@ export function DashboardPage() {
       <NoteDrawer
         opened={noteDrawerOpen}
         onClose={() => { setNoteDrawerOpen(false); queryClient.invalidateQueries({ queryKey: noteKeys.lists() }); }}
+      />
+      <MarkdownViewerModal
+        opened={!!viewNoteTarget}
+        onClose={() => setViewNoteTarget(null)}
+        title={viewNoteTarget
+          ? (viewNoteTarget.title ?? (viewNoteTarget.date
+              ? new Date(viewNoteTarget.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
+              : 'Untitled note'))
+          : ''}
+        content={viewNoteTarget?.content ?? ''}
       />
       <WinFormModal
         opened={winModalOpen}

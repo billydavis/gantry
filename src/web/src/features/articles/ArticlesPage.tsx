@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Badge, Box, Button, Group, Loader, Stack, Text, Title } from '@mantine/core';
-import { BookOpen, Plus } from 'lucide-react';
+import { ActionIcon, Badge, Box, Button, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { BookOpen, Pencil, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { articleKeys, articlesApi } from './api';
@@ -8,10 +8,12 @@ import { ArticleFormModal } from './ArticleFormModal';
 import type { Article } from './types';
 import { TagBadge } from '../tags/TagBadge';
 import { markdownPreview } from '../../utils/markdownPreview';
+import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 
 export function ArticlesPage() {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewTarget, setViewTarget] = useState<Article | null>(null);
 
   const { data: articles = [], isLoading } = useQuery({
     queryKey: articleKeys.lists(),
@@ -67,7 +69,12 @@ export function ArticlesPage() {
             </Group>
             <Stack gap="sm">
               {categoryArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} onOpen={() => navigate(`/wiki/${article.id}`)} />
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  onEdit={() => navigate(`/wiki/${article.id}`)}
+                  onView={() => setViewTarget(article)}
+                />
               ))}
             </Stack>
           </Stack>
@@ -79,14 +86,21 @@ export function ArticlesPage() {
         onClose={() => setModalOpen(false)}
         onCreated={(created) => navigate(`/wiki/${created.id}`)}
       />
+
+      <MarkdownViewerModal
+        opened={!!viewTarget}
+        onClose={() => setViewTarget(null)}
+        title={viewTarget?.title ?? ''}
+        content={viewTarget?.content ?? ''}
+      />
     </>
   );
 }
 
-function ArticleCard({ article, onOpen }: { article: Article; onOpen: () => void }) {
+function ArticleCard({ article, onEdit, onView }: { article: Article; onEdit: () => void; onView: () => void }) {
   return (
     <Box
-      onClick={onOpen}
+      onClick={onView}
       style={{
         background: 'var(--g-surface)', border: '1px solid var(--g-border)',
         borderRadius: 6, padding: '10px 14px', cursor: 'pointer',
@@ -109,6 +123,11 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: () => void
             )}
           </Stack>
         </Group>
+        <Tooltip label="Edit">
+          <ActionIcon variant="subtle" onClick={(e) => { e.stopPropagation(); onEdit(); }} style={{ color: 'var(--g-text-muted)' }}>
+            <Pencil size={16} />
+          </ActionIcon>
+        </Tooltip>
       </Group>
     </Box>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Button, Group, Loader, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { CalendarDays, Plus, StickyNote, Trash2 } from 'lucide-react';
+import { CalendarDays, Pencil, Plus, StickyNote, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
@@ -8,6 +8,7 @@ import { NoteDrawer } from './NoteDrawer';
 import type { Note } from './types';
 import { TagBadge } from '../tags/TagBadge';
 import { markdownPreview } from '../../utils/markdownPreview';
+import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 
 function noteLabel(note: Note): string {
   return note.title
@@ -21,6 +22,7 @@ export function NotesPage() {
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
+  const [viewTarget, setViewTarget] = useState<Note | null>(null);
 
   const { data: notes = [], isLoading } = useQuery({
     queryKey: noteKeys.lists(),
@@ -87,14 +89,22 @@ export function NotesPage() {
             <NoteCard
               key={note.id}
               note={note}
-              onOpen={() => navigate(`/notes/${note.id}`)}
+              onEdit={() => navigate(`/notes/${note.id}`)}
               onDelete={() => setDeleteTarget(note)}
+              onView={() => setViewTarget(note)}
             />
           ))}
         </Stack>
       </Stack>
 
       <NoteDrawer opened={createOpen} onClose={() => setCreateOpen(false)} />
+
+      <MarkdownViewerModal
+        opened={!!viewTarget}
+        onClose={() => setViewTarget(null)}
+        title={viewTarget ? noteLabel(viewTarget) : ''}
+        content={viewTarget?.content ?? ''}
+      />
 
       <Modal
         opened={!!deleteTarget}
@@ -125,10 +135,10 @@ export function NotesPage() {
   );
 }
 
-function NoteCard({ note, onOpen, onDelete }: { note: Note; onOpen: () => void; onDelete: () => void }) {
+function NoteCard({ note, onEdit, onDelete, onView }: { note: Note; onEdit: () => void; onDelete: () => void; onView: () => void }) {
   return (
     <Box
-      onClick={onOpen}
+      onClick={onView}
       style={{
         background: 'var(--g-surface)', border: '1px solid var(--g-border)',
         borderRadius: 6, padding: '10px 14px', cursor: 'pointer',
@@ -164,11 +174,18 @@ function NoteCard({ note, onOpen, onDelete }: { note: Note; onOpen: () => void; 
             )}
           </Stack>
         </Group>
-        <Tooltip label="Delete">
-          <ActionIcon variant="subtle" color="red" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
-            <Trash2 size={16} />
-          </ActionIcon>
-        </Tooltip>
+        <Group gap={4}>
+          <Tooltip label="Edit">
+            <ActionIcon variant="subtle" onClick={(e) => { e.stopPropagation(); onEdit(); }} style={{ color: 'var(--g-text-muted)' }}>
+              <Pencil size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Delete">
+            <ActionIcon variant="subtle" color="red" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
+              <Trash2 size={16} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
       </Group>
     </Box>
   );

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ActionIcon, Box, Button, Group, Loader, Modal, Stack, Text, Tooltip } from '@mantine/core';
-import { StickyNote, Trash2 } from 'lucide-react';
+import { Pencil, StickyNote, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { noteKeys, notesApi } from './api';
 import type { Note } from './types';
+import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 
 interface Props {
   projectId: string;
@@ -20,6 +21,7 @@ function noteLabel(note: Note): string {
 export function ProjectNotesList({ projectId, onEdit }: Props) {
   const queryClient = useQueryClient();
   const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
+  const [viewTarget, setViewTarget] = useState<Note | null>(null);
 
   const { data: notes = [], isLoading } = useQuery({
     queryKey: noteKeys.list({ projectId }),
@@ -45,7 +47,7 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
         {notes.map((note, i) => (
           <Box
             key={note.id}
-            onClick={() => onEdit(note)}
+            onClick={() => setViewTarget(note)}
             style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
               borderBottom: i < notes.length - 1 ? '1px solid var(--g-border)' : 'none',
@@ -63,6 +65,12 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
                 Updated {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
               </Text>
             </Box>
+            <Tooltip label="Edit">
+              <ActionIcon variant="subtle" size="sm"
+                onClick={(e) => { e.stopPropagation(); onEdit(note); }} style={{ color: 'var(--g-text-muted)' }}>
+                <Pencil size={13} />
+              </ActionIcon>
+            </Tooltip>
             <Tooltip label="Delete">
               <ActionIcon variant="subtle" size="sm" color="red"
                 onClick={(e) => { e.stopPropagation(); setDeleteTarget(note); }}>
@@ -72,6 +80,13 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
           </Box>
         ))}
       </Box>
+
+      <MarkdownViewerModal
+        opened={!!viewTarget}
+        onClose={() => setViewTarget(null)}
+        title={viewTarget ? noteLabel(viewTarget) : ''}
+        content={viewTarget?.content ?? ''}
+      />
 
       <Modal
         opened={!!deleteTarget}

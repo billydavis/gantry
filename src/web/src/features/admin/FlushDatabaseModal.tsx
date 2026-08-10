@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert, Button, Group, Modal, Stack, Text, TextInput } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
+import { TriangleAlert } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
@@ -47,7 +47,7 @@ export function FlushDatabaseModal({ opened, onClose }: Props) {
       }}
     >
       <Stack gap="md" pt="sm">
-        <Alert color="red" icon={<IconAlertTriangle size={18} />}>
+        <Alert color="red" icon={<TriangleAlert size={18} />}>
           This permanently deletes all projects, todos, resources, notes, wins, and tags. This cannot be undone.
         </Alert>
 

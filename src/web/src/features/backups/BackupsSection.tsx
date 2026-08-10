@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Button, Group, Modal, Stack, Table, Text, Tooltip } from '@mantine/core';
-import { IconAlertTriangle, IconDownload, IconHistory, IconTrash, IconUpload } from '@tabler/icons-react';
+import { ArchiveRestore, Download, Trash2, TriangleAlert, Upload } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { backupsApi } from './api';
@@ -68,7 +68,7 @@ export function BackupsSection() {
           <Button
             variant="outline"
             size="sm"
-            leftSection={<IconUpload size={16} />}
+            leftSection={<Upload size={16} />}
             onClick={() => setUploadOpen(true)}
             style={{ borderColor: 'var(--g-border)', color: 'var(--g-text)' }}
           >
@@ -76,7 +76,7 @@ export function BackupsSection() {
           </Button>
           <Button
             size="sm"
-            leftSection={<IconHistory size={16} />}
+            leftSection={<ArchiveRestore size={16} />}
             loading={createMutation.isPending}
             onClick={() => createMutation.mutate()}
             style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
@@ -121,7 +121,7 @@ export function BackupsSection() {
                     <Table.Td>
                       {backup.migrationVersion ? (
                         <Tooltip label={versionMismatch ? 'Differs from the app\'s current migration version' : 'Matches current version'} disabled={!versionMismatch}>
-                          <Badge color={versionMismatch ? 'yellow' : 'gray'} variant="light" size="sm" leftSection={versionMismatch ? <IconAlertTriangle size={12} /> : undefined}>
+                          <Badge color={versionMismatch ? 'yellow' : 'gray'} variant="light" size="sm" leftSection={versionMismatch ? <TriangleAlert size={12} /> : undefined}>
                             {backup.migrationVersion.length > 18 ? `${backup.migrationVersion.slice(0, 18)}…` : backup.migrationVersion}
                           </Badge>
                         </Tooltip>
@@ -133,17 +133,17 @@ export function BackupsSection() {
                       <Group gap={4} justify="flex-end" wrap="nowrap">
                         <Tooltip label="Download">
                           <ActionIcon variant="subtle" color="gray" onClick={() => backupsApi.download(backup.id, backup.fileName)}>
-                            <IconDownload size={16} />
+                            <Download size={16} />
                           </ActionIcon>
                         </Tooltip>
                         <Tooltip label="Restore this backup">
                           <ActionIcon variant="subtle" color="red" onClick={() => setRestoreTarget(backup)}>
-                            <IconHistory size={16} />
+                            <ArchiveRestore size={16} />
                           </ActionIcon>
                         </Tooltip>
                         <Tooltip label="Delete">
                           <ActionIcon variant="subtle" color="gray" onClick={() => setDeleteTarget(backup)}>
-                            <IconTrash size={16} />
+                            <Trash2 size={16} />
                           </ActionIcon>
                         </Tooltip>
                       </Group>

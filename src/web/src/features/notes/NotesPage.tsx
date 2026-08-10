@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Button, Group, Loader, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { IconCalendarEvent, IconNote, IconPlus, IconTrash } from '@tabler/icons-react';
+import { CalendarDays, Plus, StickyNote, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
@@ -48,14 +48,14 @@ export function NotesPage() {
           <Group gap="xs">
             <Button
               variant="default"
-              leftSection={<IconCalendarEvent size={16} />}
+              leftSection={<CalendarDays size={16} />}
               onClick={goToToday}
               style={{ background: 'var(--g-surface)', color: 'var(--g-text)', border: '1px solid var(--g-border)' }}
             >
               Today's Daily Note
             </Button>
             <Button
-              leftSection={<IconPlus size={16} />}
+              leftSection={<Plus size={16} />}
               onClick={() => setCreateOpen(true)}
               style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
             >
@@ -71,7 +71,7 @@ export function NotesPage() {
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
-            <IconNote size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
+            <StickyNote size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No notes yet</Text>
             <Text size="sm" c="dimmed" mb="md">
               Jot down a quick thought, or start today's daily note.
@@ -136,7 +136,7 @@ function NoteCard({ note, onOpen, onDelete }: { note: Note; onOpen: () => void; 
     >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <IconNote size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <StickyNote size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Group gap={6} align="center">
               <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{noteLabel(note)}</Text>
@@ -166,7 +166,7 @@ function NoteCard({ note, onOpen, onDelete }: { note: Note; onOpen: () => void; 
         </Group>
         <Tooltip label="Delete">
           <ActionIcon variant="subtle" color="red" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
-            <IconTrash size={16} />
+            <Trash2 size={16} />
           </ActionIcon>
         </Tooltip>
       </Group>

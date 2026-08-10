@@ -8,10 +8,7 @@ import { noteKeys, notesApi } from '../features/notes/api';
 import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
-import {
-  IconCopy, IconEdit, IconFolder, IconLink,
-  IconNote, IconPlus, IconSettings, IconSparkles, IconTrash, IconTrophy,
-} from '@tabler/icons-react';
+import { Copy, Folder, Link, Pencil, Plus, Settings, Sparkles, StickyNote, Trash2, Trophy } from 'lucide-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
 import { resourcesApi, resourceKeys } from '../features/resources/api';
@@ -108,7 +105,7 @@ export function DashboardPage() {
     <>
       {isWorkspaceEmpty && (
         <Alert
-          icon={<IconSparkles size={18} />}
+          icon={<Sparkles size={18} />}
           color="blue"
           mb="lg"
           styles={{ root: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' } }}
@@ -157,7 +154,7 @@ export function DashboardPage() {
             <Popover.Target>
               <Tooltip label="Configure widgets" disabled={configOpen} withinPortal>
                 <ActionIcon variant="subtle" size="sm" onClick={() => setConfigOpen(v => !v)} style={{ color: 'var(--g-text-muted)' }}>
-                  <IconSettings size={16} />
+                  <Settings size={16} />
                 </ActionIcon>
               </Tooltip>
             </Popover.Target>
@@ -204,7 +201,7 @@ export function DashboardPage() {
                 </Text>
                 <Tooltip label="Add global resource">
                   <ActionIcon variant="subtle" size="sm" onClick={() => { setEditingResource(undefined); setResourceFormOpen(true); }} style={{ color: 'var(--g-text-muted)' }}>
-                    <IconPlus size={14} />
+                    <Plus size={14} />
                   </ActionIcon>
                 </Tooltip>
               </Group>
@@ -220,7 +217,7 @@ export function DashboardPage() {
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--g-accent)')}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--g-border)')}
                 >
-                  <IconLink size={18} style={{ color: 'var(--g-text-muted)' }} />
+                  <Link size={18} style={{ color: 'var(--g-text-muted)' }} />
                   <Box>
                     <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>Add your first quick launch link</Text>
                     <Text size="xs" c="dimmed">Pin frequently used tools, dashboards, and portals here.</Text>
@@ -247,7 +244,7 @@ export function DashboardPage() {
                       onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--g-accent)')}
                       onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--g-border)')}
                     >
-                      <IconPlus size={14} style={{ color: 'var(--g-text-muted)' }} />
+                      <Plus size={14} style={{ color: 'var(--g-text-muted)' }} />
                       <Text size="sm" c="dimmed">Add</Text>
                     </Box>
                   </Tooltip>
@@ -273,7 +270,7 @@ export function DashboardPage() {
                 </Group>
                 <Tooltip label="All projects">
                   <ActionIcon variant="subtle" size="sm" onClick={() => navigate('/projects')} style={{ color: 'var(--g-text-muted)' }}>
-                    <IconFolder size={14} />
+                    <Folder size={14} />
                   </ActionIcon>
                 </Tooltip>
               </Group>
@@ -297,7 +294,7 @@ export function DashboardPage() {
                   >
                     {project.color
                       ? <ColorSwatch color={project.color} size={12} style={{ flexShrink: 0 }} />
-                      : <IconFolder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                      : <Folder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
                     }
                     <Text size="sm" fw={500} style={{ color: 'var(--g-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {project.name}
@@ -329,7 +326,7 @@ export function DashboardPage() {
                     </Text>
                     <Tooltip label="New note">
                       <ActionIcon variant="subtle" size="sm" onClick={() => setNoteDrawerOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
-                        <IconPlus size={14} />
+                        <Plus size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </Group>
@@ -348,7 +345,7 @@ export function DashboardPage() {
                           onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                         >
-                          <IconNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+                          <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
                           <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
                           {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
                           <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
@@ -369,7 +366,7 @@ export function DashboardPage() {
                     </Text>
                     <Tooltip label="Log win">
                       <ActionIcon variant="subtle" size="sm" onClick={() => setWinModalOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
-                        <IconPlus size={14} />
+                        <Plus size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </Group>
@@ -385,7 +382,7 @@ export function DashboardPage() {
                         onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
                         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
-                        <IconTrophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+                        <Trophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
                         <Box style={{ flex: 1, minWidth: 0 }}>
                           <Text size="sm" fw={500} style={{ color: 'var(--g-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {win.title}
@@ -426,7 +423,7 @@ export function DashboardPage() {
                   >
                     {project.color
                       ? <ColorSwatch color={project.color} size={12} style={{ flexShrink: 0 }} />
-                      : <IconFolder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                      : <Folder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
                     }
                     <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{project.name}</Text>
                   </Box>
@@ -487,17 +484,17 @@ function QuickLaunchPill({ resource, onEdit, onDelete }: { resource: Resource; o
         <Group gap={2} style={{ marginLeft: 4 }}>
           <Tooltip label="Copy location">
             <ActionIcon variant="subtle" size="xs" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
-              <IconCopy size={12} />
+              <Copy size={12} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Edit">
             <ActionIcon variant="subtle" size="xs" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
-              <IconEdit size={12} />
+              <Pencil size={12} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Delete">
             <ActionIcon variant="subtle" size="xs" color="red" onClick={onDelete}>
-              <IconTrash size={12} />
+              <Trash2 size={12} />
             </ActionIcon>
           </Tooltip>
         </Group>

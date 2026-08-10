@@ -1,17 +1,17 @@
 import { Box, Group, Loader, Stack, Text, Title } from '@mantine/core';
-import { IconBook2, IconCheck, IconExternalLink, IconFolder, IconNote, IconTrophy } from '@tabler/icons-react';
+import { BookOpen, Check, ExternalLink, Folder, StickyNote, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { tagKeys, tagsApi } from '../tags/api';
 import type { SearchResult } from '../tags/types';
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
-  Project:  <IconFolder size={15} />,
-  Todo:     <IconCheck size={15} />,
-  Note:     <IconNote size={15} />,
-  Win:      <IconTrophy size={15} />,
-  Resource: <IconExternalLink size={15} />,
-  Article:  <IconBook2 size={15} />,
+  Project:  <Folder size={15} />,
+  Todo:     <Check size={15} />,
+  Note:     <StickyNote size={15} />,
+  Win:      <Trophy size={15} />,
+  Resource: <ExternalLink size={15} />,
+  Article:  <BookOpen size={15} />,
 };
 
 const TYPE_COLOR: Record<string, string> = {

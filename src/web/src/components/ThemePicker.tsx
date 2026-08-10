@@ -1,5 +1,5 @@
 import { Box, Group, SegmentedControl, SimpleGrid, Stack, Text, UnstyledButton } from '@mantine/core';
-import { IconMoon, IconSun } from '@tabler/icons-react';
+import { Moon, Sun } from 'lucide-react';
 import { useAppTheme, THEMES } from '../themes';
 import type { ThemeId, ColorScheme } from '../themes/theme-defs';
 
@@ -27,7 +27,7 @@ export function ThemePicker() {
               value: 'dark',
               label: (
                 <Group gap={6} justify="center" wrap="nowrap">
-                  <IconMoon size={16} />
+                  <Moon size={16} />
                   <span>Dark</span>
                 </Group>
               ),
@@ -36,7 +36,7 @@ export function ThemePicker() {
               value: 'light',
               label: (
                 <Group gap={6} justify="center" wrap="nowrap">
-                  <IconSun size={16} />
+                  <Sun size={16} />
                   <span>Light</span>
                 </Group>
               ),

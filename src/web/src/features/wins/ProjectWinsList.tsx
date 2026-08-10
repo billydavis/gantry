@@ -1,5 +1,5 @@
 import { ActionIcon, Box, Loader, Text, Tooltip } from '@mantine/core';
-import { IconTrophy, IconTrash } from '@tabler/icons-react';
+import { Trash2, Trophy } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { winKeys, winsApi } from './api';
 import type { Win } from './types';
@@ -39,7 +39,7 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
           onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
-          <IconTrophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <Trophy size={15} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Box style={{ flex: 1, minWidth: 0 }}>
             <Text size="sm" fw={500} style={{ color: 'var(--g-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {win.title}
@@ -56,7 +56,7 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
           <Tooltip label="Delete">
             <ActionIcon variant="subtle" size="sm" color="red"
               onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(win.id); }}>
-              <IconTrash size={13} />
+              <Trash2 size={13} />
             </ActionIcon>
           </Tooltip>
         </Box>

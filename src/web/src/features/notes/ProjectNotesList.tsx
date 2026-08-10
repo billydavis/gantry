@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Box, Button, Group, Loader, Modal, Stack, Text, Tooltip } from '@mantine/core';
-import { IconNote, IconTrash } from '@tabler/icons-react';
+import { StickyNote, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { noteKeys, notesApi } from './api';
 import type { Note } from './types';
@@ -54,7 +54,7 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <IconNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+            <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
             <Box style={{ flex: 1, minWidth: 0 }}>
               <Text size="sm" fw={500} style={{ color: 'var(--g-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {noteLabel(note)}
@@ -66,7 +66,7 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
             <Tooltip label="Delete">
               <ActionIcon variant="subtle" size="sm" color="red"
                 onClick={(e) => { e.stopPropagation(); setDeleteTarget(note); }}>
-                <IconTrash size={13} />
+                <Trash2 size={13} />
               </ActionIcon>
             </Tooltip>
           </Box>

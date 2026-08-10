@@ -13,7 +13,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconArchive, IconDots, IconEdit, IconFolder, IconFolderPlus, IconPlayerPause, IconRefresh } from '@tabler/icons-react';
+import { Archive, Ellipsis, Folder, FolderPlus, Pause, Pencil, RefreshCw } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -125,7 +125,7 @@ export function ProjectsPage() {
           {project.color ? (
             <ColorSwatch color={project.color} size={isChild ? 10 : 14} style={{ flexShrink: 0 }} />
           ) : (
-            <IconFolder size={isChild ? 12 : 14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+            <Folder size={isChild ? 12 : 14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
           )}
           <Text
             fw={isChild ? 400 : 500}
@@ -152,7 +152,7 @@ export function ProjectsPage() {
               <Menu.Target>
                 <Tooltip label="Actions">
                   <ActionIcon variant="subtle" size="sm" style={{ color: 'var(--g-text-muted)' }}>
-                    <IconDots size={16} />
+                    <Ellipsis size={16} />
                   </ActionIcon>
                 </Tooltip>
               </Menu.Target>
@@ -162,7 +162,7 @@ export function ProjectsPage() {
                 }}
               >
                 <Menu.Item
-                  leftSection={<IconEdit size={14} />}
+                  leftSection={<Pencil size={14} />}
                   onClick={() => openEdit(project)}
                   styles={{ item: { color: 'var(--g-text)' } }}
                 >
@@ -170,7 +170,7 @@ export function ProjectsPage() {
                 </Menu.Item>
                 {project.status === 'Active' && (
                   <Menu.Item
-                    leftSection={<IconPlayerPause size={14} />}
+                    leftSection={<Pause size={14} />}
                     onClick={() => holdMutation.mutate(project.id)}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
@@ -179,7 +179,7 @@ export function ProjectsPage() {
                 )}
                 {project.status === 'OnHold' && (
                   <Menu.Item
-                    leftSection={<IconRefresh size={14} />}
+                    leftSection={<RefreshCw size={14} />}
                     onClick={() => reactivateMutation.mutate(project.id)}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
@@ -188,7 +188,7 @@ export function ProjectsPage() {
                 )}
                 {project.status !== 'Archived' ? (
                   <Menu.Item
-                    leftSection={<IconArchive size={14} />}
+                    leftSection={<Archive size={14} />}
                     onClick={() => archiveMutation.mutate(project.id)}
                     styles={{ item: { color: 'var(--g-text-muted)' } }}
                   >
@@ -196,7 +196,7 @@ export function ProjectsPage() {
                   </Menu.Item>
                 ) : (
                   <Menu.Item
-                    leftSection={<IconRefresh size={14} />}
+                    leftSection={<RefreshCw size={14} />}
                     onClick={() => reactivateMutation.mutate(project.id)}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
@@ -237,7 +237,7 @@ export function ProjectsPage() {
             Projects
           </Title>
           <Button
-            leftSection={<IconFolderPlus size={16} />}
+            leftSection={<FolderPlus size={16} />}
             onClick={openCreate}
             style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
           >

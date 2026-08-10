@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Group, Stack, Tabs, Text, TextInput, Title } from 
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { IconAlertTriangle, IconDatabase, IconPalette, IconUser } from '@tabler/icons-react';
+import { Database, Palette, TriangleAlert, User } from 'lucide-react';
 import { FlushDatabaseModal } from '../features/admin/FlushDatabaseModal';
 import { BackupsSection } from '../features/backups/BackupsSection';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
@@ -51,7 +51,7 @@ function ProfileSection() {
       <Stack gap="md" mt="sm">
         <Group gap="md" align="center">
           <Avatar src={gravatarUrl(email, 80)} radius="xl" size={56} style={{ border: '1px solid var(--g-border)' }}>
-            {displayName ? displayName.charAt(0).toUpperCase() : <IconUser size={24} />}
+            {displayName ? displayName.charAt(0).toUpperCase() : <User size={24} />}
           </Avatar>
           <Text size="xs" c="dimmed" maw={260}>
             Avatar pulled from{' '}
@@ -135,7 +135,7 @@ function DataSection() {
       >
         <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
           <Group gap="sm" align="flex-start" wrap="nowrap">
-            <IconAlertTriangle size={18} style={{ color: 'var(--g-danger)', marginTop: 2, flexShrink: 0 }} />
+            <TriangleAlert size={18} style={{ color: 'var(--g-danger)', marginTop: 2, flexShrink: 0 }} />
             <Box>
               <Text fw={500} style={{ color: 'var(--g-text)' }}>Flush Database</Text>
               <Text size="sm" c="dimmed">
@@ -171,9 +171,9 @@ export function SettingsPage() {
         })}
       >
         <Tabs.List miw={isDesktop ? 160 : undefined} mr={isDesktop ? 'xl' : 0} mb={isDesktop ? 0 : 'lg'}>
-          <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>Profile</Tabs.Tab>
-          <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>Appearance</Tabs.Tab>
-          <Tabs.Tab value="data" leftSection={<IconDatabase size={16} />}>Data</Tabs.Tab>
+          <Tabs.Tab value="profile" leftSection={<User size={16} />}>Profile</Tabs.Tab>
+          <Tabs.Tab value="appearance" leftSection={<Palette size={16} />}>Appearance</Tabs.Tab>
+          <Tabs.Tab value="data" leftSection={<Database size={16} />}>Data</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="profile">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert, Button, Group, Modal, Stack, Text, TextInput } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
+import { TriangleAlert } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
@@ -58,7 +58,7 @@ export function RestoreBackupModal({ backup, currentMigrationVersion, onClose }:
           </Text>
 
           {versionMismatch && (
-            <Alert color="yellow" icon={<IconAlertTriangle size={18} />}>
+            <Alert color="yellow" icon={<TriangleAlert size={18} />}>
               This backup was taken at migration version{' '}
               <Text span fw={700}>{backup.migrationVersion ?? 'unknown'}</Text>; the app is currently at{' '}
               <Text span fw={700}>{currentMigrationVersion ?? 'unknown'}</Text>. After restoring, pending
@@ -67,7 +67,7 @@ export function RestoreBackupModal({ backup, currentMigrationVersion, onClose }:
             </Alert>
           )}
 
-          <Alert color="red" icon={<IconAlertTriangle size={18} />}>
+          <Alert color="red" icon={<TriangleAlert size={18} />}>
             This replaces all current data with the contents of this backup and cannot be undone. The app will
             be briefly unavailable while the restore runs.
           </Alert>

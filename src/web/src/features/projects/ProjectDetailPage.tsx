@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconEdit, IconFolder, IconFolderOpen, IconPlus, IconTrash } from '@tabler/icons-react';
+import { Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
 import { TodoList } from '../todos/TodoList';
 import { ResourceList } from '../resources/ResourceList';
 import { ProjectNotesList } from '../notes/ProjectNotesList';
@@ -97,7 +97,7 @@ export function ProjectDetailPage() {
   if (!project) {
     return (
       <Stack align="center" py="xl">
-        <IconFolder size={48} style={{ color: 'var(--g-text-muted)' }} />
+        <Folder size={48} style={{ color: 'var(--g-text-muted)' }} />
         <Text c="dimmed">Project not found.</Text>
         <Button component={Link} to="/projects" variant="subtle">
           Back to Projects
@@ -146,7 +146,7 @@ export function ProjectDetailPage() {
             </Badge>
           </Group>
           <Button
-            leftSection={<IconEdit size={16} />}
+            leftSection={<Pencil size={16} />}
             variant="subtle"
             onClick={() => setEditOpen(true)}
             style={{ color: 'var(--g-text-muted)' }}
@@ -183,7 +183,7 @@ export function ProjectDetailPage() {
             <Tooltip label="Add environment">
               <ActionIcon variant="subtle" size="sm" onClick={() => { setEditingEnv(undefined); setEnvFormOpen(true); }}
                 style={{ color: 'var(--g-text-muted)' }}>
-                <IconPlus size={14} />
+                <Plus size={14} />
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -242,7 +242,7 @@ export function ProjectDetailPage() {
                     <ActionIcon variant="subtle" size="sm"
                       onClick={() => { setActiveNote(undefined); setNoteDrawerOpen(true); }}
                       style={{ color: 'var(--g-text-muted)' }}>
-                      <IconPlus size={14} />
+                      <Plus size={14} />
                     </ActionIcon>
                   </Tooltip>
                 </Group>
@@ -261,7 +261,7 @@ export function ProjectDetailPage() {
                     <ActionIcon variant="subtle" size="sm"
                       onClick={() => { setEditingWin(undefined); setWinModalOpen(true); }}
                       style={{ color: 'var(--g-text-muted)' }}>
-                      <IconPlus size={14} />
+                      <Plus size={14} />
                     </ActionIcon>
                   </Tooltip>
                 </Group>
@@ -327,7 +327,7 @@ export function ProjectDetailPage() {
                       {child.color ? (
                         <ColorSwatch color={child.color} size={10} style={{ flexShrink: 0 }} />
                       ) : (
-                        <IconFolderOpen size={12} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                        <FolderOpen size={12} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
                       )}
                       <Text
                         size="sm"
@@ -420,12 +420,12 @@ function EnvChip({ label, baseUrl, active, onClick, onEdit, onDelete }: {
         <Group gap={2} onClick={(e) => e.stopPropagation()}>
           <Tooltip label="Edit">
             <ActionIcon variant="subtle" size="xs" style={{ color: 'var(--g-text-muted)' }} onClick={onEdit}>
-              <IconEdit size={12} />
+              <Pencil size={12} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Delete">
             <ActionIcon variant="subtle" size="xs" color="red" onClick={onDelete}>
-              <IconTrash size={12} />
+              <Trash2 size={12} />
             </ActionIcon>
           </Tooltip>
         </Group>

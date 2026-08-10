@@ -2,9 +2,7 @@ import { useState } from 'react';
 import {
   ActionIcon, Badge, Box, Group, Loader, Stack, Text, Tooltip,
 } from '@mantine/core';
-import {
-  IconCopy, IconEdit, IconPlus, IconTrash,
-} from '@tabler/icons-react';
+import { Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { resourcesApi, resourceKeys } from './api';
 import { ResourceFormModal } from './ResourceFormModal';
@@ -88,17 +86,17 @@ function ResourceRow({
       <Group gap={2} style={{ flexShrink: 0 }}>
         <Tooltip label="Copy location">
           <ActionIcon variant="subtle" size="sm" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
-            <IconCopy size={14} />
+            <Copy size={14} />
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Edit">
           <ActionIcon variant="subtle" size="sm" onClick={() => onEdit(resource)} style={{ color: 'var(--g-text-muted)' }}>
-            <IconEdit size={14} />
+            <Pencil size={14} />
           </ActionIcon>
         </Tooltip>
         <Tooltip label="Delete">
           <ActionIcon variant="subtle" size="sm" color="red" onClick={() => onDelete(resource.id)}>
-            <IconTrash size={14} />
+            <Trash2 size={14} />
           </ActionIcon>
         </Tooltip>
       </Group>
@@ -213,7 +211,7 @@ export function ResourceList({ projectId, environments = [], selectedEnvironment
         <Group justify="flex-end">
           <Tooltip label="Add resource">
             <ActionIcon variant="subtle" onClick={openCreate} style={{ color: 'var(--g-text-muted)' }}>
-              <IconPlus size={16} />
+              <Plus size={16} />
             </ActionIcon>
           </Tooltip>
         </Group>

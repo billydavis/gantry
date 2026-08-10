@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Anchor, Box, Breadcrumbs, Button, Group, Loader, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { IconEdit, IconExternalLink, IconTrash } from '@tabler/icons-react';
+import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { articleKeys, articlesApi } from './api';
@@ -49,7 +49,7 @@ export function ArticleDetailPage() {
               {article.category && <Text size="sm" style={{ color: 'var(--g-text-muted)' }}>{article.category}</Text>}
               {article.sourceUrl && (
                 <Anchor href={article.sourceUrl} target="_blank" rel="noreferrer" size="sm" style={{ color: 'var(--g-accent)' }}>
-                  <Group gap={4}><IconExternalLink size={12} />Source</Group>
+                  <Group gap={4}><ExternalLink size={12} />Source</Group>
                 </Anchor>
               )}
             </Group>
@@ -57,12 +57,12 @@ export function ArticleDetailPage() {
           <Group gap={4}>
             <Tooltip label="Edit details">
               <ActionIcon variant="subtle" onClick={() => setEditOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
-                <IconEdit size={16} />
+                <Pencil size={16} />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Delete">
               <ActionIcon variant="subtle" color="red" onClick={() => setDeleteOpen(true)}>
-                <IconTrash size={16} />
+                <Trash2 size={16} />
               </ActionIcon>
             </Tooltip>
           </Group>

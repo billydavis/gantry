@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActionIcon, Box, Group, Popover, Text, TextInput, Tooltip } from '@mantine/core';
-import { IconPlus, IconTag } from '@tabler/icons-react';
+import { Plus, Tag as TagIcon } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { tagKeys, tagsApi } from './api';
 import { TagBadge } from './TagBadge';
@@ -89,7 +89,7 @@ export function TagPicker({ selectedTags, entityType, entityId, onChanged }: Pro
                 style={{ color: 'var(--g-text-muted)' }}
                 onClick={() => setPopoverOpen(v => !v)}
               >
-                <IconTag size={12} />
+                <TagIcon size={12} />
               </ActionIcon>
             </Tooltip>
           </Popover.Target>
@@ -152,7 +152,7 @@ export function TagPicker({ selectedTags, entityType, entityId, onChanged }: Pro
                     onClick={() => createMutation.mutate()}
                     style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
                   >
-                    <IconPlus size={12} />
+                    <Plus size={12} />
                   </ActionIcon>
                 </Group>
               </Box>
@@ -161,7 +161,7 @@ export function TagPicker({ selectedTags, entityType, entityId, onChanged }: Pro
                 onClick={() => setCreateOpen(true)}
                 style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, paddingTop: unassigned.length > 0 ? 8 : 0 }}
               >
-                <IconPlus size={12} style={{ color: 'var(--g-text-muted)' }} />
+                <Plus size={12} style={{ color: 'var(--g-text-muted)' }} />
                 <Text size="xs" c="dimmed">Create new tag</Text>
               </Box>
             )}

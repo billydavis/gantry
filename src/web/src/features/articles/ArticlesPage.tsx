@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Badge, Box, Button, Group, Loader, Stack, Text, Title } from '@mantine/core';
-import { IconBook2, IconPlus } from '@tabler/icons-react';
+import { BookOpen, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { articleKeys, articlesApi } from './api';
@@ -26,7 +26,7 @@ export function ArticlesPage() {
         <Group justify="space-between" align="center">
           <Title order={2} style={{ color: 'var(--g-heading)' }}>Wiki</Title>
           <Button
-            leftSection={<IconPlus size={16} />}
+            leftSection={<Plus size={16} />}
             onClick={() => setModalOpen(true)}
             style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
           >
@@ -41,7 +41,7 @@ export function ArticlesPage() {
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
-            <IconBook2 size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
+            <BookOpen size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No articles yet</Text>
             <Text size="sm" c="dimmed" mb="md">
               Capture gotchas, how-tos, and reference notes you'll want later.
@@ -94,7 +94,7 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: () => void
     >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <IconBook2 size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <BookOpen size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{article.title}</Text>
             {markdownPreview(article.content) && (

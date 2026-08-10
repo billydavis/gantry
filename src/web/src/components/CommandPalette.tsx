@@ -2,10 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
-import {
-  IconBook2, IconCheck, IconExternalLink, IconFolder, IconLayoutDashboard,
-  IconNote, IconSearch, IconTimeline, IconTrophy,
-} from '@tabler/icons-react';
+import { BookOpen, ChartNoAxesGantt, Check, ExternalLink, Folder, LayoutDashboard, Search, StickyNote, Trophy } from 'lucide-react';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { tagsApi, tagKeys } from '../features/tags/api';
 import type { SearchResult } from '../features/tags/types';
@@ -17,12 +14,12 @@ import '@mantine/spotlight/styles.css';
 export { spotlight };
 
 const RESULT_ICON: Record<SearchResult['type'], React.ReactNode> = {
-  Project:  <IconFolder size={18} />,
-  Todo:     <IconCheck size={18} />,
-  Note:     <IconNote size={18} />,
-  Win:      <IconTrophy size={18} />,
-  Resource: <IconExternalLink size={18} />,
-  Article:  <IconBook2 size={18} />,
+  Project:  <Folder size={18} />,
+  Todo:     <Check size={18} />,
+  Note:     <StickyNote size={18} />,
+  Win:      <Trophy size={18} />,
+  Resource: <ExternalLink size={18} />,
+  Article:  <BookOpen size={18} />,
 };
 
 export function CommandPalette() {
@@ -46,20 +43,20 @@ export function CommandPalette() {
 
   const staticActions = useMemo(() => {
     const nav = [
-      { id: 'dashboard',  label: 'Dashboard',  description: 'Go to dashboard',     leftSection: <IconLayoutDashboard size={18} />, onClick: () => navigate('/') },
-      { id: 'projects',   label: 'Projects',   description: 'Browse all projects', leftSection: <IconFolder size={18} />,          onClick: () => navigate('/projects') },
-      { id: 'notes',      label: 'Notes',      description: 'Open daily notes',    leftSection: <IconNote size={18} />,            onClick: () => navigate('/notes') },
-      { id: 'wiki',       label: 'Wiki',       description: 'Browse the wiki',     leftSection: <IconBook2 size={18} />,           onClick: () => navigate('/wiki') },
-      { id: 'wins',       label: 'Wins',       description: 'View all wins',       leftSection: <IconTrophy size={18} />,          onClick: () => navigate('/wins') },
-      { id: 'timeline',   label: 'Timeline',   description: 'Browse timeline',     leftSection: <IconTimeline size={18} />,        onClick: () => navigate('/timeline') },
+      { id: 'dashboard',  label: 'Dashboard',  description: 'Go to dashboard',     leftSection: <LayoutDashboard size={18} />, onClick: () => navigate('/') },
+      { id: 'projects',   label: 'Projects',   description: 'Browse all projects', leftSection: <Folder size={18} />,          onClick: () => navigate('/projects') },
+      { id: 'notes',      label: 'Notes',      description: 'Open daily notes',    leftSection: <StickyNote size={18} />,            onClick: () => navigate('/notes') },
+      { id: 'wiki',       label: 'Wiki',       description: 'Browse the wiki',     leftSection: <BookOpen size={18} />,           onClick: () => navigate('/wiki') },
+      { id: 'wins',       label: 'Wins',       description: 'View all wins',       leftSection: <Trophy size={18} />,          onClick: () => navigate('/wins') },
+      { id: 'timeline',   label: 'Timeline',   description: 'Browse timeline',     leftSection: <ChartNoAxesGantt size={18} />,        onClick: () => navigate('/timeline') },
       {
         id: 'new-note', label: 'New Note', description: 'Create a new note',
-        leftSection: <IconNote size={18} />,
+        leftSection: <StickyNote size={18} />,
         onClick: () => { spotlight.close(); setNoteOpen(true); },
       },
       {
         id: 'new-win', label: 'Log Win', description: 'Record an accomplishment',
-        leftSection: <IconTrophy size={18} />,
+        leftSection: <Trophy size={18} />,
         onClick: () => { spotlight.close(); setWinOpen(true); },
       },
     ];
@@ -70,7 +67,7 @@ export function CommandPalette() {
         id: `project-${p.id}`,
         label: p.name,
         description: 'Project',
-        leftSection: <IconFolder size={18} style={{ color: p.color ?? undefined }} />,
+        leftSection: <Folder size={18} style={{ color: p.color ?? undefined }} />,
         onClick: () => navigate(`/projects/${p.id}`),
       }));
 
@@ -104,7 +101,7 @@ export function CommandPalette() {
           id: 'search-all',
           label: `See all results for "${trimmed}"`,
           description: 'Open full search page',
-          leftSection: <IconSearch size={18} />,
+          leftSection: <Search size={18} />,
           onClick: () => navigate(`/search?q=${encodeURIComponent(trimmed)}`),
         },
       ]

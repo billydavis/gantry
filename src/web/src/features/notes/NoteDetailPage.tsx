@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Breadcrumbs, Button, Group, Loader, Modal, Select, Stack, Text, TextInput, Tooltip } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
@@ -88,7 +88,7 @@ export function NoteDetailPage() {
             <SaveStatusText status={status} />
             <Tooltip label="Delete">
               <ActionIcon variant="subtle" color="red" onClick={() => setDeleteOpen(true)}>
-                <IconTrash size={16} />
+                <Trash2 size={16} />
               </ActionIcon>
             </Tooltip>
           </Group>

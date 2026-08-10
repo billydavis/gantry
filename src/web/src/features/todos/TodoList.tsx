@@ -3,10 +3,7 @@ import {
   ActionIcon, Badge, Box, Group, Loader,
   SegmentedControl, Stack, Text, TextInput, Tooltip,
 } from '@mantine/core';
-import {
-  IconChevronDown, IconChevronRight, IconCircle, IconCircleCheck, IconCircleDashed, IconCircleX,
-  IconClock, IconEdit, IconExternalLink, IconPin, IconPinFilled, IconPlus, IconTrash,
-} from '@tabler/icons-react';
+import { ChevronDown, ChevronRight, Circle, CircleCheck, CircleDashed, CircleX, Clock, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { todosApi, todoKeys } from './api';
@@ -19,11 +16,11 @@ interface Props {
 }
 
 const statusIcon: Record<TodoStatus, React.ReactNode> = {
-  Todo:       <IconCircle size={18} />,
-  InProgress: <IconCircleDashed size={18} />,
-  Waiting:    <IconClock size={18} />,
-  Blocked:    <IconCircleX size={18} />,
-  Complete:   <IconCircleCheck size={18} />,
+  Todo:       <Circle size={18} />,
+  InProgress: <CircleDashed size={18} />,
+  Waiting:    <Clock size={18} />,
+  Blocked:    <CircleX size={18} />,
+  Complete:   <CircleCheck size={18} />,
 };
 
 const statusColor: Record<TodoStatus, string> = {
@@ -144,7 +141,7 @@ export function TodoList({ projectId }: Props) {
               onClick={openCreate}
               style={{ color: 'var(--g-text-muted)' }}
             >
-              <IconPlus size={16} />
+              <Plus size={16} />
             </ActionIcon>
           </Tooltip>
         </Group>
@@ -233,7 +230,7 @@ export function TodoList({ projectId }: Props) {
                             onClick={() => pinMutation.mutate(todo.id)}
                             style={{ color: todo.isPinned ? 'var(--g-accent)' : 'var(--g-text-muted)' }}
                           >
-                            {todo.isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
+                            {todo.isPinned ? <Pin size={14} fill="currentColor" /> : <Pin size={14} />}
                           </ActionIcon>
                         </Tooltip>
                         <Tooltip label="Edit">
@@ -243,7 +240,7 @@ export function TodoList({ projectId }: Props) {
                             onClick={() => openEdit(todo)}
                             style={{ color: 'var(--g-text-muted)' }}
                           >
-                            <IconEdit size={14} />
+                            <Pencil size={14} />
                           </ActionIcon>
                         </Tooltip>
                         <Tooltip label="Delete">
@@ -253,7 +250,7 @@ export function TodoList({ projectId }: Props) {
                             color="red"
                             onClick={() => deleteMutation.mutate(todo.id)}
                           >
-                            <IconTrash size={14} />
+                            <Trash2 size={14} />
                           </ActionIcon>
                         </Tooltip>
                       </Group>
@@ -290,7 +287,7 @@ export function TodoList({ projectId }: Props) {
                               onClick={() => window.open(todo.link!, '_blank', 'noopener,noreferrer')}
                               style={{ color: 'var(--g-text-muted)' }}
                             >
-                              <IconExternalLink size={13} />
+                              <ExternalLink size={13} />
                             </ActionIcon>
                           </Tooltip>
                         )}
@@ -308,7 +305,7 @@ export function TodoList({ projectId }: Props) {
                               onClick={() => setExpandedId(isExpanded ? null : todo.id)}
                               style={{ color: 'var(--g-text-muted)' }}
                             >
-                              {isExpanded ? <IconChevronDown size={13} /> : <IconChevronRight size={13} />}
+                              {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                             </ActionIcon>
                           </Tooltip>
                         )}

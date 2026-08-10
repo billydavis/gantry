@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { ActionIcon, Avatar, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import {
-  IconBook2, IconCheckbox, IconFolder, IconFolderPlus, IconLayoutDashboard, IconNote,
-  IconPlus, IconSearch, IconSettings, IconTimeline, IconTrophy, IconUser,
-} from '@tabler/icons-react';
+import { BookOpen, ChartNoAxesGantt, Folder, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, StickyNote, Trophy, User } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
 import { NoteDrawer } from '../features/notes/NoteDrawer';
@@ -22,12 +19,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: <IconLayoutDashboard size={18} />, href: '/' },
-  { label: 'Projects',  icon: <IconFolder size={18} />,          href: '/projects' },
-  { label: 'Notes',     icon: <IconNote size={18} />,            href: '/notes' },
-  { label: 'Wiki',      icon: <IconBook2 size={18} />,           href: '/wiki' },
-  { label: 'Wins',      icon: <IconTrophy size={18} />,          href: '/wins' },
-  { label: 'Timeline',  icon: <IconTimeline size={18} />,        href: '/timeline' },
+  { label: 'Dashboard', icon: <LayoutDashboard size={18} />, href: '/' },
+  { label: 'Projects',  icon: <Folder size={18} />,          href: '/projects' },
+  { label: 'Notes',     icon: <StickyNote size={18} />,            href: '/notes' },
+  { label: 'Wiki',      icon: <BookOpen size={18} />,           href: '/wiki' },
+  { label: 'Wins',      icon: <Trophy size={18} />,          href: '/wins' },
+  { label: 'Timeline',  icon: <ChartNoAxesGantt size={18} />,        href: '/timeline' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -86,7 +83,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 placeholder="Search… (or ⌘K)"
                 size="xs"
                 style={{ flex: 1 }}
-                leftSection={<IconSearch size={13} />}
+                leftSection={<Search size={13} />}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.currentTarget.value)}
                 onKeyDown={(e) => {
@@ -108,7 +105,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       size="md"
                       style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)', flexShrink: 0 }}
                     >
-                      <IconPlus size={15} />
+                      <Plus size={15} />
                     </ActionIcon>
                   </Tooltip>
                 </Menu.Target>
@@ -116,28 +113,28 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)' }}
                 >
                   <Menu.Item
-                    leftSection={<IconFolderPlus size={15} />}
+                    leftSection={<FolderPlus size={15} />}
                     onClick={() => { setProjectOpen(true); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
                     New Project
                   </Menu.Item>
                   <Menu.Item
-                    leftSection={<IconCheckbox size={15} />}
+                    leftSection={<SquareCheck size={15} />}
                     onClick={() => { setTodoOpen(true); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
                     New Todo
                   </Menu.Item>
                   <Menu.Item
-                    leftSection={<IconNote size={15} />}
+                    leftSection={<StickyNote size={15} />}
                     onClick={() => { setNoteOpen(true); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
                     New Note
                   </Menu.Item>
                   <Menu.Item
-                    leftSection={<IconTrophy size={15} />}
+                    leftSection={<Trophy size={15} />}
                     onClick={() => { setWinOpen(true); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
@@ -187,10 +184,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               }}
             >
               <Avatar src={gravatarUrl(appSettings?.email, 52)} radius="xl" size={26}>
-                {appSettings?.displayName ? appSettings.displayName.charAt(0).toUpperCase() : <IconUser size={15} />}
+                {appSettings?.displayName ? appSettings.displayName.charAt(0).toUpperCase() : <User size={15} />}
               </Avatar>
               <Text size="sm" style={{ flex: 1 }}>Settings</Text>
-              <IconSettings size={15} />
+              <Settings size={15} />
             </UnstyledButton>
           </Stack>
         </AppShell.Navbar>

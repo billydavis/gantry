@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { IconCheck, IconChevronLeft, IconChevronRight, IconTrophy } from '@tabler/icons-react';
+import { Check, ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { winKeys, winsApi } from './api';
@@ -41,7 +41,7 @@ export function TimelinePage() {
         <Group gap="xs" align="center">
           <Tooltip label="Previous month">
             <ActionIcon variant="subtle" onClick={prevMonth} style={{ color: 'var(--g-text-muted)' }}>
-              <IconChevronLeft size={18} />
+              <ChevronLeft size={18} />
             </ActionIcon>
           </Tooltip>
           <Text fw={600} style={{ color: 'var(--g-text)', minWidth: 160, textAlign: 'center' }}>
@@ -49,7 +49,7 @@ export function TimelinePage() {
           </Text>
           <Tooltip label="Next month">
             <ActionIcon variant="subtle" onClick={nextMonth} disabled={isCurrentMonth} style={{ color: 'var(--g-text-muted)' }}>
-              <IconChevronRight size={18} />
+              <ChevronRight size={18} />
             </ActionIcon>
           </Tooltip>
         </Group>
@@ -119,8 +119,8 @@ function TimelineRow({ item, onNavigate }: { item: TimelineItem; onNavigate: () 
     >
       <Box style={{ paddingTop: 2 }}>
         {isWin
-          ? <IconTrophy size={16} style={{ color: 'var(--g-accent)' }} />
-          : <IconCheck size={16} style={{ color: 'var(--g-success)' }} />
+          ? <Trophy size={16} style={{ color: 'var(--g-accent)' }} />
+          : <Check size={16} style={{ color: 'var(--g-success)' }} />
         }
       </Box>
       <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>

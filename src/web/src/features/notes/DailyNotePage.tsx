@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Box, Button, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
@@ -51,7 +51,7 @@ export function DailyNotePage() {
         </Box>
         <Group gap="xs">
           <Button
-            leftSection={<IconPlus size={14} />}
+            leftSection={<Plus size={14} />}
             variant="subtle"
             size="sm"
             onClick={() => setDrawerOpen(true)}
@@ -61,7 +61,7 @@ export function DailyNotePage() {
           </Button>
           <Tooltip label="Previous day">
             <ActionIcon variant="subtle" onClick={prev} style={{ color: 'var(--g-text-muted)' }}>
-              <IconChevronLeft size={18} />
+              <ChevronLeft size={18} />
             </ActionIcon>
           </Tooltip>
           {!isToday && (
@@ -77,7 +77,7 @@ export function DailyNotePage() {
           )}
           <Tooltip label="Next day">
             <ActionIcon variant="subtle" onClick={next} style={{ color: 'var(--g-text-muted)' }}>
-              <IconChevronRight size={18} />
+              <ChevronRight size={18} />
             </ActionIcon>
           </Tooltip>
         </Group>

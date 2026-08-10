@@ -1,24 +1,20 @@
 import { notifications } from '@mantine/notifications';
-import {
-  IconBrandGit, IconCheck, IconDatabase, IconDeviceDesktop, IconExternalLink,
-  IconFile, IconFolder, IconGlobe, IconLayoutDashboard,
-  IconNetwork, IconServerCog,
-} from '@tabler/icons-react';
+import { Check, Database, ExternalLink, File, Folder, GitBranch, Globe, LayoutDashboard, Monitor, Network, ServerCog } from 'lucide-react';
 import { COPY_ONLY_TYPES, type ResourceType } from './types';
 
 export function typeIcon(size: number): Record<ResourceType, React.ReactNode> {
   return {
-    Website:       <IconGlobe size={size} />,
-    UncShare:      <IconNetwork size={size} />,
-    LocalFolder:   <IconFolder size={size} />,
-    LocalFile:     <IconFile size={size} />,
-    GitRepository: <IconBrandGit size={size} />,
-    Documentation: <IconExternalLink size={size} />,
-    Environment:   <IconServerCog size={size} />,
-    Dashboard:     <IconLayoutDashboard size={size} />,
-    Database:      <IconDatabase size={size} />,
-    RemoteDesktop: <IconDeviceDesktop size={size} />,
-    Other:         <IconExternalLink size={size} />,
+    Website:       <Globe size={size} />,
+    UncShare:      <Network size={size} />,
+    LocalFolder:   <Folder size={size} />,
+    LocalFile:     <File size={size} />,
+    GitRepository: <GitBranch size={size} />,
+    Documentation: <ExternalLink size={size} />,
+    Environment:   <ServerCog size={size} />,
+    Dashboard:     <LayoutDashboard size={size} />,
+    Database:      <Database size={size} />,
+    RemoteDesktop: <Monitor size={size} />,
+    Other:         <ExternalLink size={size} />,
   };
 }
 
@@ -42,7 +38,7 @@ export function openLocation(location: string, type: ResourceType) {
 
 export function copyLocation(location: string) {
   navigator.clipboard.writeText(location).then(() => {
-    notifications.show({ message: 'Location copied to clipboard', color: 'green', icon: <IconCheck size={16} /> });
+    notifications.show({ message: 'Location copied to clipboard', color: 'green', icon: <Check size={16} /> });
   }).catch(() => {
     notifications.show({ message: 'Failed to copy location', color: 'red' });
   });

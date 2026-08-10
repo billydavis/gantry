@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, FileInput, Group, Modal, Stack, TextInput } from '@mantine/core';
-import { IconFileUpload } from '@tabler/icons-react';
+import { FileUp } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { backupsApi } from './api';
@@ -50,7 +50,7 @@ export function UploadBackupModal({ opened, onClose }: Props) {
           accept=".dump"
           value={file}
           onChange={setFile}
-          leftSection={<IconFileUpload size={16} />}
+          leftSection={<FileUp size={16} />}
           styles={{
             input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' },
           }}

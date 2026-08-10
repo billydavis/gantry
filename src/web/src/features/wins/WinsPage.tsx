@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   ActionIcon, Badge, Box, Button, Group, Loader, Stack, Text, Title, Tooltip,
 } from '@mantine/core';
-import { IconEdit, IconPlus, IconTrophy, IconTrash } from '@tabler/icons-react';
+import { Pencil, Plus, Trash2, Trophy } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { winKeys, winsApi } from './api';
 import { WinFormModal } from './WinFormModal';
@@ -35,7 +35,7 @@ export function WinsPage() {
         <Group justify="space-between" align="center">
           <Title order={2} style={{ color: 'var(--g-heading)' }}>Wins</Title>
           <Button
-            leftSection={<IconPlus size={16} />}
+            leftSection={<Plus size={16} />}
             onClick={openCreate}
             style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
           >
@@ -50,7 +50,7 @@ export function WinsPage() {
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
-            <IconTrophy size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
+            <Trophy size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No wins logged yet</Text>
             <Text size="sm" c="dimmed" mb="md">
               Start capturing your accomplishments — they add up fast.
@@ -110,7 +110,7 @@ function WinCard({ win, onEdit, onDelete }: { win: Win; onEdit: () => void; onDe
     }}>
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <IconTrophy size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <Trophy size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{win.title}</Text>
             {win.impact && (
@@ -141,12 +141,12 @@ function WinCard({ win, onEdit, onDelete }: { win: Win; onEdit: () => void; onDe
         <Group gap={4} style={{ flexShrink: 0 }}>
           <Tooltip label="Edit">
             <ActionIcon variant="subtle" size="sm" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
-              <IconEdit size={14} />
+              <Pencil size={14} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Delete">
             <ActionIcon variant="subtle" size="sm" color="red" onClick={onDelete}>
-              <IconTrash size={14} />
+              <Trash2 size={14} />
             </ActionIcon>
           </Tooltip>
         </Group>

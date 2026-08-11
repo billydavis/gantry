@@ -10,6 +10,8 @@ export const projectsApi = {
   archive: (id: string) => api.post<Project>(`/projects/${id}/archive`, {}),
   reactivate: (id: string) => api.post<Project>(`/projects/${id}/reactivate`, {}),
   hold: (id: string) => api.post<Project>(`/projects/${id}/hold`, {}),
+  deleteForever: (id: string, confirmation: string) =>
+    api.post<void>(`/projects/${id}/delete`, { confirmation }),
 };
 
 export const projectKeys = {

@@ -13,12 +13,13 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { Archive, Ellipsis, Folder, FolderPlus, Pause, Pencil, RefreshCw } from 'lucide-react';
+import { Archive, Ellipsis, Folder, FolderPlus, Pause, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { projectsApi, projectKeys } from './api';
 import { ProjectFormModal } from './ProjectFormModal';
+import { DeleteProjectModal } from './DeleteProjectModal';
 import type { Project, ProjectStatus } from './types';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree, type ProjectTreeEntry } from './projectTree';
@@ -43,6 +44,7 @@ export function ProjectsPage() {
   };
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
+  const [deleteModalProject, setDeleteModalProject] = useState<Project | undefined>();
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: projectKeys.list(),
@@ -195,13 +197,22 @@ export function ProjectsPage() {
                     Archive
                   </Menu.Item>
                 ) : (
-                  <Menu.Item
-                    leftSection={<RefreshCw size={14} />}
-                    onClick={() => reactivateMutation.mutate(project.id)}
-                    styles={{ item: { color: 'var(--g-text)' } }}
-                  >
-                    Reactivate
-                  </Menu.Item>
+                  <>
+                    <Menu.Item
+                      leftSection={<RefreshCw size={14} />}
+                      onClick={() => reactivateMutation.mutate(project.id)}
+                      styles={{ item: { color: 'var(--g-text)' } }}
+                    >
+                      Reactivate
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<Trash2 size={14} />}
+                      onClick={() => setDeleteModalProject(project)}
+                      styles={{ item: { color: 'var(--g-danger)' } }}
+                    >
+                      Delete Forever
+                    </Menu.Item>
+                  </>
                 )}
               </Menu.Dropdown>
             </Menu>
@@ -320,6 +331,12 @@ export function ProjectsPage() {
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
         project={editingProject}
+      />
+
+      <DeleteProjectModal
+        opened={!!deleteModalProject}
+        onClose={() => setDeleteModalProject(undefined)}
+        project={deleteModalProject}
       />
     </>
   );

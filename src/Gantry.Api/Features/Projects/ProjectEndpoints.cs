@@ -11,6 +11,7 @@ public static class ProjectEndpoints
         Archive.Endpoint.Map(app);
         Reactivate.Endpoint.Map(app);
         Hold.Endpoint.Map(app);
+        Delete.Endpoint.Map(app);
         return app;
     }
 }

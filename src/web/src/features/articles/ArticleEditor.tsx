@@ -5,6 +5,8 @@ import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { articlesApi } from './api';
 import { useAppTheme } from '../../themes/ThemeProvider';
+import { MermaidCodeBlock } from '../../components/MermaidCodeBlock';
+import { CodeBlockPre } from '../../components/CodeBlockPre';
 import type { Article } from './types';
 
 interface Props {
@@ -54,6 +56,7 @@ export function ArticleEditor({ article, minHeight = 500 }: Props) {
         onChange={handleChange}
         height={minHeight}
         style={{ background: 'var(--g-surface)' }}
+        previewOptions={{ components: { code: MermaidCodeBlock, pre: CodeBlockPre } }}
       />
       <Text size="xs" c={saveStatus === 'error' ? 'red' : 'dimmed'} mt={4} h={16}>
         {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : saveStatus === 'error' ? 'Failed to save' : ''}

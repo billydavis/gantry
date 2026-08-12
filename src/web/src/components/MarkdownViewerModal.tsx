@@ -2,6 +2,8 @@ import { Modal } from '@mantine/core';
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { useAppTheme } from '../themes/ThemeProvider';
+import { MermaidCodeBlock } from './MermaidCodeBlock';
+import { CodeBlockPre } from './CodeBlockPre';
 
 interface Props {
   opened: boolean;
@@ -36,7 +38,10 @@ export function MarkdownViewerModal({ opened, onClose, title, content }: Props) 
           padding: '20px 24px',
         }}
       >
-        <MDEditor.Markdown source={content || '*Nothing here yet.*'} />
+        <MDEditor.Markdown
+          source={content || '*Nothing here yet.*'}
+          components={{ code: MermaidCodeBlock, pre: CodeBlockPre }}
+        />
       </div>
     </Modal>
   );

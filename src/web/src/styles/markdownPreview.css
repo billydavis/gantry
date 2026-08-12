@@ -89,6 +89,54 @@
   --color-neutral-muted: rgba(175, 184, 193, 0.2) !important;
 }
 
+/*
+ * rehype-prism-plus line-highlight/line-number support: use fence meta like
+ *   ```ts {2,4-6} showLineNumbers
+ * to highlight lines 2 and 4-6, and/or add per-line gutter numbers.
+ * These classes are emitted by the plugin itself; no extra config needed
+ * beyond styling the hooks it leaves behind.
+ */
+.code-line {
+  display: block;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: -12px;
+  margin-right: -12px;
+  border-left: 3px solid transparent;
+}
+
+.code-line.highlight-line {
+  background-color: color-mix(in srgb, var(--g-accent) 15%, transparent);
+  border-left-color: var(--g-accent);
+}
+
+.code-line.inserted {
+  background-color: color-mix(in srgb, var(--g-success) 18%, transparent);
+}
+
+.code-line.deleted {
+  background-color: color-mix(in srgb, var(--g-danger) 18%, transparent);
+}
+
+.code-line.line-number::before {
+  display: inline-block;
+  width: 1.5rem;
+  margin-left: -12px;
+  margin-right: 12px;
+  text-align: right;
+  color: var(--g-text-muted);
+  content: attr(line);
+}
+
+/*
+ * Copy-to-clipboard button (CodeBlockPre.tsx) needs the fenced code block's
+ * <pre> to have room at the top-right; nudge code down slightly so the
+ * button doesn't overlap the first line of code.
+ */
+.wmde-markdown pre {
+  padding-top: 32px !important;
+}
+
 [data-color-mode='dark'] .wmde-markdown {
   --color-prettylights-syntax-comment: #8b949e !important;
   --color-prettylights-syntax-constant: #79c0ff !important;

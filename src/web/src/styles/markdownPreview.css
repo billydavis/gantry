@@ -95,8 +95,16 @@
  * to highlight lines 2 and 4-6, and/or add per-line gutter numbers.
  * These classes are emitted by the plugin itself; no extra config needed
  * beyond styling the hooks it leaves behind.
+ *
+ * Scoped to .wmde-markdown (the rendered preview) only. MDEditor also runs
+ * rehype-prism-plus on the *edit* pane's syntax-highlighting overlay
+ * (.w-md-editor-text-pre), which emits the same .code-line spans. An
+ * unscoped rule here would add this padding/margin/border to those overlay
+ * lines too, shifting the highlighted text sideways relative to the plain,
+ * invisible textarea underneath — visually throwing the native caret off by
+ * a few pixels (looks like it's sitting mid-character instead of after it).
  */
-.code-line {
+.wmde-markdown .code-line {
   display: block;
   padding-left: 12px;
   padding-right: 12px;
@@ -105,20 +113,20 @@
   border-left: 3px solid transparent;
 }
 
-.code-line.highlight-line {
+.wmde-markdown .code-line.highlight-line {
   background-color: color-mix(in srgb, var(--g-accent) 15%, transparent);
   border-left-color: var(--g-accent);
 }
 
-.code-line.inserted {
+.wmde-markdown .code-line.inserted {
   background-color: color-mix(in srgb, var(--g-success) 18%, transparent);
 }
 
-.code-line.deleted {
+.wmde-markdown .code-line.deleted {
   background-color: color-mix(in srgb, var(--g-danger) 18%, transparent);
 }
 
-.code-line.line-number::before {
+.wmde-markdown .code-line.line-number::before {
   display: inline-block;
   width: 1.5rem;
   margin-left: -12px;
@@ -135,6 +143,44 @@
  */
 .wmde-markdown pre {
   padding-top: 32px !important;
+}
+
+/*
+ * Consolas for the edit pane's source text. The vendor's font-family rules
+ * on the textarea/pre/code all read `var(--md-editor-font-family)` rather
+ * than a literal value, so redefining the variable here cascades to every
+ * layer without fighting the vendor's !important font-family declarations
+ * (and without the load-order specificity tie the font-size rule below
+ * needs to work around, since a custom property's inherited value doesn't
+ * compete with the declaration that consumes it).
+ */
+.w-md-editor-text {
+  --md-editor-font-family: Consolas, 'SFMono-Regular', ui-monospace, Menlo, 'Liberation Mono', monospace !important;
+}
+
+/*
+ * Bump the edit pane's source text up from the vendor's cramped 14px
+ * default. Must be applied identically to the textarea, its <pre> overlay,
+ * and the overlay's <code> — all three carry their own !important font-size
+ * in the vendor CSS, so setting it in only one place leaves the layers'
+ * line metrics mismatched and throws the native caret off again.
+ *
+ * The vendor's own `.w-md-editor-text` and `.w-md-editor-text-pre > code`
+ * rules also set font-size/line-height with !important at this exact
+ * specificity. Its stylesheet (imported inside NoteEditor.tsx/etc.) loads
+ * after this file (imported at the top of main.tsx), so on an equal-specificity
+ * !important tie the vendor rule wins the cascade and silently reverts just
+ * those two selectors back to 14px — reintroducing the mismatch. Doubling
+ * the class in the selector bumps specificity above the vendor's rule so
+ * ours wins outright, independent of stylesheet load order.
+ */
+.w-md-editor-text,
+.w-md-editor-text.w-md-editor-text,
+.w-md-editor-text-pre,
+.w-md-editor-text-input,
+.w-md-editor-text-pre.w-md-editor-text-pre > code {
+  font-size: 16px !important;
+  line-height: 24px !important;
 }
 
 [data-color-mode='dark'] .wmde-markdown {

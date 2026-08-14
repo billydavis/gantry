@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChartNoAxesGantt, Folder, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, StickyNote, Trophy, User } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
+import { MatrixRain } from './MatrixRain';
 import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { TodoFormModal } from '../features/todos/TodoFormModal';
@@ -192,7 +193,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </Stack>
         </AppShell.Navbar>
 
-        <AppShell.Main>{children}</AppShell.Main>
+        <AppShell.Main style={{ position: 'relative' }}>
+          {children}
+          <MatrixRain />
+        </AppShell.Main>
       </AppShell>
 
       <CommandPalette />

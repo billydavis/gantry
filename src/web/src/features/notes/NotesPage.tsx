@@ -104,6 +104,8 @@ export function NotesPage() {
         onClose={() => setViewTarget(null)}
         title={viewTarget ? noteLabel(viewTarget) : ''}
         content={viewTarget?.content ?? ''}
+        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        onOpenEditor={() => viewTarget && navigate(`/notes/${viewTarget.id}`)}
       />
 
       <Modal

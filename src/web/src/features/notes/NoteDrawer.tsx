@@ -85,6 +85,8 @@ export function NoteDrawer({ opened, onClose, note, defaultProjectId }: Props) {
       position="right"
       size="max(520px, 50vw)"
       lockScroll={false}
+      closeOnClickOutside={false}
+      closeOnEscape={false}
       styles={drawerStyles}
     >
       {isEdit ? (

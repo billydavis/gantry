@@ -8,6 +8,9 @@ import { tagsApi, tagKeys } from '../features/tags/api';
 import type { SearchResult } from '../features/tags/types';
 import { NoteDrawer } from '../features/notes/NoteDrawer';
 import { WinFormModal } from '../features/wins/WinFormModal';
+import { noteKeys, notesApi } from '../features/notes/api';
+import { articleKeys, articlesApi } from '../features/articles/api';
+import { MarkdownViewerModal } from './MarkdownViewerModal';
 
 import '@mantine/spotlight/styles.css';
 
@@ -27,6 +30,20 @@ export function CommandPalette() {
   const [noteOpen, setNoteOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [viewNoteId, setViewNoteId] = useState<{ id: string; title: string } | null>(null);
+  const [viewArticleId, setViewArticleId] = useState<{ id: string; title: string } | null>(null);
+
+  const { data: viewNote, isLoading: viewNoteLoading } = useQuery({
+    queryKey: noteKeys.detail(viewNoteId?.id ?? ''),
+    queryFn: () => notesApi.getById(viewNoteId!.id),
+    enabled: !!viewNoteId,
+  });
+
+  const { data: viewArticle, isLoading: viewArticleLoading } = useQuery({
+    queryKey: articleKeys.detail(viewArticleId?.id ?? ''),
+    queryFn: () => articlesApi.getById(viewArticleId!.id),
+    enabled: !!viewArticleId,
+  });
 
   const trimmed = query.trim();
 
@@ -78,11 +95,11 @@ export function CommandPalette() {
     spotlight.close();
     switch (r.type) {
       case 'Project':  navigate(`/projects/${r.id}`); break;
-      case 'Note':     navigate(`/notes/${r.id}`); break;
+      case 'Note':     setViewNoteId({ id: r.id, title: r.title }); break;
       case 'Win':      navigate('/wins'); break;
       case 'Todo':     navigate('/'); break;
       case 'Resource': if (r.projectId) navigate(`/projects/${r.projectId}`); break;
-      case 'Article':  navigate(`/wiki/${r.id}`); break;
+      case 'Article':  setViewArticleId({ id: r.id, title: r.title }); break;
     }
   };
 
@@ -127,6 +144,26 @@ export function CommandPalette() {
 
       <NoteDrawer opened={noteOpen} onClose={() => setNoteOpen(false)} />
       <WinFormModal opened={winOpen} onClose={() => setWinOpen(false)} />
+
+      <MarkdownViewerModal
+        opened={!!viewNoteId}
+        onClose={() => setViewNoteId(null)}
+        title={viewNoteId?.title ?? ''}
+        content={viewNote?.content ?? ''}
+        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        isLoading={viewNoteLoading}
+        onOpenEditor={() => viewNoteId && navigate(`/notes/${viewNoteId.id}`)}
+      />
+
+      <MarkdownViewerModal
+        opened={!!viewArticleId}
+        onClose={() => setViewArticleId(null)}
+        title={viewArticleId?.title ?? ''}
+        content={viewArticle?.content ?? ''}
+        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        isLoading={viewArticleLoading}
+        onOpenEditor={() => viewArticleId && navigate(`/wiki/${viewArticleId.id}`)}
+      />
     </>
   );
 }

@@ -92,6 +92,8 @@ export function ArticlesPage() {
         onClose={() => setViewTarget(null)}
         title={viewTarget?.title ?? ''}
         content={viewTarget?.content ?? ''}
+        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        onOpenEditor={() => viewTarget && navigate(`/wiki/${viewTarget.id}`)}
       />
     </>
   );

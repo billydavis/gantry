@@ -466,6 +466,8 @@ export function DashboardPage() {
               : 'Untitled note'))
           : ''}
         content={viewNoteTarget?.content ?? ''}
+        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        onOpenEditor={() => viewNoteTarget && navigate(`/notes/${viewNoteTarget.id}`)}
       />
       <WinFormModal
         opened={winModalOpen}

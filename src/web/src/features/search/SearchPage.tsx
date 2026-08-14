@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { Box, Group, Loader, Stack, Text, Title } from '@mantine/core';
 import { BookOpen, Check, ExternalLink, Folder, StickyNote, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { tagKeys, tagsApi } from '../tags/api';
 import type { SearchResult } from '../tags/types';
+import { noteKeys, notesApi } from '../notes/api';
+import { articleKeys, articlesApi } from '../articles/api';
+import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   Project:  <Folder size={15} />,
@@ -36,14 +40,29 @@ export function SearchPage() {
 
   const grouped = groupByType(results);
 
+  const [viewNoteId, setViewNoteId] = useState<{ id: string; title: string } | null>(null);
+  const [viewArticleId, setViewArticleId] = useState<{ id: string; title: string } | null>(null);
+
+  const { data: viewNote, isLoading: viewNoteLoading } = useQuery({
+    queryKey: noteKeys.detail(viewNoteId?.id ?? ''),
+    queryFn: () => notesApi.getById(viewNoteId!.id),
+    enabled: !!viewNoteId,
+  });
+
+  const { data: viewArticle, isLoading: viewArticleLoading } = useQuery({
+    queryKey: articleKeys.detail(viewArticleId?.id ?? ''),
+    queryFn: () => articlesApi.getById(viewArticleId!.id),
+    enabled: !!viewArticleId,
+  });
+
   const handleClick = (r: SearchResult) => {
     switch (r.type) {
       case 'Project':  navigate(`/projects/${r.id}`); break;
-      case 'Note':     navigate(`/notes/${r.id}`); break;
+      case 'Note':     setViewNoteId({ id: r.id, title: r.title }); break;
       case 'Win':      navigate('/wins'); break;
       case 'Todo':     navigate('/'); break;
       case 'Resource': if (r.projectId) navigate(`/projects/${r.projectId}`); break;
-      case 'Article':  navigate(`/wiki/${r.id}`); break;
+      case 'Article':  setViewArticleId({ id: r.id, title: r.title }); break;
     }
   };
 
@@ -104,6 +123,26 @@ export function SearchPage() {
           </Box>
         </Stack>
       ))}
+
+      <MarkdownViewerModal
+        opened={!!viewNoteId}
+        onClose={() => setViewNoteId(null)}
+        title={viewNoteId?.title ?? ''}
+        content={viewNote?.content ?? ''}
+        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        isLoading={viewNoteLoading}
+        onOpenEditor={() => viewNoteId && navigate(`/notes/${viewNoteId.id}`)}
+      />
+
+      <MarkdownViewerModal
+        opened={!!viewArticleId}
+        onClose={() => setViewArticleId(null)}
+        title={viewArticleId?.title ?? ''}
+        content={viewArticle?.content ?? ''}
+        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        isLoading={viewArticleLoading}
+        onOpenEditor={() => viewArticleId && navigate(`/wiki/${viewArticleId.id}`)}
+      />
     </Stack>
   );
 }

@@ -86,6 +86,8 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
         onClose={() => setViewTarget(null)}
         title={viewTarget ? noteLabel(viewTarget) : ''}
         content={viewTarget?.content ?? ''}
+        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        onOpenEditor={() => viewTarget && onEdit(viewTarget)}
       />
 
       <Modal

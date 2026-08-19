@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from '../features/notes/api';
-import { NoteDrawer } from '../features/notes/NoteDrawer';
+import { useCreateNote } from '../features/notes/useCreateNote';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { Copy, Folder, Link, Pencil, Plus, Settings, Sparkles, StickyNote, Trash2, Trophy } from 'lucide-react';
@@ -34,7 +34,7 @@ export function DashboardPage() {
 
   const [resourceFormOpen, setResourceFormOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<Resource | undefined>();
-  const [noteDrawerOpen, setNoteDrawerOpen] = useState(false);
+  const { createNote } = useCreateNote();
   const [viewNoteTarget, setViewNoteTarget] = useState<Note | null>(null);
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [editingWin, setEditingWin] = useState<import('../features/wins/types').Win | undefined>();
@@ -328,7 +328,7 @@ export function DashboardPage() {
                       Recent Notes
                     </Text>
                     <Tooltip label="New note">
-                      <ActionIcon variant="subtle" size="sm" onClick={() => setNoteDrawerOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
+                      <ActionIcon variant="subtle" size="sm" onClick={() => createNote(undefined)} style={{ color: 'var(--g-text-muted)' }}>
                         <Plus size={14} />
                       </ActionIcon>
                     </Tooltip>
@@ -452,10 +452,6 @@ export function DashboardPage() {
         onClose={() => setResourceFormOpen(false)}
         resource={editingResource}
         nextSortOrder={globalResources.length}
-      />
-      <NoteDrawer
-        opened={noteDrawerOpen}
-        onClose={() => { setNoteDrawerOpen(false); queryClient.invalidateQueries({ queryKey: noteKeys.lists() }); }}
       />
       <MarkdownViewerModal
         opened={!!viewNoteTarget}

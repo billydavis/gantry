@@ -6,6 +6,10 @@ public static class AppSettingsEndpoints
     {
         Get.Endpoint.Map(app);
         Update.Endpoint.Map(app);
+        SetPin.Endpoint.Map(app);
+        ChangePin.Endpoint.Map(app);
+        ClearPin.Endpoint.Map(app);
+        VerifyPin.Endpoint.Map(app);
         return app;
     }
 }

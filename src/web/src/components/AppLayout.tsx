@@ -5,12 +5,13 @@ import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChartNoAxesGantt, Folder, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, StickyNote, Trophy, User } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
-import { MatrixRain } from './MatrixRain';
-import { NoteDrawer } from '../features/notes/NoteDrawer';
+import { LockScreen } from './LockScreen';
+import { useCreateNote } from '../features/notes/useCreateNote';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { TodoFormModal } from '../features/todos/TodoFormModal';
 import { ProjectFormModal } from '../features/projects/ProjectFormModal';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
+import { useIdleLock } from '../hooks/useIdleLock';
 import { gravatarUrl } from '../utils/gravatar';
 
 interface NavItem {
@@ -33,7 +34,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [mobileOpen, { toggle: toggleMobile, close: closeMobile }] = useDisclosure(false);
   const [searchValue, setSearchValue] = useState('');
-  const [noteOpen, setNoteOpen] = useState(false);
+  const { createNote } = useCreateNote();
   const [winOpen, setWinOpen] = useState(false);
   const [todoOpen, setTodoOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
@@ -42,6 +43,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     queryKey: appSettingsKeys.all,
     queryFn: appSettingsApi.get,
   });
+  const { locked, hasPin, lockNow, unlock } = useIdleLock();
   const settingsActive = location.pathname.startsWith('/settings');
 
   return (
@@ -129,7 +131,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<StickyNote size={15} />}
-                    onClick={() => { setNoteOpen(true); closeMobile(); }}
+                    onClick={() => { createNote(undefined); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >
                     New Note
@@ -193,17 +195,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </Stack>
         </AppShell.Navbar>
 
-        <AppShell.Main style={{ position: 'relative' }}>
+        <AppShell.Main>
           {children}
-          <MatrixRain />
         </AppShell.Main>
       </AppShell>
 
+      <LockScreen locked={locked} hasPin={hasPin} onLockRequested={lockNow} onUnlock={unlock} />
       <CommandPalette />
 
       <ProjectFormModal opened={projectOpen} onClose={() => setProjectOpen(false)} />
       <TodoFormModal opened={todoOpen} onClose={() => setTodoOpen(false)} />
-      <NoteDrawer opened={noteOpen} onClose={() => setNoteOpen(false)} />
       <WinFormModal opened={winOpen} onClose={() => setWinOpen(false)} />
     </>
   );

@@ -115,6 +115,25 @@ This can be modeled as a nullable `Environment` text/enum column on `Resources` 
 
 ---
 
+## AppSettings
+
+Single-row table holding app-wide preferences (not per-entity data).
+
+| Column | Type | Notes |
+|---|---|---|
+| `Id` | uuid | PK |
+| `DisplayName` | varchar(100), nullable | |
+| `Email` | varchar(320), nullable | used only for Gravatar lookup |
+| `LockEnabled` | bool, default `true` | idle-lock screen on/off |
+| `IdleTimeoutMinutes` | int, default `5` | minutes of inactivity before the lock screen shows |
+| `PinHash` | varchar(200), nullable | PBKDF2 hash of the optional lock-screen PIN; `null` means no PIN is set |
+| `PinSalt` | varchar(200), nullable | salt paired with `PinHash` |
+| `UpdatedUtc` | timestamptz | |
+
+`PinHash`/`PinSalt` are never returned over the API — `GET /api/settings` exposes only a computed `HasPin` boolean. The lock screen is a local UI privacy lock, not authentication (see `DECISIONS.md`).
+
+---
+
 ## Notes on JSONB usage
 
 `Projects.Settings` is the primary candidate for JSONB in v1, e.g.:

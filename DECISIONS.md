@@ -57,3 +57,7 @@ A running record of decisions made during planning, and the reasoning behind the
 ### No authentication in v1
 **Decision:** Ship v1 with no auth, assuming a trusted local Docker deployment.
 **Why:** Single-user, local-only tool initially. Auth (Entra, GitHub OAuth, or local accounts) is deferred to a future phase rather than blocking v1.
+
+### Idle-lock screen is a UI lock, not authentication
+**Decision:** Add an idle-triggered, PIN-gated lock overlay (the Matrix-rain easter egg, evolved) that covers the whole app after a configurable idle timeout (default 5 minutes). The PIN, if set, is stored backend-side as a PBKDF2 hash+salt on `AppSettings` and required to dismiss the lock.
+**Why:** Matches the "no authentication in v1" scope — this is a local screen lock for passerby privacy (someone glancing at or touching an unattended screen), not real authentication. There are no sessions, no JWT, and no protection against anyone with direct API access; the PIN only gates the frontend's own unlock flow.

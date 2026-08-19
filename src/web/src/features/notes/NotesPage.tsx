@@ -4,7 +4,7 @@ import { CalendarDays, Pencil, Plus, StickyNote, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
-import { NoteDrawer } from './NoteDrawer';
+import { useCreateNote } from './useCreateNote';
 import type { Note } from './types';
 import { TagBadge } from '../tags/TagBadge';
 import { markdownPreview } from '../../utils/markdownPreview';
@@ -20,7 +20,7 @@ function noteLabel(note: Note): string {
 export function NotesPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [createOpen, setCreateOpen] = useState(false);
+  const { createNote } = useCreateNote();
   const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
   const [viewTarget, setViewTarget] = useState<Note | null>(null);
 
@@ -58,7 +58,7 @@ export function NotesPage() {
             </Button>
             <Button
               leftSection={<Plus size={16} />}
-              onClick={() => setCreateOpen(true)}
+              onClick={() => createNote(undefined)}
               style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}
             >
               New Note
@@ -78,7 +78,7 @@ export function NotesPage() {
             <Text size="sm" c="dimmed" mb="md">
               Jot down a quick thought, or start today's daily note.
             </Text>
-            <Button onClick={() => setCreateOpen(true)} style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}>
+            <Button onClick={() => createNote(undefined)} style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}>
               Write your first note
             </Button>
           </Box>
@@ -96,8 +96,6 @@ export function NotesPage() {
           ))}
         </Stack>
       </Stack>
-
-      <NoteDrawer opened={createOpen} onClose={() => setCreateOpen(false)} />
 
       <MarkdownViewerModal
         opened={!!viewTarget}

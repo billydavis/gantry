@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { ActionIcon, Box, Button, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
 import { NoteEditor } from './NoteEditor';
-import { NoteDrawer } from './NoteDrawer';
+import { useCreateNote } from './useCreateNote';
 import { SaveStatusText } from './SaveStatusText';
 import { useNoteAutosave } from './useNoteAutosave';
 
@@ -29,7 +28,7 @@ export function DailyNotePage() {
   const navigate = useNavigate();
   const today = toDateString(new Date());
   const activeDate = date ?? today;
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { createNote } = useCreateNote();
 
   const { data: note, isLoading } = useQuery({
     queryKey: noteKeys.daily(activeDate),
@@ -54,7 +53,7 @@ export function DailyNotePage() {
             leftSection={<Plus size={14} />}
             variant="subtle"
             size="sm"
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => createNote(undefined)}
             style={{ color: 'var(--g-text-muted)' }}
           >
             New Note
@@ -91,8 +90,6 @@ export function DailyNotePage() {
           <SaveStatusText status={status} />
         </>
       )}
-
-      <NoteDrawer opened={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </Stack>
   );
 }

@@ -18,8 +18,7 @@ import { Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
 import { TodoList } from '../todos/TodoList';
 import { ResourceList } from '../resources/ResourceList';
 import { ProjectNotesList } from '../notes/ProjectNotesList';
-import { NoteDrawer } from '../notes/NoteDrawer';
-import { noteKeys } from '../notes/api';
+import { useCreateNote } from '../notes/useCreateNote';
 import { ProjectWinsList } from '../wins/ProjectWinsList';
 import { WinFormModal } from '../wins/WinFormModal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +27,6 @@ import { projectsApi, projectKeys } from './api';
 import { ProjectFormModal } from './ProjectFormModal';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree } from './projectTree';
-import type { Note } from '../notes/types';
 import type { Win } from '../wins/types';
 import { environmentsApi, environmentKeys } from '../environments/api';
 import { EnvironmentFormModal } from '../environments/EnvironmentFormModal';
@@ -43,8 +41,7 @@ export function ProjectDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [envFormOpen, setEnvFormOpen] = useState(false);
   const [editingEnv, setEditingEnv] = useState<import('../environments/types').ProjectEnvironment | undefined>();
-  const [noteDrawerOpen, setNoteDrawerOpen] = useState(false);
-  const [activeNote, setActiveNote] = useState<Note | undefined>();
+  const { createNote } = useCreateNote();
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [editingWin, setEditingWin] = useState<Win | undefined>();
   const [selectedEnvId, setSelectedEnvId] = useState<string | null>(null);
@@ -240,7 +237,7 @@ export function ProjectDetailPage() {
                   </Text>
                   <Tooltip label="New note">
                     <ActionIcon variant="subtle" size="sm"
-                      onClick={() => { setActiveNote(undefined); setNoteDrawerOpen(true); }}
+                      onClick={() => createNote(project.id)}
                       style={{ color: 'var(--g-text-muted)' }}>
                       <Plus size={14} />
                     </ActionIcon>
@@ -248,7 +245,7 @@ export function ProjectDetailPage() {
                 </Group>
                 <ProjectNotesList
                   projectId={project.id}
-                  onEdit={(note) => { setActiveNote(note); setNoteDrawerOpen(true); }}
+                  onEdit={(note) => navigate(`/notes/${note.id}`)}
                 />
               </Box>
 
@@ -362,16 +359,6 @@ export function ProjectDetailPage() {
         projectId={project.id}
         environment={editingEnv}
         nextSortOrder={environments.length}
-      />
-      <NoteDrawer
-        opened={noteDrawerOpen}
-        onClose={() => {
-          setNoteDrawerOpen(false);
-          setActiveNote(undefined);
-          queryClient.invalidateQueries({ queryKey: noteKeys.list({ projectId: project.id }) });
-        }}
-        note={activeNote}
-        defaultProjectId={project.id}
       />
       <WinFormModal
         opened={winModalOpen}

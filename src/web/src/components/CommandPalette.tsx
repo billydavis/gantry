@@ -6,7 +6,7 @@ import { BookOpen, ChartNoAxesGantt, Check, ExternalLink, Folder, LayoutDashboar
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { tagsApi, tagKeys } from '../features/tags/api';
 import type { SearchResult } from '../features/tags/types';
-import { NoteDrawer } from '../features/notes/NoteDrawer';
+import { useCreateNote } from '../features/notes/useCreateNote';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { noteKeys, notesApi } from '../features/notes/api';
 import { articleKeys, articlesApi } from '../features/articles/api';
@@ -27,7 +27,7 @@ const RESULT_ICON: Record<SearchResult['type'], React.ReactNode> = {
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const [noteOpen, setNoteOpen] = useState(false);
+  const { createNote } = useCreateNote();
   const [winOpen, setWinOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [viewNoteId, setViewNoteId] = useState<{ id: string; title: string } | null>(null);
@@ -69,7 +69,7 @@ export function CommandPalette() {
       {
         id: 'new-note', label: 'New Note', description: 'Create a new note',
         leftSection: <StickyNote size={18} />,
-        onClick: () => { spotlight.close(); setNoteOpen(true); },
+        onClick: () => { spotlight.close(); createNote(undefined); },
       },
       {
         id: 'new-win', label: 'Log Win', description: 'Record an accomplishment',
@@ -142,7 +142,6 @@ export function CommandPalette() {
         }}
       />
 
-      <NoteDrawer opened={noteOpen} onClose={() => setNoteOpen(false)} />
       <WinFormModal opened={winOpen} onClose={() => setWinOpen(false)} />
 
       <MarkdownViewerModal

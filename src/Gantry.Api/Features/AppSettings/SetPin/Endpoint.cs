@@ -2,12 +2,12 @@ using Gantry.Api.Data;
 using Entities = Gantry.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gantry.Api.Features.AppSettings.Update;
+namespace Gantry.Api.Features.AppSettings.SetPin;
 
 public static class Endpoint
 {
     public static void Map(IEndpointRouteBuilder app) =>
-        app.MapPut("/api/settings", Handle).WithName("UpdateAppSettings");
+        app.MapPut("/api/settings/pin", Handle).WithName("SetAppSettingsPin");
 
     private static async Task<IResult> Handle(Request request, AppDbContext db, CancellationToken ct)
     {
@@ -22,10 +22,12 @@ public static class Endpoint
             db.AppSettings.Add(settings);
         }
 
-        settings.DisplayName = string.IsNullOrWhiteSpace(request.DisplayName) ? null : request.DisplayName.Trim();
-        settings.Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
-        if (request.LockEnabled is not null) settings.LockEnabled = request.LockEnabled.Value;
-        if (request.IdleTimeoutMinutes is not null) settings.IdleTimeoutMinutes = request.IdleTimeoutMinutes.Value;
+        if (settings.PinHash is not null)
+            return Results.Problem("A PIN is already set. Use change-pin to update it.", statusCode: StatusCodes.Status400BadRequest);
+
+        var (hash, salt) = PinHasher.Hash(request.Pin);
+        settings.PinHash = hash;
+        settings.PinSalt = salt;
         settings.UpdatedUtc = DateTime.UtcNow;
 
         await db.SaveChangesAsync(ct);

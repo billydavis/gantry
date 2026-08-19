@@ -163,6 +163,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.DisplayName).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(320);
             entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+            entity.Property(e => e.LockEnabled).HasDefaultValue(true);
+            entity.Property(e => e.IdleTimeoutMinutes).HasDefaultValue(5);
+            entity.Property(e => e.PinHash).HasMaxLength(200);
+            entity.Property(e => e.PinSalt).HasMaxLength(200);
         });
 
         modelBuilder.Entity<DailyQuote>(entity =>

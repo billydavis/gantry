@@ -55,7 +55,6 @@ export function ArticleEditor({ article, minHeight = 500 }: Props) {
         value={content}
         onChange={handleChange}
         height={minHeight}
-        style={{ background: 'var(--g-surface)' }}
         previewOptions={{ components: { code: MermaidCodeBlock, pre: CodeBlockPre } }}
       />
       <Text size="xs" c={saveStatus === 'error' ? 'red' : 'dimmed'} mt={4} h={16}>

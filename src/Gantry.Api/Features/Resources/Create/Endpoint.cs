@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPost("/api/resources", Handle).WithName("CreateResource");
 
-    private static async Task<IResult> Handle(Request request, AppDbContext db, CancellationToken ct)
+    internal static async Task<IResult> Handle(Request request, AppDbContext db, CancellationToken ct)
     {
         var validation = await new Validator().ValidateAsync(request, ct);
         if (!validation.IsValid)

@@ -10,7 +10,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPut("/api/resources/reorder", Handle).WithName("ReorderResources");
 
-    private static async Task<IResult> Handle(
+    internal static async Task<IResult> Handle(
         List<ReorderItem> items,
         AppDbContext db,
         CancellationToken ct)

@@ -21,6 +21,7 @@ services:
     environment:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       Backups__Directory: /app/backups
+      McpServer__BearerToken: "${MCP_BEARER_TOKEN}"
     volumes:
       - backups:/app/backups
     expose:

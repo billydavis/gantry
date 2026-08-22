@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPut("/api/resources/{id:guid}", Handle).WithName("UpdateResource");
 
-    private static async Task<IResult> Handle(Guid id, Request request, AppDbContext db, CancellationToken ct)
+    internal static async Task<IResult> Handle(Guid id, Request request, AppDbContext db, CancellationToken ct)
     {
         var validation = await new Validator().ValidateAsync(request, ct);
         if (!validation.IsValid)

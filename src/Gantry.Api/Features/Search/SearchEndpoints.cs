@@ -21,7 +21,7 @@ public static class SearchEndpoints
         return app;
     }
 
-    private static async Task<IResult> Handle(AppDbContext db, string q, CancellationToken ct)
+    internal static async Task<IResult> Handle(AppDbContext db, string q, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
             return Results.Ok(Array.Empty<SearchResult>());

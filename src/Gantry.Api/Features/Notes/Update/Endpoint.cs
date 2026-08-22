@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPut("/api/notes/{id:guid}", Handle).WithName("UpdateNote");
 
-    private static async Task<IResult> Handle(Guid id, UpdateNoteRequest request, AppDbContext db, CancellationToken ct)
+    internal static async Task<IResult> Handle(Guid id, UpdateNoteRequest request, AppDbContext db, CancellationToken ct)
     {
         var validation = await new Validator().ValidateAsync(request, ct);
         if (!validation.IsValid)

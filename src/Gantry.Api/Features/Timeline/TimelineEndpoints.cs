@@ -22,7 +22,7 @@ public static class TimelineEndpoints
         return app;
     }
 
-    private static async Task<IResult> Handle(AppDbContext db, int year, int month)
+    internal static async Task<IResult> Handle(AppDbContext db, int year, int month)
     {
         var start = new DateOnly(year, month, 1);
         var end = start.AddMonths(1).AddDays(-1);

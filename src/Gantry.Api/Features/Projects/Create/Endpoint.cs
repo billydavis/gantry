@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPost("/api/projects", Handle).WithName("CreateProject");
 
-    private static async Task<IResult> Handle(
+    internal static async Task<IResult> Handle(
         Request request,
         AppDbContext db,
         CancellationToken ct)

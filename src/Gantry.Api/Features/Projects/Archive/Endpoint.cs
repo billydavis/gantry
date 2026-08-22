@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPost("/api/projects/{id:guid}/archive", Handle).WithName("ArchiveProject");
 
-    private static async Task<IResult> Handle(Guid id, AppDbContext db, CancellationToken ct)
+    internal static async Task<IResult> Handle(Guid id, AppDbContext db, CancellationToken ct)
     {
         var all = await db.Projects.ToListAsync(ct);
 

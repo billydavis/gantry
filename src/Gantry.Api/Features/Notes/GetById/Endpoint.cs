@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/notes/{id:guid}", Handle).WithName("GetNoteById");
 
-    private static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
+    internal static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
     {
         var note = await db.Notes
             .Include(n => n.Project)

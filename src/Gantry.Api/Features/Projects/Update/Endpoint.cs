@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPut("/api/projects/{id:guid}", Handle).WithName("UpdateProject");
 
-    private static async Task<IResult> Handle(
+    internal static async Task<IResult> Handle(
         Guid id,
         Request request,
         AppDbContext db,

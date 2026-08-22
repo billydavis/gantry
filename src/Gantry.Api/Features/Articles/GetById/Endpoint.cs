@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/articles/{id:guid}", Handle).WithName("GetArticleById");
 
-    private static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
+    internal static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
     {
         var article = await db.Articles
             .Include(a => a.Tags)

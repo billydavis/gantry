@@ -100,6 +100,79 @@ Settings → Data lets you create a full database backup (via `pg_dump`) before 
 
 You can also use Download / Upload to move your data to a new machine: download a backup from the old install, copy the file over however you like, then upload and restore it on the new one. This works across app versions — restoring runs pending migrations automatically — but keep `POSTGRES_USER` and `POSTGRES_DB` in `.env` the same on both machines. A mismatch doesn't break the restore, but `pg_restore` will print harmless ownership warnings for the old username it doesn't recognize.
 
+## MCP server (AI assistant access)
+
+Gantry exposes an [MCP](https://modelcontextprotocol.io) server at `/mcp` so an AI assistant can read and manage your projects, todos, notes, wins, resources, and more directly — no copy-pasting between the app and a chat window. It's mounted alongside the REST API and reachable at `http://localhost:5150/mcp` (or whatever `APP_PORT` you set).
+
+Guardrails: MCP can create, update, and status-transition (archive, complete, pin, etc.) almost everything, but it **cannot permanently delete** projects, notes, resources, wins, articles, environments, or tags — those stay REST/web-UI only. Todos support a reversible soft-delete tool instead.
+
+**Auth**: every `/mcp` request requires a shared-secret bearer token, set via `MCP_BEARER_TOKEN` in `.env` (see `.env.example`). Generate one before first use:
+
+```sh
+openssl rand -hex 32
+```
+
+Put the result in `.env` as `MCP_BEARER_TOKEN=...`, then `docker compose up -d` to apply it.
+
+### Connect from Claude Code
+
+```sh
+claude mcp add --transport http gantry http://localhost:5150/mcp \
+  --header "Authorization: Bearer <your MCP_BEARER_TOKEN>"
+```
+
+Or hand-edit `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "gantry": {
+      "type": "http",
+      "url": "http://localhost:5150/mcp",
+      "headers": {
+        "Authorization": "Bearer <your MCP_BEARER_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+### Connect from Claude Desktop
+
+**Don't use Settings → Connectors → "Add custom connector"** — that flow is cloud-brokered: the connection is made from Anthropic's servers, not your machine, so it requires a publicly reachable HTTPS URL and can't reach `localhost` at all, even with a valid bearer token.
+
+Claude Desktop's `claude_desktop_config.json` only supports local (stdio) server processes — it has no native `url`/`headers` field for remote HTTP servers. To bridge to Gantry's HTTP endpoint, use [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs locally as a stdio↔HTTP proxy:
+
+```json
+{
+  "mcpServers": {
+    "gantry": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:5150/mcp", "--header", "Authorization:${AUTH_HEADER}"],
+      "env": {
+        "AUTH_HEADER": "Bearer <your MCP_BEARER_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+(The header is split into a `${AUTH_HEADER}` env var rather than inlined in `args` — Claude Desktop has a known argument-quoting issue on Windows that mangles spaces inside a single arg string.)
+
+Edit the file at:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows (traditional installer): `%APPDATA%\Claude\claude_desktop_config.json`
+- Windows (Microsoft Store / MSIX build): the plain `%APPDATA%\Claude` path doesn't exist — MSIX apps virtualize AppData into a per-package folder instead. Find yours with:
+
+  ```powershell
+  Get-ChildItem "$env:LOCALAPPDATA\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json"
+  ```
+
+  (typically `%LOCALAPPDATA%\Packages\Claude_<hash>\LocalCache\Roaming\Claude\claude_desktop_config.json`)
+
+Fully quit and restart Claude Desktop afterward — it only reads this file at startup.
+
 ## Development
 
 **Backend** (`src/Gantry.Api`):

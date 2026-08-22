@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapPost("/api/articles", Handle).WithName("CreateArticle");
 
-    private static async Task<IResult> Handle(CreateArticleRequest request, AppDbContext db, CancellationToken ct)
+    internal static async Task<IResult> Handle(CreateArticleRequest request, AppDbContext db, CancellationToken ct)
     {
         var validation = await new Validator().ValidateAsync(request, ct);
         if (!validation.IsValid)

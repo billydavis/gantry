@@ -4,6 +4,7 @@ using Gantry.Api.Features.Admin.Backups;
 using Gantry.Api.Features.AppSettings;
 using Gantry.Api.Features.Articles;
 using Gantry.Api.Features.Environments;
+using Gantry.Api.Features.Mcp;
 using Gantry.Api.Features.Notes;
 using Gantry.Api.Features.Projects;
 using Gantry.Api.Features.Quotes;
@@ -32,6 +33,36 @@ builder.Services.AddHttpClient("ZenQuotes", client =>
     client.BaseAddress = new Uri("https://zenquotes.io");
     client.Timeout = TimeSpan.FromSeconds(5);
 });
+
+builder.Services.AddMcpServer()
+    .WithHttpTransport(options => options.Stateless = true)
+    .WithRequestFilters(filters =>
+    {
+        filters.AddCallToolFilter(next => async (context, ct) =>
+        {
+            try
+            {
+                return await next(context, ct);
+            }
+            catch (Exception ex) when (ex is not ModelContextProtocol.McpException)
+            {
+                context.Services?.GetService<ILoggerFactory>()?.CreateLogger("Mcp")
+                    .LogError(ex, "Unhandled exception in MCP tool call {Tool}", context.Params?.Name);
+                throw;
+            }
+        });
+    })
+    .WithTools<Gantry.Api.Features.Projects.Mcp.ProjectMcpTools>()
+    .WithTools<Gantry.Api.Features.Todos.Mcp.TodoMcpTools>()
+    .WithTools<Gantry.Api.Features.Notes.Mcp.NoteMcpTools>()
+    .WithTools<Gantry.Api.Features.Resources.Mcp.ResourceMcpTools>()
+    .WithTools<Gantry.Api.Features.Wins.Mcp.WinMcpTools>()
+    .WithTools<Gantry.Api.Features.Articles.Mcp.ArticleMcpTools>()
+    .WithTools<Gantry.Api.Features.Environments.Mcp.EnvironmentMcpTools>()
+    .WithTools<Gantry.Api.Features.Tags.Mcp.TagMcpTools>()
+    .WithTools<Gantry.Api.Features.Quotes.Mcp.QuoteMcpTools>()
+    .WithTools<Gantry.Api.Features.Search.Mcp.SearchMcpTools>()
+    .WithTools<Gantry.Api.Features.Timeline.Mcp.TimelineMcpTools>();
 
 builder.Services.AddSingleton<MaintenanceModeState>();
 builder.Services.AddScoped<BackupStore>();
@@ -69,6 +100,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
+app.UseMcpBearerAuth();
+
 app.MapHealthChecks("/api/health");
 app.MapProjectEndpoints();
 app.MapTodoEndpoints();
@@ -84,5 +117,6 @@ app.MapSampleDataEndpoints();
 app.MapAdminEndpoints();
 app.MapAppSettingsEndpoints();
 app.MapQuoteEndpoints();
+app.MapMcp("/mcp");
 
 app.Run();

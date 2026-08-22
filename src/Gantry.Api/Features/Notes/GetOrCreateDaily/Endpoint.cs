@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/notes/daily/{date}", Handle).WithName("GetOrCreateDailyNote");
 
-    private static async Task<IResult> Handle(AppDbContext db, string date, CancellationToken ct)
+    internal static async Task<IResult> Handle(AppDbContext db, string date, CancellationToken ct)
     {
         if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", out var parsedDate))
             return Results.BadRequest("Date must be in yyyy-MM-dd format.");

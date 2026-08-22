@@ -11,7 +11,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/quotes/today", Handle).WithName("GetTodayQuote");
 
-    private static async Task<IResult> Handle(AppDbContext db, IHttpClientFactory httpClientFactory, CancellationToken ct)
+    internal static async Task<IResult> Handle(AppDbContext db, IHttpClientFactory httpClientFactory, CancellationToken ct)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 

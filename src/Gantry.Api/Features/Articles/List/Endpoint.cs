@@ -8,7 +8,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/articles", Handle).WithName("ListArticles");
 
-    private static async Task<IResult> Handle(
+    internal static async Task<IResult> Handle(
         AppDbContext db,
         CancellationToken ct,
         string? category = null,

@@ -9,7 +9,7 @@ public static class Endpoint
     public static void Map(IEndpointRouteBuilder app) =>
         app.MapGet("/api/todos", Handle).WithName("ListTodos");
 
-    private static async Task<IResult> Handle(
+    internal static async Task<IResult> Handle(
         AppDbContext db,
         CancellationToken ct,
         Guid? projectId = null,

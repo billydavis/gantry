@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Group, NumberInput, PasswordInput, Stack, Switch, 
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { Database, Lock, Palette, TriangleAlert, User } from 'lucide-react';
+import { Database, Lock, Palette, Settings, TriangleAlert, User } from 'lucide-react';
 import { FlushDatabaseModal } from '../features/admin/FlushDatabaseModal';
 import { BackupsSection } from '../features/backups/BackupsSection';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';

@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { noteKeys, notesApi } from './api';
 import type { Note } from './types';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 
 interface Props {
   projectId: string;
@@ -64,6 +65,11 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
               <Text size="xs" c="dimmed">
                 Updated {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
               </Text>
+              {note.content && (
+                <Box mt={2}>
+                  <ExpandableDescription content={note.content} />
+                </Box>
+              )}
             </Box>
             <Tooltip label="Edit">
               <ActionIcon variant="subtle" size="sm"

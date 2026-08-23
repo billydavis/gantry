@@ -6,13 +6,16 @@ import { Pencil, Plus, Trash2, Trophy } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { winKeys, winsApi } from './api';
 import { WinFormModal } from './WinFormModal';
+import { WinViewerModal } from './WinViewerModal';
 import type { Win } from './types';
 import { TagPicker } from '../tags/TagPicker';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 
 export function WinsPage() {
   const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Win | undefined>();
+  const [viewingWinId, setViewingWinId] = useState<string | null>(null);
 
   const { data: wins = [], isLoading } = useQuery({
     queryKey: winKeys.list(),
@@ -79,6 +82,7 @@ export function WinsPage() {
                 <WinCard
                   key={win.id}
                   win={win}
+                  onView={() => setViewingWinId(win.id)}
                   onEdit={() => openEdit(win)}
                   onDelete={() => deleteMutation.mutate(win.id)}
                 />
@@ -93,33 +97,39 @@ export function WinsPage() {
         onClose={() => { setModalOpen(false); setEditing(undefined); }}
         win={editing}
       />
+      <WinViewerModal
+        winId={viewingWinId}
+        onClose={() => setViewingWinId(null)}
+        onOpenEditor={(win) => { setEditing(win); setModalOpen(true); }}
+      />
     </>
   );
 }
 
-function WinCard({ win, onEdit, onDelete }: { win: Win; onEdit: () => void; onDelete: () => void }) {
+function WinCard({ win, onView, onEdit, onDelete }: { win: Win; onView: () => void; onEdit: () => void; onDelete: () => void }) {
   const queryClient = useQueryClient();
   const date = new Date(win.date + 'T12:00:00').toLocaleDateString(undefined, {
     weekday: 'short', month: 'short', day: 'numeric',
   });
 
   return (
-    <Box style={{
-      background: 'var(--g-surface)', border: '1px solid var(--g-border)',
-      borderRadius: 6, padding: '10px 14px',
-    }}>
+    <Box
+      onClick={onView}
+      style={{
+        background: 'var(--g-surface)', border: '1px solid var(--g-border)',
+        borderRadius: 6, padding: '10px 14px', cursor: 'pointer',
+      }}
+    >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
           <Trophy size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{win.title}</Text>
-            {win.impact && (
-              <Text size="sm" style={{ color: 'var(--g-text-muted)', fontStyle: 'italic' }}>
-                {win.impact}
-              </Text>
-            )}
+            {win.impact && <ExpandableDescription content={win.impact} />}
             {win.description && (
-              <Text size="sm" c="dimmed" lineClamp={2} style={{ marginTop: 4 }}>{win.description}</Text>
+              <Box style={{ marginTop: 4 }}>
+                <ExpandableDescription content={win.description} />
+              </Box>
             )}
             <Group gap="xs" mt={4}>
               <Text size="xs" c="dimmed">{date}</Text>
@@ -130,22 +140,24 @@ function WinCard({ win, onEdit, onDelete }: { win: Win; onEdit: () => void; onDe
                 </>
               )}
             </Group>
-            <TagPicker
-              selectedTags={win.tags}
-              entityType="wins"
-              entityId={win.id}
-              onChanged={() => queryClient.invalidateQueries({ queryKey: winKeys.lists() })}
-            />
+            <Box onClick={(e) => e.stopPropagation()}>
+              <TagPicker
+                selectedTags={win.tags}
+                entityType="wins"
+                entityId={win.id}
+                onChanged={() => queryClient.invalidateQueries({ queryKey: winKeys.lists() })}
+              />
+            </Box>
           </Stack>
         </Group>
         <Group gap={4} style={{ flexShrink: 0 }}>
           <Tooltip label="Edit">
-            <ActionIcon variant="subtle" size="sm" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
+            <ActionIcon variant="subtle" size="sm" onClick={(e) => { e.stopPropagation(); onEdit(); }} style={{ color: 'var(--g-text-muted)' }}>
               <Pencil size={14} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Delete">
-            <ActionIcon variant="subtle" size="sm" color="red" onClick={onDelete}>
+            <ActionIcon variant="subtle" size="sm" color="red" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
               <Trash2 size={14} />
             </ActionIcon>
           </Tooltip>

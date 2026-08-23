@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { ActionIcon, Box, Loader, Text, Tooltip } from '@mantine/core';
 import { Trash2, Trophy } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { winKeys, winsApi } from './api';
 import type { Win } from './types';
+import { WinViewerModal } from './WinViewerModal';
+import { InlineMarkdown } from '../../components/MarkdownText';
 
 interface Props {
   projectId: string;
@@ -11,6 +14,7 @@ interface Props {
 
 export function ProjectWinsList({ projectId, onEdit }: Props) {
   const queryClient = useQueryClient();
+  const [viewingWinId, setViewingWinId] = useState<string | null>(null);
 
   const { data: wins = [], isLoading } = useQuery({
     queryKey: winKeys.list({ projectId }),
@@ -35,7 +39,7 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
             borderBottom: i < wins.length - 1 ? '1px solid var(--g-border)' : 'none',
             cursor: 'pointer',
           }}
-          onClick={() => onEdit(win)}
+          onClick={() => setViewingWinId(win.id)}
           onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
@@ -46,7 +50,7 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
             </Text>
             {win.impact && (
               <Text size="xs" style={{ color: 'var(--g-text-muted)', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {win.impact}
+                <InlineMarkdown text={win.impact} />
               </Text>
             )}
             <Text size="xs" c="dimmed">
@@ -61,6 +65,11 @@ export function ProjectWinsList({ projectId, onEdit }: Props) {
           </Tooltip>
         </Box>
       ))}
+      <WinViewerModal
+        winId={viewingWinId}
+        onClose={() => setViewingWinId(null)}
+        onOpenEditor={onEdit}
+      />
     </Box>
   );
 }

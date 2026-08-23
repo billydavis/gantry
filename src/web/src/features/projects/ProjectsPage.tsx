@@ -23,6 +23,7 @@ import { DeleteProjectModal } from './DeleteProjectModal';
 import type { Project, ProjectStatus } from './types';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree, type ProjectTreeEntry } from './projectTree';
+import { InlineMarkdown } from '../../components/MarkdownText';
 
 type Filter = 'Active' | 'OnHold' | 'Archived' | 'All';
 
@@ -233,7 +234,7 @@ export function ProjectsPage() {
               whiteSpace: 'nowrap',
             }}
           >
-            {project.description}
+            <InlineMarkdown text={project.description} />
           </Text>
         )}
       </Box>

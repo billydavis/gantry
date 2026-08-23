@@ -40,9 +40,16 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 | **Tags** | Assign to anything; search by tag across all entity types |
 | **Global search** | Full-text + tag search across projects, todos, notes, resources, and wins |
 | **Command palette** | `Ctrl+K` to jump anywhere or create anything |
+| **Markdown descriptions** | Project, Todo, Win, and Resource descriptions support Markdown, with a collapsible summary-line convention on list views |
 | **Themes** | 12 themes × dark/light — Default, Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Graphite, Amber, Sundial, Terracotta, Petal, Rosewood |
 | **PWA** | Installable, offline-capable service worker |
 | **Mobile** | Responsive layout with collapsible sidebar |
+
+## Markdown descriptions
+
+Description fields — on Projects, Todos, Wins, and Resources — and Note content all render as Markdown: bold, italics, code spans, links, lists, headings.
+
+List views (the Project detail page, Todo list, Wins list, and everywhere Notes are listed) follow a soft convention rather than an enforced format: write a short plain-text **summary as the first line**, leave a **blank line**, then add as much Markdown **detail** below it. The summary always shows; a chevron appears only when there's detail to expand into. A description or note with no line break just displays as-is — nothing breaks, there's just no collapse to gain until it's written that way.
 
 ## Stack
 

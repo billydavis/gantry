@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { Button, Group, Modal, NumberInput, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { todosApi, todoKeys } from './api';
 import { projectsApi, projectKeys } from '../projects/api';
+import { MarkdownField } from '../../components/MarkdownField';
 import type { Todo, Priority, TodoStatus } from './types';
 
 const schema = z.object({
@@ -162,12 +163,12 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
             {...register('title')}
           />
 
-          <Textarea
+          <MarkdownField
             label="Description"
             placeholder="Optional notes"
-            rows={3}
-            styles={inputStyles}
-            {...register('description')}
+            value={watch('description') ?? ''}
+            onChange={(v) => setValue('description', v)}
+            error={errors.description?.message}
           />
 
           <TextInput

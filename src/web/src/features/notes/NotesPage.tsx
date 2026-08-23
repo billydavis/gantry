@@ -7,8 +7,8 @@ import { noteKeys, notesApi } from './api';
 import { useCreateNote } from './useCreateNote';
 import type { Note } from './types';
 import { TagBadge } from '../tags/TagBadge';
-import { markdownPreview } from '../../utils/markdownPreview';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 
 function noteLabel(note: Note): string {
   return note.title
@@ -162,11 +162,7 @@ function NoteCard({ note, onEdit, onDelete, onView }: { note: Note; onEdit: () =
             {note.projectName && (
               <Text size="xs" style={{ color: 'var(--g-text-muted)' }}>{note.projectName}</Text>
             )}
-            {markdownPreview(note.content) && (
-              <Text size="sm" lineClamp={2} style={{ color: 'var(--g-text-muted)' }}>
-                {markdownPreview(note.content)}
-              </Text>
-            )}
+            {note.content && <ExpandableDescription content={note.content} />}
             {note.tags.length > 0 && (
               <Group gap={4} wrap="wrap" onClick={(e) => e.stopPropagation()}>
                 {note.tags.map((tag) => <TagBadge key={tag.id} tag={tag} />)}

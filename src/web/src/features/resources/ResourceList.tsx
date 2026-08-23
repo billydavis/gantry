@@ -10,6 +10,7 @@ import { RESOURCE_TYPE_LABELS, type Resource } from './types';
 import { copyLocation, isCopyOnly, openLocation, typeIcon } from './locationUtils';
 import type { ProjectEnvironment } from '../environments/types';
 import { TagPicker } from '../tags/TagPicker';
+import { InlineMarkdown } from '../../components/MarkdownText';
 
 const TYPE_ICON = typeIcon(16);
 
@@ -52,7 +53,7 @@ function ResourceRow({
           {resource.name}
         </Text>
         {resource.description && (
-          <Text size="xs" c="dimmed" lineClamp={1}>{resource.description}</Text>
+          <Text size="xs" c="dimmed" lineClamp={1}><InlineMarkdown text={resource.description} /></Text>
         )}
         <Text size="xs" style={{ color: 'var(--g-text-muted)', fontFamily: 'monospace' }} lineClamp={1}>
           {resource.location}

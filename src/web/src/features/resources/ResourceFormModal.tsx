@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Group, Modal, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { resourcesApi, resourceKeys } from './api';
 import { RESOURCE_TYPES, RESOURCE_TYPE_LABELS, type Resource, type ResourceType } from './types';
 import { environmentsApi, environmentKeys } from '../environments/api';
+import { MarkdownField } from '../../components/MarkdownField';
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
@@ -160,13 +161,13 @@ export function ResourceFormModal({ opened, onClose, projectId, resource, nextSo
               styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
             />
           )}
-          <Textarea
+          <MarkdownField
             label="Description"
             placeholder="Optional notes"
-            rows={2}
+            height={120}
+            value={watch('description') ?? ''}
+            onChange={(v) => setValue('description', v)}
             error={errors.description?.message}
-            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
-            {...register('description')}
           />
           <Group justify="flex-end" mt="xs">
             <Button variant="subtle" onClick={onClose} disabled={isPending}

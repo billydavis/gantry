@@ -8,6 +8,7 @@ import { noteKeys, notesApi } from '../features/notes/api';
 import { useCreateNote } from '../features/notes/useCreateNote';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
+import { WinViewerModal } from '../features/wins/WinViewerModal';
 import { Copy, Folder, Link, Pencil, Plus, Settings, Sparkles, StickyNote, Trash2, Trophy } from 'lucide-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
@@ -22,6 +23,7 @@ import { sampleDataApi } from '../features/sampleData/api';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 import { quoteKeys, quotesApi } from '../features/quotes/api';
 import { MarkdownViewerModal } from '../components/MarkdownViewerModal';
+import { ExpandableDescription } from '../components/ExpandableDescription';
 import type { Note } from '../features/notes/types';
 
 const TYPE_ICON = typeIcon(18);
@@ -38,6 +40,7 @@ export function DashboardPage() {
   const [viewNoteTarget, setViewNoteTarget] = useState<Note | null>(null);
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [editingWin, setEditingWin] = useState<import('../features/wins/types').Win | undefined>();
+  const [viewingWinId, setViewingWinId] = useState<string | null>(null);
   const [configOpen, setConfigOpen] = useState(false);
 
   const { data: recentNotes = [] } = useQuery({
@@ -341,19 +344,26 @@ export function DashboardPage() {
                       return (
                         <Box key={note.id} onClick={() => setViewNoteTarget(note)}
                           style={{
-                            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                            padding: '10px 14px',
                             borderBottom: i < recentNotes.length - 1 ? '1px solid var(--g-border)' : 'none',
                             cursor: 'pointer',
                           }}
                           onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                         >
-                          <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
-                          <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
-                          {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
-                          <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
-                            {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                          </Text>
+                          <Box style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+                            <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
+                            {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
+                            <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+                              {new Date(note.updatedUtc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            </Text>
+                          </Box>
+                          {note.content && (
+                            <Box mt={4} style={{ paddingLeft: 25 }}>
+                              <ExpandableDescription content={note.content} />
+                            </Box>
+                          )}
                         </Box>
                       );
                     })}
@@ -376,7 +386,7 @@ export function DashboardPage() {
                   <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
                     {recentWins.map((win, i) => (
                       <Box key={win.id}
-                        onClick={() => { setEditingWin(win); setWinModalOpen(true); }}
+                        onClick={() => setViewingWinId(win.id)}
                         style={{
                           display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px',
                           borderBottom: i < recentWins.length - 1 ? '1px solid var(--g-border)' : 'none',
@@ -469,6 +479,11 @@ export function DashboardPage() {
         opened={winModalOpen}
         onClose={() => { setWinModalOpen(false); setEditingWin(undefined); }}
         win={editingWin}
+      />
+      <WinViewerModal
+        winId={viewingWinId}
+        onClose={() => setViewingWinId(null)}
+        onOpenEditor={(win) => { setEditingWin(win); setWinModalOpen(true); }}
       />
     </>
   );

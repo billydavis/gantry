@@ -27,6 +27,7 @@ import { projectsApi, projectKeys } from './api';
 import { ProjectFormModal } from './ProjectFormModal';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree } from './projectTree';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 import type { Win } from '../wins/types';
 import { environmentsApi, environmentKeys } from '../environments/api';
 import { EnvironmentFormModal } from '../environments/EnvironmentFormModal';
@@ -152,11 +153,7 @@ export function ProjectDetailPage() {
           </Button>
         </Group>
 
-        {project.description && (
-          <Text style={{ color: 'var(--g-text-muted)' }} size="sm">
-            {project.description}
-          </Text>
-        )}
+        {project.description && <ExpandableDescription content={project.description} />}
 
         <TagPicker
           selectedTags={project.tags}

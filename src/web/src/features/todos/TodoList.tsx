@@ -3,13 +3,14 @@ import {
   ActionIcon, Badge, Box, Group, Loader,
   SegmentedControl, Stack, Text, TextInput, Tooltip,
 } from '@mantine/core';
-import { ChevronDown, ChevronRight, Circle, CircleCheck, CircleDashed, CircleX, Clock, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
+import { Circle, CircleCheck, CircleDashed, CircleX, Clock, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { todosApi, todoKeys } from './api';
 import { TodoFormModal } from './TodoFormModal';
 import type { Todo, TodoStatus } from './types';
 import { TagPicker } from '../tags/TagPicker';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 
 interface Props {
   projectId?: string;
@@ -60,7 +61,6 @@ export function TodoList({ projectId }: Props) {
   const [quickAdd, setQuickAdd] = useState('');
   const [editingTodo, setEditingTodo] = useState<Todo | undefined>();
   const [formOpen, setFormOpen] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const queryParams = { projectId, includeCompleted: filter === 'All' };
 
@@ -177,8 +177,7 @@ export function TodoList({ projectId }: Props) {
               const due = todo.dueDate ? formatDue(todo.dueDate) : null;
 
               const hasDescription = !!todo.description;
-              const isExpanded = expandedId === todo.id;
-              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || hasDescription || todo.link);
+              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || todo.link);
 
               return (
                 <Box
@@ -215,9 +214,7 @@ export function TodoList({ projectId }: Props) {
                           textDecoration: isComplete ? 'line-through' : 'none',
                           whiteSpace: 'normal',
                           overflowWrap: 'break-word',
-                          cursor: hasDescription ? 'pointer' : 'default',
                         }}
-                        onClick={() => hasDescription && setExpandedId(isExpanded ? null : todo.id)}
                       >
                         {todo.title}
                       </Text>
@@ -297,26 +294,12 @@ export function TodoList({ projectId }: Props) {
                           entityId={todo.id}
                           onChanged={invalidate}
                         />
-                        {hasDescription && (
-                          <Tooltip label={isExpanded ? 'Hide description' : 'Show description'}>
-                            <ActionIcon
-                              variant="subtle"
-                              size="xs"
-                              onClick={() => setExpandedId(isExpanded ? null : todo.id)}
-                              style={{ color: 'var(--g-text-muted)' }}
-                            >
-                              {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                            </ActionIcon>
-                          </Tooltip>
-                        )}
                       </Group>
                     )}
 
-                    {isExpanded && hasDescription && (
-                      <Box style={{ paddingLeft: 34, paddingTop: 8, minWidth: 0 }}>
-                        <Text size="sm" c="dimmed" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-                          {todo.description}
-                        </Text>
+                    {hasDescription && (
+                      <Box style={{ paddingLeft: 34, paddingTop: 8, minWidth: 0, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
+                        <ExpandableDescription content={todo.description ?? ''} />
                       </Box>
                     )}
                   </Box>

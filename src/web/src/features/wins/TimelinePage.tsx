@@ -4,13 +4,19 @@ import { Check, ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { winKeys, winsApi } from './api';
-import type { TimelineItem } from './types';
+import type { TimelineItem, Win } from './types';
+import { WinViewerModal } from './WinViewerModal';
+import { WinFormModal } from './WinFormModal';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
 
 export function TimelinePage() {
   const navigate = useNavigate();
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
+  const [viewingWinId, setViewingWinId] = useState<string | null>(null);
+  const [editingWin, setEditingWin] = useState<Win | undefined>();
+  const [winModalOpen, setWinModalOpen] = useState(false);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: winKeys.timeline(year, month),
@@ -89,8 +95,8 @@ export function TimelinePage() {
                   <TimelineRow
                     key={`${item.type}-${item.id}`}
                     item={item}
-                    onNavigate={() => item.type === 'Win'
-                      ? navigate('/wins')
+                    onClick={() => item.type === 'Win'
+                      ? setViewingWinId(item.id)
                       : navigate('/')}
                   />
                 ))}
@@ -99,15 +105,26 @@ export function TimelinePage() {
           </Box>
         ))}
       </Stack>
+
+      <WinViewerModal
+        winId={viewingWinId}
+        onClose={() => setViewingWinId(null)}
+        onOpenEditor={(win) => { setEditingWin(win); setWinModalOpen(true); }}
+      />
+      <WinFormModal
+        opened={winModalOpen}
+        onClose={() => { setWinModalOpen(false); setEditingWin(undefined); }}
+        win={editingWin}
+      />
     </Stack>
   );
 }
 
-function TimelineRow({ item, onNavigate }: { item: TimelineItem; onNavigate: () => void }) {
+function TimelineRow({ item, onClick }: { item: TimelineItem; onClick: () => void }) {
   const isWin = item.type === 'Win';
   return (
     <Box
-      onClick={onNavigate}
+      onClick={onClick}
       style={{
         display: 'flex', alignItems: 'flex-start', gap: 10,
         padding: '10px 14px',
@@ -125,9 +142,7 @@ function TimelineRow({ item, onNavigate }: { item: TimelineItem; onNavigate: () 
       </Box>
       <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
         <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>{item.title}</Text>
-        {item.impact && (
-          <Text size="xs" style={{ color: 'var(--g-text-muted)', fontStyle: 'italic' }}>{item.impact}</Text>
-        )}
+        {item.impact && <ExpandableDescription content={item.impact} />}
         {item.projectName && (
           <Text size="xs" c="dimmed">{item.projectName}</Text>
         )}

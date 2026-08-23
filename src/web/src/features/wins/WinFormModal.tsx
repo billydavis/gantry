@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Group, Modal, Select, Stack, Textarea, TextInput } from '@mantine/core';
+import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { notifications } from '@mantine/notifications';
 import { winKeys, winsApi } from './api';
 import { projectKeys, projectsApi } from '../projects/api';
 import type { Win } from './types';
+import { MarkdownField } from '../../components/MarkdownField';
 
 const schema = z.object({
   title: z.string().min(1, 'Title is required').max(500),
@@ -112,25 +113,20 @@ export function WinFormModal({ opened, onClose, win, defaultProjectId }: Props) 
             styles={inputStyles}
             {...register('date')}
           />
-          <Textarea
+          <MarkdownField
             label="Impact"
             placeholder="How did this move the needle? (great for perf reviews)"
-            autosize
-            minRows={2}
-            maxRows={4}
+            height={120}
+            value={watch('impact') ?? ''}
+            onChange={(v) => setValue('impact', v)}
             error={errors.impact?.message}
-            styles={inputStyles}
-            {...register('impact')}
           />
-          <Textarea
+          <MarkdownField
             label="Details"
             placeholder="Optional — extra context, links, numbers"
-            autosize
-            minRows={2}
-            maxRows={6}
+            value={watch('description') ?? ''}
+            onChange={(v) => setValue('description', v)}
             error={errors.description?.message}
-            styles={inputStyles}
-            {...register('description')}
           />
           <Select
             label="Project"

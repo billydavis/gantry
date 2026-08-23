@@ -1,4 +1,16 @@
 /*
+ * Hard guardrail against page-wide horizontal scroll. Rendered Markdown can
+ * contain wide content (Mermaid diagrams, tables, long unbroken code lines)
+ * that's meant to scroll within its own box — every such box already sets
+ * its own overflow-x: auto. This just makes it structurally impossible for
+ * any of that (or anything else, now or later) to widen the actual page and
+ * produce a horizontal scrollbar on html/body.
+ */
+html, body {
+  overflow-x: hidden;
+}
+
+/*
  * The MDEditor preview pane ships with its own GitHub-flavored color scheme
  * (CSS custom properties on .wmde-markdown), independent of our theme tokens.
  * These overrides remap prose (text/background/headings/links) onto --g-*
@@ -181,6 +193,18 @@
 .w-md-editor-text-pre.w-md-editor-text-pre > code {
   font-size: 16px !important;
   line-height: 24px !important;
+}
+
+/*
+ * MarkdownText.tsx renders description-style fields at var(--g-text-muted),
+ * which is low-contrast by design for secondary text. A 600-weight <strong>
+ * barely reads as bold against it, so bump both weight and color for the
+ * compact renderer specifically (the full-page Note/Article viewers already
+ * sit on --g-text and don't need this).
+ */
+.g-markdown-text-compact strong {
+  font-weight: 700 !important;
+  color: var(--g-text) !important;
 }
 
 [data-color-mode='dark'] .wmde-markdown {

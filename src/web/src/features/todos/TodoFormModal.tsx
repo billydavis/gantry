@@ -145,7 +145,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
       opened={opened}
       onClose={onClose}
       title={isEditing ? 'Edit Todo' : 'New Todo'}
-      size="md"
+      size="lg"
       styles={{
         content: { background: 'var(--g-surface)' },
         header: { background: 'var(--g-surface)', borderBottom: '1px solid var(--g-border)' },
@@ -169,6 +169,7 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
             value={watch('description') ?? ''}
             onChange={(v) => setValue('description', v)}
             error={errors.description?.message}
+            height={260}
           />
 
           <TextInput

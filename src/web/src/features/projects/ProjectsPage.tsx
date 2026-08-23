@@ -23,7 +23,8 @@ import { DeleteProjectModal } from './DeleteProjectModal';
 import type { Project, ProjectStatus } from './types';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree, type ProjectTreeEntry } from './projectTree';
-import { InlineMarkdown } from '../../components/MarkdownText';
+import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { TagPicker } from '../tags/TagPicker';
 
 type Filter = 'Active' | 'OnHold' | 'Archived' | 'All';
 
@@ -220,22 +221,26 @@ export function ProjectsPage() {
           </Box>
         </Group>
 
-        {/* Secondary row — description, indented under the name */}
-        {project.description && (
-          <Text
-            size="xs"
-            c="dimmed"
+        {/* Secondary row — expandable description and tags, indented under the name */}
+        {(project.description || project.tags.length > 0) && (
+          <Box
             visibleFrom="md"
-            style={{
-              paddingLeft: depth * 24 + (isChild ? 34 : 24),
-              marginTop: 2,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
+            style={{ paddingLeft: depth * 24 + (isChild ? 34 : 24), marginTop: 4 }}
           >
-            <InlineMarkdown text={project.description} />
-          </Text>
+            {project.description && <ExpandableDescription content={project.description} />}
+            <Box
+              onClick={(e) => e.stopPropagation()}
+              mt={project.description ? 4 : 0}
+              ml={project.description ? 21 : 0}
+            >
+              <TagPicker
+                selectedTags={project.tags}
+                entityType="projects"
+                entityId={project.id}
+                onChanged={() => queryClient.invalidateQueries({ queryKey: projectKeys.all })}
+              />
+            </Box>
+          </Box>
         )}
       </Box>
     );

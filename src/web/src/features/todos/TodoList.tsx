@@ -3,11 +3,12 @@ import {
   ActionIcon, Badge, Box, Group, Loader,
   SegmentedControl, Stack, Text, TextInput, Tooltip,
 } from '@mantine/core';
-import { Circle, CircleCheck, CircleDashed, CircleX, Clock, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
+import { Circle, CircleCheck, CircleDashed, CircleX, Clock, Eye, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { todosApi, todoKeys } from './api';
 import { TodoFormModal } from './TodoFormModal';
+import { TodoViewerModal } from './TodoViewerModal';
 import type { Todo, TodoStatus } from './types';
 import { TagPicker } from '../tags/TagPicker';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
@@ -61,6 +62,7 @@ export function TodoList({ projectId }: Props) {
   const [quickAdd, setQuickAdd] = useState('');
   const [editingTodo, setEditingTodo] = useState<Todo | undefined>();
   const [formOpen, setFormOpen] = useState(false);
+  const [viewingTodoId, setViewingTodoId] = useState<string | null>(null);
 
   const queryParams = { projectId, includeCompleted: filter === 'All' };
 
@@ -205,6 +207,7 @@ export function TodoList({ projectId }: Props) {
 
                       <Text
                         fw={600}
+                        onClick={() => setViewingTodoId(todo.id)}
                         style={{
                           flex: 1,
                           minWidth: 0,
@@ -214,12 +217,23 @@ export function TodoList({ projectId }: Props) {
                           textDecoration: isComplete ? 'line-through' : 'none',
                           whiteSpace: 'normal',
                           overflowWrap: 'break-word',
+                          cursor: 'pointer',
                         }}
                       >
                         {todo.title}
                       </Text>
 
                       <Group gap={2} style={{ flexShrink: 0 }}>
+                        <Tooltip label="View">
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            onClick={() => setViewingTodoId(todo.id)}
+                            style={{ color: 'var(--g-text-muted)' }}
+                          >
+                            <Eye size={14} />
+                          </ActionIcon>
+                        </Tooltip>
                         <Tooltip label={todo.isPinned ? 'Unpin' : 'Pin to top'}>
                           <ActionIcon
                             variant="subtle"
@@ -315,6 +329,12 @@ export function TodoList({ projectId }: Props) {
         onClose={() => setFormOpen(false)}
         projectId={projectId}
         todo={editingTodo}
+      />
+
+      <TodoViewerModal
+        todoId={viewingTodoId}
+        onClose={() => setViewingTodoId(null)}
+        onOpenEditor={openEdit}
       />
     </>
   );

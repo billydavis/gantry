@@ -47,7 +47,7 @@ public class TagMcpTools
         [Description("The win's id.")] Guid id, Assign.AssignRequest req, AppDbContext db)
         => McpResultAdapter.UnwrapNoContent(await Assign.Endpoint.AssignToWin(id, req, db));
 
-    [McpServerTool(Name = "assign_tags_to_article"), Description("Replaces the full set of tags on an article.")]
+    [McpServerTool(Name = "assign_tags_to_article"), Description("Replaces the full set of tags on an article (Knowledge Base / Wiki entry).")]
     public static async Task<string> AssignTagsToArticle(
         [Description("The article's id.")] Guid id, Assign.AssignRequest req, AppDbContext db)
         => McpResultAdapter.UnwrapNoContent(await Assign.Endpoint.AssignToArticle(id, req, db));

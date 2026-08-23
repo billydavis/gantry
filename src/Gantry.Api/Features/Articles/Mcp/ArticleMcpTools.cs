@@ -10,18 +10,18 @@ namespace Gantry.Api.Features.Articles.Mcp;
 [McpServerToolType]
 public class ArticleMcpTools
 {
-    [McpServerTool(Name = "create_article"), Description("Creates a new article (a saved reference article/write-up, not tied to a project).")]
+    [McpServerTool(Name = "create_article"), Description("Creates a new article (a saved reference write-up, not tied to a project). This is the entity behind Gantry's Knowledge Base UI section (formerly called the Wiki) -- use this tool for requests to add/push/save something to the knowledge base or wiki.")]
     public static async Task<ArticleResponse> CreateArticle(
         CreateArticleRequest request, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<ArticleResponse>(await Create.Endpoint.Handle(request, db, ct));
 
-    [McpServerTool(Name = "update_article"), Description("Updates an existing article.")]
+    [McpServerTool(Name = "update_article"), Description("Updates an existing article (Knowledge Base / Wiki entry).")]
     public static async Task<ArticleResponse> UpdateArticle(
         [Description("The article's id.")] Guid id,
         UpdateArticleRequest request, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<ArticleResponse>(await Update.Endpoint.Handle(id, request, db, ct));
 
-    [McpServerTool(Name = "list_articles"), Description("Lists articles, alphabetically by title.")]
+    [McpServerTool(Name = "list_articles"), Description("Lists articles (Knowledge Base / Wiki entries), alphabetically by title.")]
     public static async Task<IEnumerable<ArticleResponse>> ListArticles(
         AppDbContext db,
         CancellationToken ct,
@@ -29,7 +29,7 @@ public class ArticleMcpTools
         [Description("Filter to articles carrying this tag.")] Guid? tagId = null)
         => McpResultAdapter.Unwrap<IEnumerable<ArticleResponse>>(await List.Endpoint.Handle(db, ct, category, tagId));
 
-    [McpServerTool(Name = "get_article"), Description("Gets a single article by id.")]
+    [McpServerTool(Name = "get_article"), Description("Gets a single article (Knowledge Base / Wiki entry) by id.")]
     public static async Task<ArticleResponse> GetArticle(
         [Description("The article's id.")] Guid id, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<ArticleResponse>(await GetById.Endpoint.Handle(db, id, ct));

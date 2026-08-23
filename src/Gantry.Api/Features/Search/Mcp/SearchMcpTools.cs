@@ -8,7 +8,7 @@ namespace Gantry.Api.Features.Search.Mcp;
 [McpServerToolType]
 public class SearchMcpTools
 {
-    [McpServerTool(Name = "search"), Description("Full-text-ish search across projects, todos, notes, wins, resources, and articles.")]
+    [McpServerTool(Name = "search"), Description("Full-text-ish search across projects, todos, notes, wins, resources, and articles (Knowledge Base / Wiki entries).")]
     public static async Task<IEnumerable<SearchResult>> Search(
         [Description("The search query. Must be at least 2 characters.")] string q,
         AppDbContext db, CancellationToken ct)

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Box, Button, Group, Loader, Modal, Stack, Text, Tooltip } from '@mantine/core';
-import { Pencil, StickyNote, Trash2 } from 'lucide-react';
+import { Pencil, NotebookText, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { noteKeys, notesApi } from './api';
 import type { Note } from './types';
@@ -57,7 +57,7 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--g-background)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+            <NotebookText size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
             <Box style={{ flex: 1, minWidth: 0 }}>
               <Text size="sm" fw={500} style={{ color: 'var(--g-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {noteLabel(note)}
@@ -92,7 +92,7 @@ export function ProjectNotesList({ projectId, onEdit }: Props) {
         onClose={() => setViewTarget(null)}
         title={viewTarget ? noteLabel(viewTarget) : ''}
         content={viewTarget?.content ?? ''}
-        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<NotebookText size={18} style={{ color: 'var(--g-accent)' }} />}
         onOpenEditor={() => viewTarget && onEdit(viewTarget)}
       />
 

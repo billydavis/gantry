@@ -37,7 +37,7 @@ export function ArticleDetailPage() {
       <Stack gap="md">
         <Breadcrumbs styles={{ breadcrumb: { color: 'var(--g-text-muted)', fontSize: 13 } }}>
           <Text component={Link} to="/wiki" size="sm" style={{ color: 'var(--g-text-muted)', textDecoration: 'none' }}>
-            Wiki
+            Knowledge Base
           </Text>
           <Text size="sm" style={{ color: 'var(--g-text)' }}>{article.title}</Text>
         </Breadcrumbs>

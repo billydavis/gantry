@@ -169,9 +169,11 @@ Each day gets an auto-created note with structure:
 
 Notes are searchable indefinitely.
 
-### 4.6 Scratch Pad
+### 4.6 Knowledge Base (retired: Scratch Pad)
 
-An always-available, autosaving space for transient content: SQL queries, regex, connection strings, JSON payloads, random URLs — anything not worth filing anywhere permanent.
+**Note (2026-08-23): the Scratch Pad concept described below was never built as specified. Post-v1, it was retired in favor of a Knowledge Base feature** — a Markdown-backed `Article` entity (Title, Content, Category, SourceUrl, Tags) with full CRUD, list, and MCP tool support, sharing the read-only viewer used by Notes. This better fit the actual usage pattern (durable, searchable reference material) than a single transient autosaving buffer. Internally the entity/routes/MCP tools are still named `Article`/`Articles` — only the user-facing label reads "Knowledge Base" (renamed 2026-08-23 to reflect intent, no functional change). See `ROADMAP.md`'s "v1.1" section for details.
+
+Original v1 concept (superseded): an always-available, autosaving space for transient content — SQL queries, regex, connection strings, JSON payloads, random URLs — anything not worth filing anywhere permanent.
 
 ### 4.7 Wins Log
 
@@ -213,7 +215,6 @@ Aggregates completed todos and logged wins chronologically, grouped by month, to
 
 - GitHub integration
 - Calendar integration
-- AI chat / assistant integrated into the dashboard
 - Email reminders
 - Time tracking
 - Plugin system
@@ -221,6 +222,12 @@ Aggregates completed todos and logged wins chronologically, grouped by month, to
 - Authentication (Entra / GitHub OAuth / local accounts)
 - Background worker service
 - Reverse proxy for cleaner local URLs
+
+**Shipped since v1 (not originally listed here — see `ROADMAP.md`'s "v1.1" section for full detail):**
+- Environments entity (Dev/QA/UAT/Prod), realizing the "optional Environments" idea from §4.2 as a full CRUD feature
+- MCP server exposing Gantry's data/actions to AI assistants (this supersedes the "AI chat / assistant integrated into the dashboard" idea that was previously listed here — an MCP server lets any MCP-compatible assistant, not just an in-app chat widget, act on Gantry's data)
+- Idle-triggered lock screen with optional PIN (a privacy screen, not authentication — see `DECISIONS.md`)
+- Markdown rendering across Projects/Todos/Wins/Resources/Notes/Articles
 
 ---
 

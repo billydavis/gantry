@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Group, Loader, Stack, Text, Title } from '@mantine/core';
-import { BookOpen, Check, ExternalLink, Folder, StickyNote, Trophy } from 'lucide-react';
+import { Check, ExternalLink, FileText, FolderKanban, NotebookText, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { tagKeys, tagsApi } from '../tags/api';
@@ -10,12 +10,12 @@ import { articleKeys, articlesApi } from '../articles/api';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
-  Project:  <Folder size={15} />,
+  Project:  <FolderKanban size={15} />,
   Todo:     <Check size={15} />,
-  Note:     <StickyNote size={15} />,
+  Note:     <NotebookText size={15} />,
   Win:      <Trophy size={15} />,
   Resource: <ExternalLink size={15} />,
-  Article:  <BookOpen size={15} />,
+  Article:  <FileText size={15} />,
 };
 
 const TYPE_COLOR: Record<string, string> = {
@@ -25,6 +25,10 @@ const TYPE_COLOR: Record<string, string> = {
   Win:      'var(--g-accent)',
   Resource: 'var(--g-text-muted)',
   Article:  'var(--g-accent)',
+};
+
+const TYPE_GROUP_LABEL: Record<string, string> = {
+  Article: 'Knowledge Base',
 };
 
 export function SearchPage() {
@@ -85,7 +89,7 @@ export function SearchPage() {
       {grouped.map(({ type, items }) => (
         <Stack key={type} gap="sm">
           <Text fw={600} size="sm" tt="uppercase" style={{ color: 'var(--g-text-muted)', letterSpacing: '0.05em' }}>
-            {type}s
+            {TYPE_GROUP_LABEL[type] ?? `${type}s`}
           </Text>
           <Box style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8, overflow: 'hidden' }}>
             {items.map((r, i) => (
@@ -129,7 +133,7 @@ export function SearchPage() {
         onClose={() => setViewNoteId(null)}
         title={viewNoteId?.title ?? ''}
         content={viewNote?.content ?? ''}
-        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<NotebookText size={18} style={{ color: 'var(--g-accent)' }} />}
         isLoading={viewNoteLoading}
         onOpenEditor={() => viewNoteId && navigate(`/notes/${viewNoteId.id}`)}
       />
@@ -139,7 +143,7 @@ export function SearchPage() {
         onClose={() => setViewArticleId(null)}
         title={viewArticleId?.title ?? ''}
         content={viewArticle?.content ?? ''}
-        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<FileText size={18} style={{ color: 'var(--g-accent)' }} />}
         isLoading={viewArticleLoading}
         onOpenEditor={() => viewArticleId && navigate(`/wiki/${viewArticleId.id}`)}
       />

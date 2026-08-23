@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, ChartNoAxesGantt, Check, ExternalLink, Folder, LayoutDashboard, Search, StickyNote, Trophy } from 'lucide-react';
+import { Brain, ChartNoAxesGantt, Check, ExternalLink, FileText, FolderKanban, LayoutDashboard, Search, NotebookText, Trophy } from 'lucide-react';
 import { projectsApi, projectKeys } from '../features/projects/api';
 import { tagsApi, tagKeys } from '../features/tags/api';
 import type { SearchResult } from '../features/tags/types';
@@ -17,12 +17,12 @@ import '@mantine/spotlight/styles.css';
 export { spotlight };
 
 const RESULT_ICON: Record<SearchResult['type'], React.ReactNode> = {
-  Project:  <Folder size={18} />,
+  Project:  <FolderKanban size={18} />,
   Todo:     <Check size={18} />,
-  Note:     <StickyNote size={18} />,
+  Note:     <NotebookText size={18} />,
   Win:      <Trophy size={18} />,
   Resource: <ExternalLink size={18} />,
-  Article:  <BookOpen size={18} />,
+  Article:  <FileText size={18} />,
 };
 
 export function CommandPalette() {
@@ -61,14 +61,14 @@ export function CommandPalette() {
   const staticActions = useMemo(() => {
     const nav = [
       { id: 'dashboard',  label: 'Dashboard',  description: 'Go to dashboard',     leftSection: <LayoutDashboard size={18} />, onClick: () => navigate('/') },
-      { id: 'projects',   label: 'Projects',   description: 'Browse all projects', leftSection: <Folder size={18} />,          onClick: () => navigate('/projects') },
-      { id: 'notes',      label: 'Notes',      description: 'Open daily notes',    leftSection: <StickyNote size={18} />,            onClick: () => navigate('/notes') },
-      { id: 'wiki',       label: 'Wiki',       description: 'Browse the wiki',     leftSection: <BookOpen size={18} />,           onClick: () => navigate('/wiki') },
+      { id: 'projects',   label: 'Projects',   description: 'Browse all projects', leftSection: <FolderKanban size={18} />,          onClick: () => navigate('/projects') },
+      { id: 'notes',      label: 'Notes',      description: 'Open daily notes',    leftSection: <NotebookText size={18} />,            onClick: () => navigate('/notes') },
+      { id: 'wiki',       label: 'Knowledge Base', description: 'Browse the knowledge base', leftSection: <Brain size={18} />,           onClick: () => navigate('/wiki') },
       { id: 'wins',       label: 'Wins',       description: 'View all wins',       leftSection: <Trophy size={18} />,          onClick: () => navigate('/wins') },
       { id: 'timeline',   label: 'Timeline',   description: 'Browse timeline',     leftSection: <ChartNoAxesGantt size={18} />,        onClick: () => navigate('/timeline') },
       {
         id: 'new-note', label: 'New Note', description: 'Create a new note',
-        leftSection: <StickyNote size={18} />,
+        leftSection: <NotebookText size={18} />,
         onClick: () => { spotlight.close(); createNote(undefined); },
       },
       {
@@ -84,7 +84,7 @@ export function CommandPalette() {
         id: `project-${p.id}`,
         label: p.name,
         description: 'Project',
-        leftSection: <Folder size={18} style={{ color: p.color ?? undefined }} />,
+        leftSection: <FolderKanban size={18} style={{ color: p.color ?? undefined }} />,
         onClick: () => navigate(`/projects/${p.id}`),
       }));
 
@@ -149,7 +149,7 @@ export function CommandPalette() {
         onClose={() => setViewNoteId(null)}
         title={viewNoteId?.title ?? ''}
         content={viewNote?.content ?? ''}
-        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<NotebookText size={18} style={{ color: 'var(--g-accent)' }} />}
         isLoading={viewNoteLoading}
         onOpenEditor={() => viewNoteId && navigate(`/notes/${viewNoteId.id}`)}
       />
@@ -159,7 +159,7 @@ export function CommandPalette() {
         onClose={() => setViewArticleId(null)}
         title={viewArticleId?.title ?? ''}
         content={viewArticle?.content ?? ''}
-        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<FileText size={18} style={{ color: 'var(--g-accent)' }} />}
         isLoading={viewArticleLoading}
         onOpenEditor={() => viewArticleId && navigate(`/wiki/${viewArticleId.id}`)}
       />

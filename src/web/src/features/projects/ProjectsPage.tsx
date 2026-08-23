@@ -13,7 +13,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { Archive, Ellipsis, Folder, FolderPlus, Pause, Pencil, RefreshCw, Trash2 } from 'lucide-react';
+import { Archive, Ellipsis, FolderKanban, FolderPlus, Pause, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -128,7 +128,7 @@ export function ProjectsPage() {
           {project.color ? (
             <ColorSwatch color={project.color} size={isChild ? 10 : 14} style={{ flexShrink: 0 }} />
           ) : (
-            <Folder size={isChild ? 12 : 14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+            <FolderKanban size={isChild ? 12 : 14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
           )}
           <Text
             fw={isChild ? 400 : 500}
@@ -245,9 +245,12 @@ export function ProjectsPage() {
     <>
       <Stack gap="lg">
         <Group justify="space-between" align="center">
-          <Title order={2} style={{ color: 'var(--g-heading)' }}>
-            Projects
-          </Title>
+          <Group gap="xs">
+            <FolderKanban size={22} style={{ color: 'var(--g-heading)' }} />
+            <Title order={2} style={{ color: 'var(--g-heading)' }}>
+              Projects
+            </Title>
+          </Group>
           <Button
             leftSection={<FolderPlus size={16} />}
             onClick={openCreate}

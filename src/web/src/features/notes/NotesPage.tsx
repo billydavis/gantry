@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Button, Group, Loader, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { CalendarDays, Pencil, Plus, StickyNote, Trash2 } from 'lucide-react';
+import { CalendarDays, Pencil, Plus, NotebookText, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
@@ -46,7 +46,10 @@ export function NotesPage() {
     <>
       <Stack gap="lg">
         <Group justify="space-between" align="center">
-          <Title order={2} style={{ color: 'var(--g-heading)' }}>Notes</Title>
+          <Group gap="xs">
+            <NotebookText size={22} style={{ color: 'var(--g-heading)' }} />
+            <Title order={2} style={{ color: 'var(--g-heading)' }}>Notes</Title>
+          </Group>
           <Group gap="xs">
             <Button
               variant="default"
@@ -73,7 +76,7 @@ export function NotesPage() {
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
-            <StickyNote size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
+            <NotebookText size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No notes yet</Text>
             <Text size="sm" c="dimmed" mb="md">
               Jot down a quick thought, or start today's daily note.
@@ -102,7 +105,7 @@ export function NotesPage() {
         onClose={() => setViewTarget(null)}
         title={viewTarget ? noteLabel(viewTarget) : ''}
         content={viewTarget?.content ?? ''}
-        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<NotebookText size={18} style={{ color: 'var(--g-accent)' }} />}
         onOpenEditor={() => viewTarget && navigate(`/notes/${viewTarget.id}`)}
       />
 
@@ -146,7 +149,7 @@ function NoteCard({ note, onEdit, onDelete, onView }: { note: Note; onEdit: () =
     >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <StickyNote size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <NotebookText size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Group gap={6} align="center">
               <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{noteLabel(note)}</Text>

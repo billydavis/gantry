@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
+import { FolderKanban, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
 import { TodoList } from '../todos/TodoList';
 import { ResourceList } from '../resources/ResourceList';
 import { ProjectNotesList } from '../notes/ProjectNotesList';
@@ -95,7 +95,7 @@ export function ProjectDetailPage() {
   if (!project) {
     return (
       <Stack align="center" py="xl">
-        <Folder size={48} style={{ color: 'var(--g-text-muted)' }} />
+        <FolderKanban size={48} style={{ color: 'var(--g-text-muted)' }} />
         <Text c="dimmed">Project not found.</Text>
         <Button component={Link} to="/projects" variant="subtle">
           Back to Projects

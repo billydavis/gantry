@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Button, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { BookOpen, Pencil, Plus } from 'lucide-react';
+import { Brain, FileText, Pencil, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { articleKeys, articlesApi } from './api';
@@ -26,7 +26,10 @@ export function ArticlesPage() {
     <>
       <Stack gap="lg">
         <Group justify="space-between" align="center">
-          <Title order={2} style={{ color: 'var(--g-heading)' }}>Wiki</Title>
+          <Group gap="xs">
+            <Brain size={22} style={{ color: 'var(--g-heading)' }} />
+            <Title order={2} style={{ color: 'var(--g-heading)' }}>Knowledge Base</Title>
+          </Group>
           <Button
             leftSection={<Plus size={16} />}
             onClick={() => setModalOpen(true)}
@@ -43,7 +46,7 @@ export function ArticlesPage() {
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
           }}>
-            <BookOpen size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
+            <FileText size={40} style={{ color: 'var(--g-text-muted)', marginBottom: 12 }} />
             <Text fw={500} style={{ color: 'var(--g-text)' }}>No articles yet</Text>
             <Text size="sm" c="dimmed" mb="md">
               Capture gotchas, how-tos, and reference notes you'll want later.
@@ -92,7 +95,7 @@ export function ArticlesPage() {
         onClose={() => setViewTarget(null)}
         title={viewTarget?.title ?? ''}
         content={viewTarget?.content ?? ''}
-        icon={<BookOpen size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<FileText size={18} style={{ color: 'var(--g-accent)' }} />}
         onOpenEditor={() => viewTarget && navigate(`/wiki/${viewTarget.id}`)}
       />
     </>
@@ -110,7 +113,7 @@ function ArticleCard({ article, onEdit, onView }: { article: Article; onEdit: ()
     >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Group gap="sm" align="flex-start" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <BookOpen size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
+          <FileText size={18} style={{ color: 'var(--g-accent)', flexShrink: 0, marginTop: 2 }} />
           <Stack gap={4} style={{ minWidth: 0 }}>
             <Text fw={600} style={{ color: 'var(--g-text)', wordBreak: 'break-word' }}>{article.title}</Text>
             {markdownPreview(article.content) && (

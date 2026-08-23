@@ -36,7 +36,10 @@ export function WinsPage() {
     <>
       <Stack gap="lg">
         <Group justify="space-between" align="center">
-          <Title order={2} style={{ color: 'var(--g-heading)' }}>Wins</Title>
+          <Group gap="xs">
+            <Trophy size={22} style={{ color: 'var(--g-heading)' }} />
+            <Title order={2} style={{ color: 'var(--g-heading)' }}>Wins</Title>
+          </Group>
           <Button
             leftSection={<Plus size={16} />}
             onClick={openCreate}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActionIcon, Badge, Box, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { Check, ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
+import { ChartNoAxesGantt, Check, ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { winKeys, winsApi } from './api';
@@ -43,7 +43,10 @@ export function TimelinePage() {
   return (
     <Stack gap="lg">
       <Group justify="space-between" align="center">
-        <Title order={2} style={{ color: 'var(--g-heading)' }}>Timeline</Title>
+        <Group gap="xs">
+          <ChartNoAxesGantt size={22} style={{ color: 'var(--g-heading)' }} />
+          <Title order={2} style={{ color: 'var(--g-heading)' }}>Timeline</Title>
+        </Group>
         <Group gap="xs" align="center">
           <Tooltip label="Previous month">
             <ActionIcon variant="subtle" onClick={prevMonth} style={{ color: 'var(--g-text-muted)' }}>

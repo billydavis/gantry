@@ -9,7 +9,7 @@ import { useCreateNote } from '../features/notes/useCreateNote';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { WinViewerModal } from '../features/wins/WinViewerModal';
-import { Copy, Folder, Link, Pencil, Plus, Settings, Sparkles, StickyNote, Trash2, Trophy } from 'lucide-react';
+import { Copy, FolderKanban, Link, Pencil, Plus, Settings, Sparkles, NotebookText, Trash2, Trophy } from 'lucide-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
 import { resourcesApi, resourceKeys } from '../features/resources/api';
@@ -276,7 +276,7 @@ export function DashboardPage() {
                 </Group>
                 <Tooltip label="All projects">
                   <ActionIcon variant="subtle" size="sm" onClick={() => navigate('/projects')} style={{ color: 'var(--g-text-muted)' }}>
-                    <Folder size={14} />
+                    <FolderKanban size={14} />
                   </ActionIcon>
                 </Tooltip>
               </Group>
@@ -300,7 +300,7 @@ export function DashboardPage() {
                   >
                     {project.color
                       ? <ColorSwatch color={project.color} size={12} style={{ flexShrink: 0 }} />
-                      : <Folder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                      : <FolderKanban size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
                     }
                     <Text size="sm" fw={500} style={{ color: 'var(--g-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {project.name}
@@ -352,7 +352,7 @@ export function DashboardPage() {
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                         >
                           <Box style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <StickyNote size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
+                            <NotebookText size={15} style={{ color: 'var(--g-accent)', flexShrink: 0 }} />
                             <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{label}</Text>
                             {note.projectName && <Text size="xs" c="dimmed">{note.projectName}</Text>}
                             <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
@@ -436,7 +436,7 @@ export function DashboardPage() {
                   >
                     {project.color
                       ? <ColorSwatch color={project.color} size={12} style={{ flexShrink: 0 }} />
-                      : <Folder size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
+                      : <FolderKanban size={14} style={{ color: 'var(--g-text-muted)', flexShrink: 0 }} />
                     }
                     <Text size="sm" fw={500} style={{ color: 'var(--g-text)', flex: 1 }}>{project.name}</Text>
                   </Box>
@@ -472,7 +472,7 @@ export function DashboardPage() {
               : 'Untitled note'))
           : ''}
         content={viewNoteTarget?.content ?? ''}
-        icon={<StickyNote size={18} style={{ color: 'var(--g-accent)' }} />}
+        icon={<NotebookText size={18} style={{ color: 'var(--g-accent)' }} />}
         onOpenEditor={() => viewNoteTarget && navigate(`/notes/${viewNoteTarget.id}`)}
       />
       <WinFormModal

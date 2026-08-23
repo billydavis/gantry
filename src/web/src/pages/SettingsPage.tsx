@@ -372,7 +372,10 @@ export function SettingsPage() {
 
   return (
     <>
-      <Title order={2} mb="xl" style={{ color: 'var(--g-heading)' }}>Settings</Title>
+      <Group gap="xs" mb="xl">
+        <Settings size={22} style={{ color: 'var(--g-heading)' }} />
+        <Title order={2} style={{ color: 'var(--g-heading)' }}>Settings</Title>
+      </Group>
 
       <Tabs
         defaultValue="profile"

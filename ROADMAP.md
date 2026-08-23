@@ -68,7 +68,7 @@ A phased plan for getting v1 built. Each phase should result in something runnab
 Released 2026-07-27. The app is usable daily: open it, see what to work on, log todos and wins as work happens, and have a searchable record of the year building up automatically.
 
 **What shipped in v1:**
-- 8 theme variants (Default, Cobalt DOS, Phosphor, Frostline, Nightshade, Canopy, Graphite, Amber) each with dark/light mode
+- 8 theme variants (Default, Cobalt DOS, Phosphor, Frostline, Nightshade, Canopy, Graphite, Amber) each with dark/light mode — see note under v1.1 below, this list has since grown and two names changed
 - Projects with subproject hierarchy, color coding, status, tags, resources, todos, notes, and wins
 - Global Quick Launch dashboard with type-aware icons
 - Active Projects and Recently Opened dashboard widgets
@@ -80,6 +80,20 @@ Released 2026-07-27. The app is usable daily: open it, see what to work on, log 
 - Self-hosted via Docker Compose, no authentication required
 
 ---
+
+## v1.1 — shipped, previously undocumented
+
+Work that landed after the 2026-07-27 v1 release but was never folded back into this roadmap or `PROJECT_SPEC.md`. Captured here after an app-wide assessment on 2026-08-23.
+
+- **Knowledge Base (Articles)** — a Markdown-backed `Article` entity (Title, Content, Category, SourceUrl, Tags) with full CRUD, replacing the originally-planned Scratch Pad. Shares the read-only `MarkdownViewerModal` with Notes. UI label is "Knowledge Base" (renamed 2026-08-23); the entity/routes/MCP tools stay named `Article`/`Articles` internally.
+- **Environments** — a `ProjectEnvironment` entity (Name, BaseUrl, SortOrder, optionally scoped to a Project), realizing the "optional Environments (Dev/QA/UAT/Prod)" idea from `PROJECT_SPEC.md` §4.2 as a full feature with CRUD endpoints and a frontend area.
+- **Markdown everywhere** — Project/Todo/Win/Resource descriptions and Win "impact" now render/edit as Markdown via shared `MarkdownField`/`MarkdownText` components, with a collapsible summary-line pattern (`ExpandableDescription`) so long text doesn't push content down. Includes Mermaid diagram rendering and a code-block copy button, plus guards against wide content causing page-level horizontal scroll.
+- **Wins popup viewer** — Wins now open in a read-only popup (matching the Notes/Knowledge Base viewer) from the Timeline instead of navigating into an edit form.
+- **Idle-triggered lock screen with optional PIN** — after a configurable idle timeout, a Matrix-rain-styled `LockScreen` covers the app; an optional PIN (hashed via `AppSettings`, with failed-attempt backoff) gates dismissal. Manually triggerable via `Ctrl+L`. This is a UI privacy screen only, not authentication — see `DECISIONS.md`.
+- **MCP server** — a Model Context Protocol server exposing ~50 tools across every domain (Projects, Todos, Notes, Wins, Resources, Articles, Environments, Tags, Search, Timeline, Quotes) to AI assistants, gated by bearer-token middleware. Lives inline in the API project as a repo-wide pattern: shared infra in `Features/Mcp/`, with per-domain tool classes co-located under each feature's own `Mcp/` subfolder (e.g. `Features/Projects/Mcp/`).
+- **Admin tools** — database backup/restore, a guarded "flush database" that preserves Profile/Appearance settings, and an optional sample-data loader.
+- **Icon pack switch** — Tabler → Lucide icons.
+- **Theme set grew from 8 to 12** — Frostline was replaced by **Afterglow** and Nightshade by **Synthwave**; **Sundial, Terracotta, Petal, and Rosewood** were added. See `THEMES.md` for the current authoritative list and source lineage; the "What shipped in v1" list above reflects the original 8 at release time and is now stale.
 
 ## Post-v1 (not scheduled)
 

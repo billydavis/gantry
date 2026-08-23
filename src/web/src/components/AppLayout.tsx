@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ActionIcon, Avatar, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, ChartNoAxesGantt, Folder, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, StickyNote, Trophy, User } from 'lucide-react';
+import { Brain, ChartNoAxesGantt, FolderKanban, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, NotebookText, Trophy, User } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
 import { LockScreen } from './LockScreen';
@@ -22,9 +22,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: <LayoutDashboard size={18} />, href: '/' },
-  { label: 'Projects',  icon: <Folder size={18} />,          href: '/projects' },
-  { label: 'Notes',     icon: <StickyNote size={18} />,            href: '/notes' },
-  { label: 'Wiki',      icon: <BookOpen size={18} />,           href: '/wiki' },
+  { label: 'Projects',  icon: <FolderKanban size={18} />,          href: '/projects' },
+  { label: 'Notes',     icon: <NotebookText size={18} />,            href: '/notes' },
+  { label: 'Knowledge Base', icon: <Brain size={18} />,           href: '/wiki' },
   { label: 'Wins',      icon: <Trophy size={18} />,          href: '/wins' },
   { label: 'Timeline',  icon: <ChartNoAxesGantt size={18} />,        href: '/timeline' },
 ];
@@ -130,7 +130,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     New Todo
                   </Menu.Item>
                   <Menu.Item
-                    leftSection={<StickyNote size={15} />}
+                    leftSection={<NotebookText size={15} />}
                     onClick={() => { createNote(undefined); closeMobile(); }}
                     styles={{ item: { color: 'var(--g-text)' } }}
                   >

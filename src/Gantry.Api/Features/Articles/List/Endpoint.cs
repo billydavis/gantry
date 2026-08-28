@@ -12,7 +12,8 @@ public static class Endpoint
         AppDbContext db,
         CancellationToken ct,
         string? category = null,
-        Guid? tagId = null)
+        Guid? tagId = null,
+        string? q = null)
     {
         var query = db.Articles
             .Include(a => a.Tags)
@@ -23,6 +24,16 @@ public static class Endpoint
 
         if (tagId.HasValue)
             query = query.Where(a => a.Tags.Any(t => t.Id == tagId));
+
+        if (q is not null && q.Trim().Length >= 2)
+        {
+            var pattern = $"%{q.Trim()}%";
+            query = query.Where(a =>
+                EF.Functions.ILike(a.Title, pattern) ||
+                EF.Functions.ILike(a.Content, pattern) ||
+                EF.Functions.ILike(a.Category ?? "", pattern) ||
+                a.Tags.Any(t => EF.Functions.ILike(t.Name, pattern)));
+        }
 
         query = query.OrderBy(a => a.Title);
 

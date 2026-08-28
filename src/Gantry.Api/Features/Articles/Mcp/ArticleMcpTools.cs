@@ -26,8 +26,9 @@ public class ArticleMcpTools
         AppDbContext db,
         CancellationToken ct,
         [Description("Filter to a category.")] string? category = null,
-        [Description("Filter to articles carrying this tag.")] Guid? tagId = null)
-        => McpResultAdapter.Unwrap<IEnumerable<ArticleResponse>>(await List.Endpoint.Handle(db, ct, category, tagId));
+        [Description("Filter to articles carrying this tag.")] Guid? tagId = null,
+        [Description("Case-insensitive text to match against article title, content, category, or tag names (min 2 characters).")] string? q = null)
+        => McpResultAdapter.Unwrap<IEnumerable<ArticleResponse>>(await List.Endpoint.Handle(db, ct, category, tagId, q));
 
     [McpServerTool(Name = "get_article"), Description("Gets a single article (Knowledge Base / Wiki entry) by id.")]
     public static async Task<ArticleResponse> GetArticle(

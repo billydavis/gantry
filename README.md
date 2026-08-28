@@ -34,7 +34,8 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 | **Projects** | Hierarchy via subprojects, color coding, status, tags, environments |
 | **Todos** | Status, priority, due dates, pinning, tags, per-project or global |
 | **Resources** | Quick-launch links for websites, UNC shares, local paths, repos, dashboards, databases — not just URLs |
-| **Notes** | Daily notes with auto-created structure, project notes, scratch pad |
+| **Notes** | Daily notes with auto-created structure, project notes, scratch pad; text/project/tag filters and a paged ("Load more") list |
+| **Knowledge Base** | Markdown reference articles grouped by category, with text/category/tag filters |
 | **Wins log** | Capture accomplishments as they happen; review them at year end |
 | **Timeline** | Completed todos + wins aggregated by month |
 | **Tags** | Assign to anything; search by tag across all entity types |

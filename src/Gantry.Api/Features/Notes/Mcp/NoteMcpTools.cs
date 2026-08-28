@@ -26,8 +26,11 @@ public class NoteMcpTools
         AppDbContext db,
         CancellationToken ct,
         [Description("Filter to a single project.")] Guid? projectId = null,
+        [Description("Filter to notes carrying this tag.")] Guid? tagId = null,
+        [Description("Case-insensitive text to match against note title, content, or tag names (min 2 characters).")] string? q = null,
         [Description("Maximum number of notes to return.")] int? limit = null)
-        => McpResultAdapter.Unwrap<IEnumerable<NoteResponse>>(await List.Endpoint.Handle(db, ct, projectId, limit));
+        => McpResultAdapter.Unwrap<IEnumerable<NoteResponse>>(
+            await List.Endpoint.Handle(db, ct, projectId, tagId, q, skip: null, take: null, limit: limit));
 
     [McpServerTool(Name = "get_note"), Description("Gets a single note by id.")]
     public static async Task<NoteResponse> GetNote(

@@ -12,6 +12,10 @@ public static class Endpoint
         AppDbContext db,
         CancellationToken ct,
         Guid? projectId = null,
+        Guid? tagId = null,
+        string? q = null,
+        int? skip = null,
+        int? take = null,
         int? limit = null)
     {
         var query = db.Notes
@@ -22,9 +26,26 @@ public static class Endpoint
         if (projectId.HasValue)
             query = query.Where(n => n.ProjectId == projectId);
 
+        if (tagId.HasValue)
+            query = query.Where(n => n.Tags.Any(t => t.Id == tagId));
+
+        if (q is not null && q.Trim().Length >= 2)
+        {
+            var pattern = $"%{q.Trim()}%";
+            query = query.Where(n =>
+                EF.Functions.ILike(n.Title ?? "", pattern) ||
+                EF.Functions.ILike(n.Content, pattern) ||
+                n.Tags.Any(t => EF.Functions.ILike(t.Name, pattern)));
+        }
+
         query = query.OrderByDescending(n => n.UpdatedUtc);
 
-        if (limit.HasValue)
+        if (skip is > 0)
+            query = query.Skip(skip.Value);
+
+        if (take.HasValue)
+            query = query.Take(take.Value);
+        else if (limit.HasValue)
             query = query.Take(limit.Value);
 
         var notes = await query.ToListAsync(ct);

@@ -1,14 +1,20 @@
-import { useState } from 'react';
-import { ActionIcon, Badge, Box, Button, Group, Loader, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { useMemo, useState } from 'react';
+import { ActionIcon, Badge, Box, Button, Group, Loader, Modal, Select, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { CalendarDays, Pencil, Plus, NotebookText, Trash2 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { noteKeys, notesApi } from './api';
 import { useCreateNote } from './useCreateNote';
 import type { Note } from './types';
 import { TagBadge } from '../tags/TagBadge';
+import { tagKeys, tagsApi } from '../tags/api';
+import { projectKeys, projectsApi } from '../projects/api';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { SearchInput } from '../../components/SearchInput';
+
+const PAGE_SIZE = 30;
 
 function noteLabel(note: Note): string {
   return note.title
@@ -24,10 +30,38 @@ export function NotesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
   const [viewTarget, setViewTarget] = useState<Note | null>(null);
 
-  const { data: notes = [], isLoading } = useQuery({
-    queryKey: noteKeys.lists(),
-    queryFn: () => notesApi.list(),
+  const [search, setSearch] = useState('');
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [tagId, setTagId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 300);
+  const q = debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : '';
+  const filtersActive = q !== '' || projectId !== null || tagId !== null;
+
+  const { data: projects = [] } = useQuery({ queryKey: projectKeys.list(), queryFn: projectsApi.list });
+  const { data: tags = [] } = useQuery({ queryKey: tagKeys.list(), queryFn: tagsApi.list });
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: noteKeys.infinite({ q, projectId: projectId ?? undefined, tagId: tagId ?? undefined }),
+    queryFn: ({ pageParam }) =>
+      notesApi.list({
+        q: q || undefined,
+        projectId: projectId ?? undefined,
+        tagId: tagId ?? undefined,
+        skip: pageParam,
+        take: PAGE_SIZE,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length === PAGE_SIZE ? pages.length * PAGE_SIZE : undefined,
   });
+
+  const notes = useMemo(() => data?.pages.flat() ?? [], [data]);
 
   const deleteMutation = useMutation({
     mutationFn: () => notesApi.delete(deleteTarget!.id),
@@ -40,6 +74,12 @@ export function NotesPage() {
   const goToToday = () => {
     const today = new Date().toISOString().slice(0, 10);
     navigate(`/notes/daily/${today}`);
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setProjectId(null);
+    setTagId(null);
   };
 
   return (
@@ -69,9 +109,38 @@ export function NotesPage() {
           </Group>
         </Group>
 
+        <Group gap="sm" align="flex-end" wrap="wrap">
+          <SearchInput value={search} onChange={setSearch} placeholder="Search notes…" />
+          <Select
+            placeholder="All projects"
+            clearable
+            searchable
+            data={projects.map((p) => ({ value: p.id, label: p.name }))}
+            value={projectId}
+            onChange={setProjectId}
+            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            w={200}
+          />
+          <Select
+            placeholder="All tags"
+            clearable
+            searchable
+            data={tags.map((t) => ({ value: t.id, label: t.name }))}
+            value={tagId}
+            onChange={setTagId}
+            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            w={180}
+          />
+          {filtersActive && (
+            <Button variant="subtle" size="sm" onClick={clearFilters} style={{ color: 'var(--g-text-muted)' }}>
+              Clear filters
+            </Button>
+          )}
+        </Group>
+
         {isLoading && <Loader size="sm" />}
 
-        {!isLoading && notes.length === 0 && (
+        {!isLoading && notes.length === 0 && !filtersActive && (
           <Box style={{
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
@@ -87,6 +156,18 @@ export function NotesPage() {
           </Box>
         )}
 
+        {!isLoading && notes.length === 0 && filtersActive && (
+          <Box style={{
+            textAlign: 'center', padding: '48px 20px',
+            background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
+          }}>
+            <Text fw={500} style={{ color: 'var(--g-text)' }}>No notes match these filters</Text>
+            <Button variant="subtle" mt="sm" onClick={clearFilters} style={{ color: 'var(--g-text-muted)' }}>
+              Clear filters
+            </Button>
+          </Box>
+        )}
+
         <Stack gap="sm">
           {notes.map((note) => (
             <NoteCard
@@ -98,6 +179,19 @@ export function NotesPage() {
             />
           ))}
         </Stack>
+
+        {hasNextPage && (
+          <Group justify="center">
+            <Button
+              variant="default"
+              onClick={() => fetchNextPage()}
+              loading={isFetchingNextPage}
+              style={{ background: 'var(--g-surface)', color: 'var(--g-text)', border: '1px solid var(--g-border)' }}
+            >
+              Load more
+            </Button>
+          </Group>
+        )}
       </Stack>
 
       <MarkdownViewerModal

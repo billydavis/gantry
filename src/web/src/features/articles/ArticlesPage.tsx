@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ActionIcon, Badge, Box, Button, Group, Loader, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Box, Button, Group, Loader, Select, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Brain, FileText, Pencil, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +8,10 @@ import { articleKeys, articlesApi } from './api';
 import { ArticleFormModal } from './ArticleFormModal';
 import type { Article } from './types';
 import { TagBadge } from '../tags/TagBadge';
+import { tagKeys, tagsApi } from '../tags/api';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { SearchInput } from '../../components/SearchInput';
 import { articleEmailMeta } from './articleEmailMeta';
 
 export function ArticlesPage() {
@@ -16,12 +19,33 @@ export function ArticlesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [viewTarget, setViewTarget] = useState<Article | null>(null);
 
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState<string | null>(null);
+  const [tagId, setTagId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 300);
+  const q = debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : '';
+  const filtersActive = q !== '' || category !== null || tagId !== null;
+
   const { data: articles = [], isLoading } = useQuery({
-    queryKey: articleKeys.lists(),
-    queryFn: () => articlesApi.list(),
+    queryKey: articleKeys.list({ q: q || undefined, category: category ?? undefined, tagId: tagId ?? undefined }),
+    queryFn: () => articlesApi.list({ q: q || undefined, category: category ?? undefined, tagId: tagId ?? undefined }),
   });
 
+  // Unfiltered list, kept cached, purely to populate the category dropdown with every category.
+  const { data: allArticles = [] } = useQuery({ queryKey: articleKeys.list({}), queryFn: () => articlesApi.list() });
+  const { data: tags = [] } = useQuery({ queryKey: tagKeys.list(), queryFn: tagsApi.list });
+
+  const categoryOptions = Array.from(
+    new Set(allArticles.map((a) => a.category?.trim()).filter((c): c is string => !!c)),
+  ).sort((a, b) => a.localeCompare(b));
+
   const grouped = groupByCategory(articles);
+
+  const clearFilters = () => {
+    setSearch('');
+    setCategory(null);
+    setTagId(null);
+  };
 
   return (
     <>
@@ -40,9 +64,38 @@ export function ArticlesPage() {
           </Button>
         </Group>
 
+        <Group gap="sm" align="flex-end" wrap="wrap">
+          <SearchInput value={search} onChange={setSearch} placeholder="Search the knowledge base…" />
+          <Select
+            placeholder="All categories"
+            clearable
+            searchable
+            data={categoryOptions}
+            value={category}
+            onChange={setCategory}
+            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            w={200}
+          />
+          <Select
+            placeholder="All tags"
+            clearable
+            searchable
+            data={tags.map((t) => ({ value: t.id, label: t.name }))}
+            value={tagId}
+            onChange={setTagId}
+            styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+            w={180}
+          />
+          {filtersActive && (
+            <Button variant="subtle" size="sm" onClick={clearFilters} style={{ color: 'var(--g-text-muted)' }}>
+              Clear filters
+            </Button>
+          )}
+        </Group>
+
         {isLoading && <Loader size="sm" />}
 
-        {!isLoading && articles.length === 0 && (
+        {!isLoading && articles.length === 0 && !filtersActive && (
           <Box style={{
             textAlign: 'center', padding: '60px 20px',
             background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
@@ -54,6 +107,18 @@ export function ArticlesPage() {
             </Text>
             <Button onClick={() => setModalOpen(true)} style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}>
               Write your first article
+            </Button>
+          </Box>
+        )}
+
+        {!isLoading && articles.length === 0 && filtersActive && (
+          <Box style={{
+            textAlign: 'center', padding: '48px 20px',
+            background: 'var(--g-surface)', border: '1px solid var(--g-border)', borderRadius: 8,
+          }}>
+            <Text fw={500} style={{ color: 'var(--g-text)' }}>No articles match these filters</Text>
+            <Button variant="subtle" mt="sm" onClick={clearFilters} style={{ color: 'var(--g-text-muted)' }}>
+              Clear filters
             </Button>
           </Box>
         )}

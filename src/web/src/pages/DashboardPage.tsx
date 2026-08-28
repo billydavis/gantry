@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionIcon, Alert, Badge, Box, Button, Checkbox, ColorSwatch, Group, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Box, Button, Checkbox, ColorSwatch, Group, Menu, Popover, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
@@ -9,7 +9,7 @@ import { useCreateNote } from '../features/notes/useCreateNote';
 import { winKeys, winsApi } from '../features/wins/api';
 import { WinFormModal } from '../features/wins/WinFormModal';
 import { WinViewerModal } from '../features/wins/WinViewerModal';
-import { Copy, FolderKanban, Link, Pencil, Plus, Settings, Sparkles, NotebookText, Trash2, Trophy } from 'lucide-react';
+import { Copy, Ellipsis, FolderKanban, Link, Pencil, Plus, Settings, Sparkles, NotebookText, Trash2, Trophy } from 'lucide-react';
 import { todosApi, todoKeys } from '../features/todos/api';
 import { TodoList } from '../features/todos/TodoList';
 import { resourcesApi, resourceKeys } from '../features/resources/api';
@@ -506,25 +506,28 @@ function QuickLaunchPill({ resource, onEdit, onDelete }: { resource: Resource; o
         <Box style={{ color: 'var(--g-accent)' }}>{TYPE_ICON[resource.type as ResourceType]}</Box>
         <Text size="sm" fw={500} style={{ color: 'var(--g-text)' }}>{resource.name}</Text>
       </Box>
-      {hovered && (
-        <Group gap={2} style={{ marginLeft: 4 }}>
-          <Tooltip label="Copy location">
-            <ActionIcon variant="subtle" size="xs" onClick={() => copyLocation(resource.location)} style={{ color: 'var(--g-text-muted)' }}>
-              <Copy size={12} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="Edit">
-            <ActionIcon variant="subtle" size="xs" onClick={onEdit} style={{ color: 'var(--g-text-muted)' }}>
-              <Pencil size={12} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="Delete">
-            <ActionIcon variant="subtle" size="xs" color="red" onClick={onDelete}>
-              <Trash2 size={12} />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
-      )}
+      <Box onClick={(e) => e.stopPropagation()} style={{ marginLeft: 4, flexShrink: 0 }}>
+        <Menu width={170} position="bottom-end">
+          <Menu.Target>
+            <Tooltip label="Actions">
+              <ActionIcon variant="subtle" size="xs" style={{ color: 'var(--g-text-muted)' }}>
+                <Ellipsis size={14} />
+              </ActionIcon>
+            </Tooltip>
+          </Menu.Target>
+          <Menu.Dropdown styles={{ dropdown: { background: 'var(--g-surface)', border: '1px solid var(--g-border)' } }}>
+            <Menu.Item leftSection={<Copy size={14} />} onClick={() => copyLocation(resource.location)} styles={{ item: { color: 'var(--g-text)' } }}>
+              Copy location
+            </Menu.Item>
+            <Menu.Item leftSection={<Pencil size={14} />} onClick={onEdit} styles={{ item: { color: 'var(--g-text)' } }}>
+              Edit
+            </Menu.Item>
+            <Menu.Item leftSection={<Trash2 size={14} />} onClick={onDelete} styles={{ item: { color: 'var(--g-danger)' } }}>
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Box>
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ActionIcon,
   Badge,
@@ -8,11 +8,13 @@ import {
   Group,
   Menu,
   SegmentedControl,
+  Select,
   Stack,
   Text,
   Title,
   Tooltip,
 } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Archive, Ellipsis, FolderKanban, FolderPlus, Pause, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +26,7 @@ import type { Project, ProjectStatus } from './types';
 import { statusColors, statusLabels } from './statusMeta';
 import { buildProjectTree, type ProjectTreeEntry } from './projectTree';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { SearchInput } from '../../components/SearchInput';
 import { TagPicker } from '../tags/TagPicker';
 
 type Filter = 'Active' | 'OnHold' | 'Archived' | 'All';
@@ -34,6 +37,27 @@ const VALID_FILTERS: Filter[] = ['Active', 'OnHold', 'Archived', 'All'];
 function loadFilter(): Filter {
   const raw = localStorage.getItem(FILTER_STORAGE_KEY);
   return VALID_FILTERS.includes(raw as Filter) ? (raw as Filter) : 'All';
+}
+
+/**
+ * Keeps only projects that match `matches`, plus the ancestors of any match so
+ * the tree stays connected. Descendants of a match are not pulled in.
+ */
+function filterKeepingTree(projects: Project[], matches: (p: Project) => boolean): Project[] {
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  const keep = new Set<string>();
+
+  for (const p of projects) {
+    if (!matches(p)) continue;
+    keep.add(p.id);
+    let parentId = p.parentProjectId;
+    while (parentId && byId.has(parentId) && !keep.has(parentId)) {
+      keep.add(parentId);
+      parentId = byId.get(parentId)!.parentProjectId;
+    }
+  }
+
+  return projects.filter((p) => keep.has(p.id));
 }
 
 export function ProjectsPage() {
@@ -47,11 +71,31 @@ export function ProjectsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
   const [deleteModalProject, setDeleteModalProject] = useState<Project | undefined>();
+  const [search, setSearch] = useState('');
+  const [tagId, setTagId] = useState<string | null>(null);
+  const [debouncedSearch] = useDebouncedValue(search, 200);
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: projectKeys.list(),
     queryFn: projectsApi.list,
   });
+
+  const q = debouncedSearch.trim().toLowerCase();
+  const filtersActive = q.length > 0 || tagId !== null;
+
+  const tagOptions = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const p of projects) for (const t of p.tags) seen.set(t.id, t.name);
+    return [...seen.entries()]
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [projects]);
+
+  const matchesFilters = (p: Project) => {
+    const textOk = !q || p.name.toLowerCase().includes(q) || (p.description ?? '').toLowerCase().includes(q);
+    const tagOk = !tagId || p.tags.some((t) => t.id === tagId);
+    return textOk && tagOk;
+  };
 
   const archiveMutation = useMutation({
     mutationFn: (id: string) => projectsApi.archive(id),
@@ -87,18 +131,25 @@ export function ProjectsPage() {
     setModalOpen(true);
   };
 
-  // Derive what to show in each section based on the active filter
-  const mainProjects = projects.filter((p) => {
+  // Derive what to show in each section based on the active status filter
+  let mainProjects = projects.filter((p) => {
     if (filter === 'Active') return p.status === 'Active';
     if (filter === 'OnHold') return p.status === 'OnHold';
     if (filter === 'All') return p.status !== 'Archived';
     return false; // Archived filter — main section is empty
   });
 
-  const archivedProjects =
+  let archivedProjects =
     filter === 'Archived' || filter === 'All'
       ? projects.filter((p) => p.status === 'Archived')
       : [];
+
+  // Then narrow by the search / tag filter, keeping matched projects' ancestors
+  // so the hierarchy stays readable.
+  if (filtersActive) {
+    mainProjects = filterKeepingTree(mainProjects, matchesFilters);
+    archivedProjects = filterKeepingTree(archivedProjects, matchesFilters);
+  }
 
   const mainTree = buildProjectTree(mainProjects);
   const archivedTree = buildProjectTree(archivedProjects);
@@ -265,35 +316,63 @@ export function ProjectsPage() {
           </Button>
         </Group>
 
-        <SegmentedControl
-          value={filter}
-          onChange={(v) => setFilter(v as Filter)}
-          data={[
-            { label: 'Active', value: 'Active' },
-            { label: 'On Hold', value: 'OnHold' },
-            { label: 'Archived', value: 'Archived' },
-            { label: 'All', value: 'All' },
-          ]}
-          styles={{
-            root: {
-              background: 'var(--g-surface)',
-              border: '1px solid var(--g-border)',
-              alignSelf: 'flex-start',
-            },
-            label: { color: 'var(--g-text-muted)', fontSize: 13 },
-          }}
-        />
+        <Group gap="sm" align="center" wrap="wrap">
+          <SegmentedControl
+            value={filter}
+            onChange={(v) => setFilter(v as Filter)}
+            data={[
+              { label: 'Active', value: 'Active' },
+              { label: 'On Hold', value: 'OnHold' },
+              { label: 'Archived', value: 'Archived' },
+              { label: 'All', value: 'All' },
+            ]}
+            styles={{
+              root: {
+                background: 'var(--g-surface)',
+                border: '1px solid var(--g-border)',
+              },
+              label: { color: 'var(--g-text-muted)', fontSize: 13 },
+            }}
+          />
+          <SearchInput value={search} onChange={setSearch} placeholder="Search projects…" width={220} />
+          {tagOptions.length > 0 && (
+            <Select
+              placeholder="All tags"
+              clearable
+              searchable
+              data={tagOptions}
+              value={tagId}
+              onChange={setTagId}
+              styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
+              w={180}
+            />
+          )}
+          {filtersActive && (
+            <Button variant="subtle" size="sm" onClick={() => { setSearch(''); setTagId(null); }} style={{ color: 'var(--g-text-muted)' }}>
+              Clear filters
+            </Button>
+          )}
+        </Group>
 
         {isLoading ? (
           <Text c="dimmed">Loading…</Text>
         ) : isEmpty ? (
           <Stack align="center" py="xl" gap="sm">
             <Text c="dimmed">
-              {projects.length === 0 ? 'No projects yet.' : `No ${statusLabels[filter as ProjectStatus] ?? ''} projects.`}
+              {projects.length === 0
+                ? 'No projects yet.'
+                : filtersActive
+                  ? 'No projects match these filters.'
+                  : `No ${statusLabels[filter as ProjectStatus] ?? ''} projects.`}
             </Text>
             {projects.length === 0 && (
               <Button variant="subtle" onClick={openCreate}>
                 Create your first project
+              </Button>
+            )}
+            {projects.length > 0 && filtersActive && (
+              <Button variant="subtle" onClick={() => { setSearch(''); setTagId(null); }} style={{ color: 'var(--g-text-muted)' }}>
+                Clear filters
               </Button>
             )}
           </Stack>

@@ -31,7 +31,7 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 | Area | What's included |
 |---|---|
 | **Dashboard** | Configurable widgets — Today's Focus, Active Projects, Recently Opened, Quick Launch, Recent Notes, Recent Wins |
-| **Projects** | Hierarchy via subprojects, color coding, status, tags, environments |
+| **Projects** | Hierarchy via subprojects, color coding, status, tags, environments; status/search/tag filters |
 | **Todos** | Status, priority, due dates, pinning, tags, per-project or global |
 | **Resources** | Quick-launch links for websites, UNC shares, local paths, repos, dashboards, databases — not just URLs |
 | **Notes** | Daily notes with auto-created structure, project notes, scratch pad; text/project/tag filters and a paged ("Load more") list |

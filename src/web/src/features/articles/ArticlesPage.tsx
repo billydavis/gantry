@@ -9,6 +9,7 @@ import type { Article } from './types';
 import { TagBadge } from '../tags/TagBadge';
 import { MarkdownViewerModal } from '../../components/MarkdownViewerModal';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { articleEmailMeta } from './articleEmailMeta';
 
 export function ArticlesPage() {
   const navigate = useNavigate();
@@ -97,6 +98,8 @@ export function ArticlesPage() {
         content={viewTarget?.content ?? ''}
         icon={<FileText size={18} style={{ color: 'var(--g-accent)' }} />}
         onOpenEditor={() => viewTarget && navigate(`/wiki/${viewTarget.id}`)}
+        emailMetaHtml={viewTarget ? articleEmailMeta(viewTarget).html : undefined}
+        emailMetaText={viewTarget ? articleEmailMeta(viewTarget).text : undefined}
       />
     </>
   );

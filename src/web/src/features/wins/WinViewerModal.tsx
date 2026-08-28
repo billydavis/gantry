@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { winKeys, winsApi } from './api';
 import type { Win } from './types';
 import { MarkdownText } from '../../components/MarkdownText';
+import { CopyForEmailButton } from '../../components/CopyForEmailButton';
+import { emailMetaParagraph } from '../../utils/emailContent';
 import { TagBadge } from '../tags/TagBadge';
 
 interface Props {
@@ -44,6 +46,14 @@ export function WinViewerModal({ winId, onClose, onOpenEditor }: Props) {
             <Text fw={600} style={{ color: 'var(--g-heading)' }} lineClamp={1}>{win?.title ?? 'Win'}</Text>
           </Group>
           <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {win && (
+              <CopyForEmailButton
+                title={win.title}
+                content={[win.impact, win.description].filter(Boolean).join('\n\n')}
+                metaHtml={emailMetaParagraph([date, win.projectName].filter(Boolean) as string[])}
+                metaText={[date, win.projectName].filter(Boolean).join(' · ')}
+              />
+            )}
             {onOpenEditor && (
               <Tooltip label="Open in editor">
                 <ActionIcon variant="subtle" onClick={handleOpenEditor} disabled={!win} style={{ color: 'var(--g-text-muted)' }}>

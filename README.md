@@ -41,6 +41,7 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 | **Global search** | Full-text + tag search across projects, todos, notes, resources, and wins |
 | **Command palette** | `Ctrl+K` to jump anywhere or create anything |
 | **Markdown descriptions** | Project, Todo, Win, and Resource descriptions support Markdown, with a collapsible summary-line convention on list views |
+| **Copy for email** | One click copies a Note, Knowledge Base article, Win, or Todo as formatted rich text, ready to paste into a new Outlook or Gmail message |
 | **Themes** | 12 themes × dark/light — Default, Cobalt DOS, Phosphor, Afterglow, Synthwave, Canopy, Graphite, Amber, Sundial, Terracotta, Petal, Rosewood |
 | **PWA** | Installable, offline-capable service worker |
 | **Mobile** | Responsive layout with collapsible sidebar |
@@ -50,6 +51,10 @@ The secondary payoff: if you use it consistently, end-of-year self-reviews write
 Description fields — on Projects, Todos, Wins, and Resources — and Note content all render as Markdown: bold, italics, code spans, links, lists, headings.
 
 List views (the Project detail page, Todo list, Wins list, and everywhere Notes are listed) follow a soft convention rather than an enforced format: write a short plain-text **summary as the first line**, leave a **blank line**, then add as much Markdown **detail** below it. The summary always shows; a chevron appears only when there's detail to expand into. A description or note with no line break just displays as-is — nothing breaks, there's just no collapse to gain until it's written that way.
+
+## Copy for email
+
+Notes, Knowledge Base articles, Wins, and Todos have a **Copy for email** button (the mail icon in the detail toolbar or the quick-view popup). It doesn't open a mail client — it puts the item on your clipboard as formatted rich text. Open a new message in Outlook (desktop or web) or Gmail and paste: headings, bold, lists, tables, links, and code come through. Articles carry their category and source link; Wins and Todos carry a short context line (date, project, status). No email account, server, or integration is involved.
 
 ## Stack
 

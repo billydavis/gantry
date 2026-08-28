@@ -9,6 +9,7 @@ import { SaveStatusText } from './SaveStatusText';
 import { useNoteAutosave } from './useNoteAutosave';
 import { noteFieldStyles } from './noteFieldStyles';
 import { projectsApi, projectKeys } from '../projects/api';
+import { CopyForEmailButton } from '../../components/CopyForEmailButton';
 
 export function NoteDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -86,6 +87,7 @@ export function NoteDetailPage() {
           </Group>
           <Group gap="xs" align="center">
             <SaveStatusText status={status} />
+            <CopyForEmailButton title={displayTitle} content={content} />
             <Tooltip label="Delete">
               <ActionIcon variant="subtle" color="red" onClick={() => setDeleteOpen(true)}>
                 <Trash2 size={16} />

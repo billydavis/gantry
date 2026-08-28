@@ -7,6 +7,8 @@ import { articleKeys, articlesApi } from './api';
 import { ArticleEditor } from './ArticleEditor';
 import { ArticleFormModal } from './ArticleFormModal';
 import { TagPicker } from '../tags/TagPicker';
+import { CopyForEmailButton } from '../../components/CopyForEmailButton';
+import { articleEmailMeta } from './articleEmailMeta';
 
 export function ArticleDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +57,12 @@ export function ArticleDetailPage() {
             </Group>
           </Box>
           <Group gap={4}>
+            <CopyForEmailButton
+              title={article.title}
+              content={article.content}
+              metaHtml={articleEmailMeta(article).html}
+              metaText={articleEmailMeta(article).text}
+            />
             <Tooltip label="Edit details">
               <ActionIcon variant="subtle" onClick={() => setEditOpen(true)} style={{ color: 'var(--g-text-muted)' }}>
                 <Pencil size={16} />

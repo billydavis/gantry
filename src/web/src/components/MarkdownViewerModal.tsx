@@ -6,6 +6,7 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import { useAppTheme } from '../themes/ThemeProvider';
 import { MermaidCodeBlock } from './MermaidCodeBlock';
 import { CodeBlockPre } from './CodeBlockPre';
+import { CopyForEmailButton } from './CopyForEmailButton';
 
 interface Props {
   opened: boolean;
@@ -18,9 +19,13 @@ interface Props {
   isLoading?: boolean;
   /** When provided, shows an "Open in editor" button that closes the viewer and hands off to editing. */
   onOpenEditor?: () => void;
+  /** Extra HTML (e.g. category / source link) added to the "Copy for email" output. */
+  emailMetaHtml?: string;
+  /** Plain-text equivalent of {@link emailMetaHtml}. */
+  emailMetaText?: string;
 }
 
-export function MarkdownViewerModal({ opened, onClose, title, content, icon, isLoading, onOpenEditor }: Props) {
+export function MarkdownViewerModal({ opened, onClose, title, content, icon, isLoading, onOpenEditor, emailMetaHtml, emailMetaText }: Props) {
   const { colorScheme } = useAppTheme();
 
   const handleOpenEditor = () => {
@@ -40,6 +45,9 @@ export function MarkdownViewerModal({ opened, onClose, title, content, icon, isL
             <Text fw={600} style={{ color: 'var(--g-heading)' }} lineClamp={1}>{title}</Text>
           </Group>
           <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {!isLoading && content && (
+              <CopyForEmailButton title={title} content={content} metaHtml={emailMetaHtml} metaText={emailMetaText} />
+            )}
             {onOpenEditor && (
               <Tooltip label="Open in editor">
                 <ActionIcon variant="subtle" onClick={handleOpenEditor} style={{ color: 'var(--g-text-muted)' }}>

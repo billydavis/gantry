@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { todoKeys, todosApi } from './api';
 import type { Todo } from './types';
 import { MarkdownText } from '../../components/MarkdownText';
+import { CopyForEmailButton } from '../../components/CopyForEmailButton';
+import { emailMetaParagraph } from '../../utils/emailContent';
 import { TagBadge } from '../tags/TagBadge';
 
 interface Props {
@@ -15,6 +17,16 @@ interface Props {
 }
 
 const priorityColor = { Low: 'gray', Medium: 'yellow', High: 'red' } as const;
+
+function todoEmailMetaLines(todo: Todo, due: string | null): string[] {
+  return [
+    todo.status,
+    `${todo.priority} priority`,
+    due ? `Due ${due}` : null,
+    todo.projectName ?? null,
+    todo.link ?? null,
+  ].filter(Boolean) as string[];
+}
 
 /** Read-only popup for a single todo — a quick way to read a long description without opening the edit form. */
 export function TodoViewerModal({ todoId, onClose, onOpenEditor }: Props) {
@@ -46,6 +58,14 @@ export function TodoViewerModal({ todoId, onClose, onOpenEditor }: Props) {
             <Text fw={600} style={{ color: 'var(--g-heading)' }} lineClamp={1}>{todo?.title ?? 'Todo'}</Text>
           </Group>
           <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {todo && (
+              <CopyForEmailButton
+                title={todo.title}
+                content={todo.description ?? ''}
+                metaHtml={emailMetaParagraph(todoEmailMetaLines(todo, due))}
+                metaText={todoEmailMetaLines(todo, due).join(' · ')}
+              />
+            )}
             {onOpenEditor && (
               <Tooltip label="Open in editor">
                 <ActionIcon variant="subtle" onClick={handleOpenEditor} disabled={!todo} style={{ color: 'var(--g-text-muted)' }}>

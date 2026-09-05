@@ -3,9 +3,10 @@ import { Avatar, Box, Button, Group, NumberInput, PasswordInput, Stack, Switch, 
 import { useMediaQuery } from '@mantine/hooks';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { Database, Lock, Palette, Settings, TriangleAlert, User } from 'lucide-react';
+import { Database, Lock, Palette, Settings, Tags as TagsIcon, TriangleAlert, User } from 'lucide-react';
 import { FlushDatabaseModal } from '../features/admin/FlushDatabaseModal';
 import { BackupsSection } from '../features/backups/BackupsSection';
+import { TagsSection } from '../features/tags/TagsSection';
 import { appSettingsKeys, appSettingsApi } from '../features/settings/api';
 import { ApiError } from '../api/client';
 import { ThemePicker } from '../components/ThemePicker';
@@ -390,6 +391,7 @@ export function SettingsPage() {
           <Tabs.Tab value="security" leftSection={<Lock size={16} />}>Security</Tabs.Tab>
           <Tabs.Tab value="appearance" leftSection={<Palette size={16} />}>Appearance</Tabs.Tab>
           <Tabs.Tab value="data" leftSection={<Database size={16} />}>Data</Tabs.Tab>
+          <Tabs.Tab value="tags" leftSection={<TagsIcon size={16} />}>Tags</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="profile">
@@ -403,6 +405,9 @@ export function SettingsPage() {
         </Tabs.Panel>
         <Tabs.Panel value="data">
           <DataSection />
+        </Tabs.Panel>
+        <Tabs.Panel value="tags">
+          <TagsSection />
         </Tabs.Panel>
       </Tabs>
     </>

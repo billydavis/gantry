@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ActionIcon, Avatar, AppShell, Burger, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { Brain, ChartNoAxesGantt, FolderKanban, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, NotebookText, Tags, Trophy, User } from 'lucide-react';
+import { Brain, ChartNoAxesGantt, FolderKanban, FolderPlus, LayoutDashboard, Plus, Search, Settings, SquareCheck, NotebookText, Trophy, User } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CommandPalette } from './CommandPalette';
 import { LockScreen } from './LockScreen';
@@ -27,7 +27,6 @@ const navItems: NavItem[] = [
   { label: 'Knowledge Base', icon: <Brain size={18} />,           href: '/wiki' },
   { label: 'Wins',      icon: <Trophy size={18} />,          href: '/wins' },
   { label: 'Timeline',  icon: <ChartNoAxesGantt size={18} />,        href: '/timeline' },
-  { label: 'Tags',      icon: <Tags size={18} />,          href: '/tags' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

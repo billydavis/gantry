@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { ActionIcon, Badge, Box, Group, Loader, Modal, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { Check, Combine, Tag as TagIcon, Trash2, X } from 'lucide-react';
+import { ActionIcon, Badge, Box, ColorPicker, Group, Loader, Popover, Stack, Text, TextInput, Tooltip } from '@mantine/core';
+import { Check, Combine, Palette, Trash2, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { tagKeys, tagsApi } from './api';
 import { MergeTagModal } from './MergeTagModal';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { SearchInput } from '../../components/SearchInput';
-import { SearchResultList } from '../search/SearchResultList';
 import { ApiError } from '../../api/client';
 import type { Tag } from './types';
 
@@ -18,14 +17,14 @@ const PRESET_COLORS = [
   '#868e96', '#495057',
 ];
 
-export function TagManagementPage() {
+export function TagsSection() {
   const navigate = useNavigate();
-  const { id: usageTagId } = useParams<{ id?: string }>();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editColor, setEditColor] = useState<string | null>(null);
+  const [customPickerOpen, setCustomPickerOpen] = useState(false);
   const [mergeSource, setMergeSource] = useState<Tag | undefined>();
   const [deleteTarget, setDeleteTarget] = useState<Tag | undefined>();
 
@@ -63,25 +62,20 @@ export function TagManagementPage() {
     setEditColor(tag.color);
   };
 
+  const cancelEdit = () => {
+    setEditingId(null);
+    setCustomPickerOpen(false);
+  };
+
   const saveEdit = () => {
     if (!editingId || !editName.trim()) return;
     updateMutation.mutate({ id: editingId, name: editName.trim(), color: editColor });
   };
 
-  const { data: usageResults, isLoading: usageLoading } = useQuery({
-    queryKey: tagKeys.usage(usageTagId ?? ''),
-    queryFn: () => tagsApi.usage(usageTagId!),
-    enabled: !!usageTagId,
-  });
-
-  const usageTag = tags.find((t) => t.id === usageTagId);
+  const isPreset = (color: string | null) => color !== null && PRESET_COLORS.includes(color);
 
   return (
     <Stack gap="lg">
-      <Group justify="space-between">
-        <Title order={2} style={{ color: 'var(--g-heading)' }}>Tags</Title>
-      </Group>
-
       <SearchInput value={search} onChange={setSearch} placeholder="Search tags…" width={280} />
 
       {isLoading ? (
@@ -111,12 +105,36 @@ export function TagManagementPage() {
                         }}
                       />
                     ))}
+                    <Popover opened={customPickerOpen} onChange={setCustomPickerOpen} position="bottom-start" withinPortal>
+                      <Popover.Target>
+                        <Tooltip label="Custom color">
+                          <Box
+                            onClick={() => setCustomPickerOpen((v) => !v)}
+                            style={{
+                              width: 16, height: 16, borderRadius: 4, cursor: 'pointer',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              background: !isPreset(editColor) && editColor ? editColor : 'var(--g-background)',
+                              border: !isPreset(editColor) ? '2px solid var(--g-text)' : '2px dashed var(--g-border)',
+                            }}
+                          >
+                            {isPreset(editColor) || !editColor ? <Palette size={10} style={{ color: 'var(--g-text-muted)' }} /> : null}
+                          </Box>
+                        </Tooltip>
+                      </Popover.Target>
+                      <Popover.Dropdown style={{ background: 'var(--g-surface)', border: '1px solid var(--g-border)' }}>
+                        <ColorPicker
+                          format="hex"
+                          value={editColor ?? '#868e96'}
+                          onChange={setEditColor}
+                        />
+                      </Popover.Dropdown>
+                    </Popover>
                   </Group>
                   <TextInput
                     size="xs"
                     value={editName}
                     onChange={(e) => setEditName(e.currentTarget.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') cancelEdit(); }}
                     autoFocus
                     style={{ flex: 1 }}
                     styles={{ input: { background: 'var(--g-background)', color: 'var(--g-text)', border: '1px solid var(--g-border)' } }}
@@ -124,7 +142,7 @@ export function TagManagementPage() {
                   <ActionIcon size="sm" loading={updateMutation.isPending} onClick={saveEdit} style={{ background: 'var(--g-accent)', color: 'var(--g-accent-text)' }}>
                     <Check size={14} />
                   </ActionIcon>
-                  <ActionIcon size="sm" variant="subtle" onClick={() => setEditingId(null)} style={{ color: 'var(--g-text-muted)' }}>
+                  <ActionIcon size="sm" variant="subtle" onClick={cancelEdit} style={{ color: 'var(--g-text-muted)' }}>
                     <X size={14} />
                   </ActionIcon>
                 </>
@@ -189,32 +207,6 @@ export function TagManagementPage() {
         onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
         onCancel={() => setDeleteTarget(undefined)}
       />
-
-      <Modal
-        opened={!!usageTagId}
-        onClose={() => navigate('/tags')}
-        title={
-          <Group gap={8}>
-            <TagIcon size={16} style={{ color: 'var(--g-accent)' }} />
-            <Text fw={600} style={{ color: 'var(--g-heading)' }}>
-              {usageTag ? `Tagged "${usageTag.name}"` : 'Tagged items'}
-            </Text>
-          </Group>
-        }
-        size="lg"
-        styles={{
-          content: { background: 'var(--g-surface)' },
-          header: { background: 'var(--g-surface)', borderBottom: '1px solid var(--g-border)' },
-        }}
-      >
-        {usageLoading ? (
-          <Loader size="sm" />
-        ) : usageResults && usageResults.length === 0 ? (
-          <Text size="sm" c="dimmed">Not used anywhere.</Text>
-        ) : (
-          <SearchResultList results={usageResults ?? []} />
-        )}
-      </Modal>
     </Stack>
   );
 }

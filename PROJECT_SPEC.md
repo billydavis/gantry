@@ -208,12 +208,12 @@ Search across projects, todos, notes, resources, and wins from one place.
 
 ### 4.11 Tag Management
 
-A dedicated `/tags` page for browsing and maintaining tags across every entity, alongside the inline create/assign flow available on each entity's form. Supports:
-- **Rename** — tag names stay unique, case-insensitive; renaming to a name already in use is rejected.
+A "Tags" tab in Settings for browsing and maintaining tags across every entity, alongside the inline create/assign flow available on each entity's form. Lives in Settings rather than the main nav since it's occasional maintenance, not a daily destination. Supports:
+- **Rename** — tag names stay unique, case-insensitive; renaming to a name already in use is rejected. A custom color can be picked in addition to the preset swatches.
 - **Merge** — combine two tags into one: every item carrying the source tag is retagged with the target (an item already carrying both ends up with just the target, no duplicate), then the source tag is removed.
 - **Delete** — removes the tag from every item it's assigned to; the items themselves are untouched, only the tag association is dropped. The page shows how many items a tag is used on before deleting.
 
-Each tag also shows its usage count and links to an exact list of everything it's applied to.
+Each tag also shows its usage count and links to an exact list of everything it's applied to (also reachable directly by clicking any tag badge elsewhere in the app).
 
 ### 4.12 Timeline / Year-in-Review View
 

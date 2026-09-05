@@ -10,5 +10,6 @@ public class Note
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }
+    public DateTime? DeletedUtc { get; set; }
     public ICollection<Tag> Tags { get; set; } = [];
 }

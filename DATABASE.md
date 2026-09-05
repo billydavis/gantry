@@ -66,6 +66,7 @@ Generalized from a simple "Links" table to cover anything project-related worth 
 | Date | date | for daily notes |
 | Markdown | text | note body |
 | CreatedUtc | timestamptz | |
+| DeletedUtc | timestamptz, nullable | soft-delete |
 
 ### Wins
 
@@ -77,6 +78,7 @@ Generalized from a simple "Links" table to cover anything project-related worth 
 | Impact | text | free-text description of impact |
 | Date | date | |
 | CreatedUtc | timestamptz | |
+| DeletedUtc | timestamptz, nullable | soft-delete |
 
 ### Tags
 

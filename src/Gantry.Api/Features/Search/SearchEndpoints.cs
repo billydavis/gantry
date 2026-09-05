@@ -60,7 +60,7 @@ public static class SearchEndpoints
         var notes = await db.Notes
             .Include(n => n.Project)
             .Include(n => n.Tags)
-            .Where(n =>
+            .Where(n => n.DeletedUtc == null &&
                 (EF.Functions.ILike(n.Title ?? "", pattern) ||
                 EF.Functions.ILike(n.Content, pattern) ||
                 n.Tags.Any(t => EF.Functions.ILike(t.Name, pattern))))
@@ -77,10 +77,11 @@ public static class SearchEndpoints
         var wins = await db.Wins
             .Include(w => w.Project)
             .Include(w => w.Tags)
-            .Where(w => EF.Functions.ILike(w.Title, pattern) ||
+            .Where(w => w.DeletedUtc == null &&
+                (EF.Functions.ILike(w.Title, pattern) ||
                 EF.Functions.ILike(w.Impact ?? "", pattern) ||
                 EF.Functions.ILike(w.Description ?? "", pattern) ||
-                w.Tags.Any(t => EF.Functions.ILike(t.Name, pattern)))
+                w.Tags.Any(t => EF.Functions.ILike(t.Name, pattern))))
             .OrderByDescending(w => w.Date)
             .Take(10)
             .ToListAsync(ct);
@@ -106,10 +107,11 @@ public static class SearchEndpoints
 
         var articles = await db.Articles
             .Include(a => a.Tags)
-            .Where(a => EF.Functions.ILike(a.Title, pattern) ||
+            .Where(a => a.DeletedUtc == null &&
+                (EF.Functions.ILike(a.Title, pattern) ||
                 EF.Functions.ILike(a.Content, pattern) ||
                 EF.Functions.ILike(a.Category ?? "", pattern) ||
-                a.Tags.Any(t => EF.Functions.ILike(t.Name, pattern)))
+                a.Tags.Any(t => EF.Functions.ILike(t.Name, pattern))))
             .OrderByDescending(a => a.UpdatedUtc)
             .Take(10)
             .ToListAsync(ct);

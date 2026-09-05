@@ -13,7 +13,7 @@ public static class Endpoint
         var note = await db.Notes
             .Include(n => n.Project)
             .Include(n => n.Tags)
-            .FirstOrDefaultAsync(n => n.Id == id, ct);
+            .FirstOrDefaultAsync(n => n.Id == id && n.DeletedUtc == null, ct);
 
         return note is null ? Results.NotFound("Note not found.") : Results.Ok(NoteResponse.FromEntity(note));
     }

@@ -19,7 +19,7 @@ public static class Endpoint
 
         note.ProjectId = request.ProjectId;
         note.Title = request.Title;
-        note.Content = request.Content;
+        note.Content = request.Content ?? string.Empty;
         note.UpdatedUtc = DateTime.UtcNow;
 
         await db.SaveChangesAsync(ct);

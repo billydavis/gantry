@@ -84,6 +84,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.Content).HasDefaultValue(string.Empty);
             entity.Property(e => e.CreatedUtc).HasColumnType("timestamptz");
             entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+            entity.Property(e => e.DeletedUtc).HasColumnType("timestamptz");
             entity.HasOne(e => e.Project)
                 .WithMany()
                 .HasForeignKey(e => e.ProjectId)
@@ -98,6 +99,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.Content).HasDefaultValue(string.Empty);
             entity.Property(e => e.CreatedUtc).HasColumnType("timestamptz");
             entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+            entity.Property(e => e.DeletedUtc).HasColumnType("timestamptz");
         });
 
         modelBuilder.Entity<Tag>(entity =>
@@ -150,6 +152,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.Date).HasColumnType("date");
             entity.Property(e => e.CreatedUtc).HasColumnType("timestamptz");
             entity.Property(e => e.UpdatedUtc).HasColumnType("timestamptz");
+            entity.Property(e => e.DeletedUtc).HasColumnType("timestamptz");
             entity.HasOne(e => e.Project)
                 .WithMany()
                 .HasForeignKey(e => e.ProjectId)

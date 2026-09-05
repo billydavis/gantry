@@ -11,9 +11,9 @@ public static class Endpoint
     private static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
     {
         var note = await db.Notes.FirstOrDefaultAsync(n => n.Id == id, ct);
-        if (note is null) return Results.NotFound("Note not found.");
+        if (note is null || note.DeletedUtc is not null) return Results.NotFound("Note not found.");
 
-        db.Notes.Remove(note);
+        note.DeletedUtc = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
         return Results.NoContent();
     }

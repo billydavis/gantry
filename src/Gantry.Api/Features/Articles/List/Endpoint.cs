@@ -17,6 +17,7 @@ public static class Endpoint
     {
         var query = db.Articles
             .Include(a => a.Tags)
+            .Where(a => a.DeletedUtc == null)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(category))

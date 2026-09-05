@@ -29,7 +29,7 @@ public static class TimelineEndpoints
 
         var wins = await db.Wins
             .Include(w => w.Project)
-            .Where(w => w.Date >= start && w.Date <= end)
+            .Where(w => w.DeletedUtc == null && w.Date >= start && w.Date <= end)
             .OrderByDescending(w => w.Date)
             .Select(w => new TimelineItem("Win", w.Id, w.Title, w.Date, w.ProjectId, w.Project == null ? null : w.Project.Name, w.Impact))
             .ToListAsync();

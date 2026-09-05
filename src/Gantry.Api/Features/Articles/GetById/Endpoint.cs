@@ -12,7 +12,7 @@ public static class Endpoint
     {
         var article = await db.Articles
             .Include(a => a.Tags)
-            .FirstOrDefaultAsync(a => a.Id == id, ct);
+            .FirstOrDefaultAsync(a => a.Id == id && a.DeletedUtc == null, ct);
 
         return article is null ? Results.NotFound("Article not found.") : Results.Ok(ArticleResponse.FromEntity(article));
     }

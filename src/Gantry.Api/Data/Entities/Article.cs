@@ -9,5 +9,6 @@ public class Article
     public string? SourceUrl { get; set; }
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }
+    public DateTime? DeletedUtc { get; set; }
     public ICollection<Tag> Tags { get; set; } = [];
 }

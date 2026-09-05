@@ -7,7 +7,7 @@ public static class Endpoint
 {
     public static async Task<IResult> Handle(AppDbContext db, Guid? projectId = null, int? limit = null)
     {
-        var query = db.Wins.Include(w => w.Project).Include(w => w.Tags).AsQueryable();
+        var query = db.Wins.Include(w => w.Project).Include(w => w.Tags).Where(w => w.DeletedUtc == null).AsQueryable();
 
         if (projectId.HasValue)
             query = query.Where(w => w.ProjectId == projectId);

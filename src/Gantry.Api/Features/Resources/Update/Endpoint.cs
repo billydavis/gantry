@@ -1,5 +1,6 @@
 using Gantry.Api.Data;
 using Gantry.Api.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gantry.Api.Features.Resources.Update;
 
@@ -20,6 +21,13 @@ public static class Endpoint
 
         if (!Enum.TryParse<ResourceType>(request.Type, out var resourceType))
             return Results.BadRequest("Invalid resource type.");
+
+        if (request.EnvironmentId.HasValue)
+        {
+            var envExists = await db.Environments.AnyAsync(e => e.Id == request.EnvironmentId, ct);
+            if (!envExists)
+                return Results.NotFound("Environment not found.");
+        }
 
         resource.Name = request.Name;
         resource.Location = request.Location;

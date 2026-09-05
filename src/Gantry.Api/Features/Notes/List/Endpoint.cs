@@ -21,6 +21,7 @@ public static class Endpoint
         var query = db.Notes
             .Include(n => n.Project)
             .Include(n => n.Tags)
+            .Where(n => n.DeletedUtc == null)
             .AsQueryable();
 
         if (projectId.HasValue)

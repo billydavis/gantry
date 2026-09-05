@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q \"git commit\"; then repo_root=$(git rev-parse --show-toplevel 2>/dev/null); if [ -z \"$repo_root\" ]; then exit 0; fi; cd \"$repo_root\" || exit 0; if git diff --cached --name-only | grep -qE '^(src/Gantry\\.Api/|tests/Gantry\\.Api\\.Tests/)'; then (cd tests/Gantry.Api.Tests && dotnet test) || { echo \"Gantry.Api.Tests failed - commit blocked. Fix failing tests before committing.\" >&2; exit 2; }; fi; fi",
+            "timeout": 180,
+            "statusMessage": "Running Gantry.Api.Tests before commit..."
+          }
+        ]
+      }
+    ]
+  }
+}

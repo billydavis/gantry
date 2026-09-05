@@ -25,6 +25,8 @@ public static class Endpoint
             Priority = Enum.TryParse<Priority>(request.Priority, true, out var p) ? p : Priority.Medium,
             EstimatedMinutes = request.EstimatedMinutes,
             DueDate = request.DueDate,
+            RecurrenceType = Enum.TryParse<RecurrenceType>(request.RecurrenceType, true, out var r) ? r : RecurrenceType.None,
+            RecurrenceIntervalDays = request.RecurrenceIntervalDays,
             CreatedUtc = DateTime.UtcNow,
             UpdatedUtc = DateTime.UtcNow
         };

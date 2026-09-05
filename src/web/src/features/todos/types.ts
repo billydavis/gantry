@@ -2,6 +2,7 @@ import type { Tag } from '../tags/types';
 
 export type TodoStatus = 'Todo' | 'InProgress' | 'Waiting' | 'Blocked' | 'Complete';
 export type Priority = 'Low' | 'Medium' | 'High';
+export type RecurrenceType = 'None' | 'Daily' | 'Weekly' | 'Monthly' | 'Custom';
 
 export interface Todo {
   id: string;
@@ -18,6 +19,9 @@ export interface Todo {
   completedUtc: string | null;
   createdUtc: string;
   updatedUtc: string;
+  recurrenceType: RecurrenceType;
+  recurrenceIntervalDays: number | null;
+  recurrenceParentId: string | null;
   tags: Tag[];
 }
 
@@ -29,6 +33,8 @@ export interface CreateTodoRequest {
   priority?: Priority;
   estimatedMinutes?: number | null;
   dueDate?: string | null;
+  recurrenceType?: RecurrenceType | null;
+  recurrenceIntervalDays?: number | null;
 }
 
 export interface UpdateTodoRequest {
@@ -40,4 +46,6 @@ export interface UpdateTodoRequest {
   priority?: Priority;
   estimatedMinutes?: number | null;
   dueDate?: string | null;
+  recurrenceType?: RecurrenceType | null;
+  recurrenceIntervalDays?: number | null;
 }

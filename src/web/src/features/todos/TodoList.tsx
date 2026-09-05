@@ -3,7 +3,7 @@ import {
   ActionIcon, Badge, Box, Group, Loader,
   SegmentedControl, Stack, Text, TextInput, Tooltip,
 } from '@mantine/core';
-import { Circle, CircleCheck, CircleDashed, CircleX, Clock, Eye, ExternalLink, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
+import { Circle, CircleCheck, CircleDashed, CircleX, Clock, Eye, ExternalLink, Pencil, Pin, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { todosApi, todoKeys } from './api';
@@ -12,6 +12,14 @@ import { TodoViewerModal } from './TodoViewerModal';
 import type { Todo, TodoStatus } from './types';
 import { TagPicker } from '../tags/TagPicker';
 import { ExpandableDescription } from '../../components/ExpandableDescription';
+import { ConfirmModal } from '../../components/ConfirmModal';
+
+/** True if `dueDate` is a real calendar day after today (recurring-completion confirmation only cares about "early", not "today or overdue"). */
+function isBeforeDueDate(dueDate: string): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return new Date(dueDate + 'T00:00:00') > today;
+}
 
 interface Props {
   projectId?: string;
@@ -46,6 +54,16 @@ function formatDue(dueDate: string): { label: string; color: string } {
   return { label: due.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), color: 'gray' };
 }
 
+function formatRecurrence(todo: Todo): string {
+  switch (todo.recurrenceType) {
+    case 'Daily': return 'Daily';
+    case 'Weekly': return 'Weekly';
+    case 'Monthly': return 'Monthly';
+    case 'Custom': return `Every ${todo.recurrenceIntervalDays}d`;
+    default: return '';
+  }
+}
+
 function formatMinutes(m: number): string {
   if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60);
@@ -63,6 +81,7 @@ export function TodoList({ projectId }: Props) {
   const [editingTodo, setEditingTodo] = useState<Todo | undefined>();
   const [formOpen, setFormOpen] = useState(false);
   const [viewingTodoId, setViewingTodoId] = useState<string | null>(null);
+  const [earlyCompleteTodo, setEarlyCompleteTodo] = useState<Todo | null>(null);
 
   const queryParams = { projectId, includeCompleted: filter === 'All' };
 
@@ -105,8 +124,13 @@ export function TodoList({ projectId }: Props) {
   };
 
   const toggleComplete = (todo: Todo) => {
-    if (todo.status === 'Complete') reopenMutation.mutate(todo.id);
-    else completeMutation.mutate(todo.id);
+    if (todo.status === 'Complete') {
+      reopenMutation.mutate(todo.id);
+    } else if (todo.recurrenceType !== 'None' && todo.dueDate && isBeforeDueDate(todo.dueDate)) {
+      setEarlyCompleteTodo(todo);
+    } else {
+      completeMutation.mutate(todo.id);
+    }
   };
 
   const openEdit = (todo: Todo) => {
@@ -179,7 +203,8 @@ export function TodoList({ projectId }: Props) {
               const due = todo.dueDate ? formatDue(todo.dueDate) : null;
 
               const hasDescription = !!todo.description;
-              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || todo.link);
+              const isRecurring = todo.recurrenceType !== 'None';
+              const hasMeta = !!(due || todo.estimatedMinutes || (!projectId && todo.projectName) || todo.tags.length > 0 || todo.link || isRecurring);
 
               return (
                 <Box
@@ -273,6 +298,18 @@ export function TodoList({ projectId }: Props) {
                         {due && (
                           <Badge size="xs" color={due.color} variant="light">{due.label}</Badge>
                         )}
+                        {isRecurring && (
+                          <Tooltip label="Repeats — completing spawns the next occurrence">
+                            <Badge
+                              size="xs"
+                              color="grape"
+                              variant="light"
+                              leftSection={<Repeat size={10} />}
+                            >
+                              {formatRecurrence(todo)}
+                            </Badge>
+                          </Tooltip>
+                        )}
                         <Badge size="xs" color={priorityColor[todo.priority]} variant="dot">
                           {todo.priority}
                         </Badge>
@@ -335,6 +372,18 @@ export function TodoList({ projectId }: Props) {
         todoId={viewingTodoId}
         onClose={() => setViewingTodoId(null)}
         onOpenEditor={openEdit}
+      />
+
+      <ConfirmModal
+        opened={!!earlyCompleteTodo}
+        title="Complete early?"
+        message="This todo isn't due yet. Completing it now will still schedule the next occurrence from its original due date, not from today. Complete it anyway?"
+        confirmLabel="Complete"
+        onConfirm={() => {
+          if (earlyCompleteTodo) completeMutation.mutate(earlyCompleteTodo.id);
+          setEarlyCompleteTodo(null);
+        }}
+        onCancel={() => setEarlyCompleteTodo(null)}
       />
     </>
   );

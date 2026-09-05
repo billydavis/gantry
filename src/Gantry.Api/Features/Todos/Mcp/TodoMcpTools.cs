@@ -8,12 +8,12 @@ namespace Gantry.Api.Features.Todos.Mcp;
 [McpServerToolType]
 public class TodoMcpTools
 {
-    [McpServerTool(Name = "create_todo"), Description("Creates a new todo.")]
+    [McpServerTool(Name = "create_todo"), Description("Creates a new todo. Set recurrenceType (Daily/Weekly/Monthly/Custom) and, for Custom, recurrenceIntervalDays to make it repeat; recurrence requires a due date.")]
     public static async Task<TodoResponse> CreateTodo(
         Create.Request request, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<TodoResponse>(await Create.Endpoint.Handle(request, db, ct));
 
-    [McpServerTool(Name = "update_todo"), Description("Updates an existing todo's fields, including status and priority.")]
+    [McpServerTool(Name = "update_todo"), Description("Updates an existing todo's fields, including status, priority, and recurrence (recurrenceType/recurrenceIntervalDays; recurrence requires a due date). Completing a recurring todo via this tool auto-spawns its next occurrence, same as complete_todo.")]
     public static async Task<TodoResponse> UpdateTodo(
         [Description("The todo's id.")] Guid id,
         Update.Request request, AppDbContext db, CancellationToken ct)
@@ -34,7 +34,7 @@ public class TodoMcpTools
         [Description("The todo's id.")] Guid id, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<TodoResponse>(await GetById.Endpoint.Handle(id, db, ct));
 
-    [McpServerTool(Name = "complete_todo"), Description("Marks a todo complete. Reversible via reopen_todo.")]
+    [McpServerTool(Name = "complete_todo"), Description("Marks a todo complete. Reversible via reopen_todo. If the todo is recurring, auto-spawns the next occurrence on its due-date schedule.")]
     public static async Task<TodoResponse> CompleteTodo(
         [Description("The todo's id.")] Guid id, AppDbContext db, CancellationToken ct)
         => McpResultAdapter.Unwrap<TodoResponse>(await Complete.Endpoint.Handle(id, db, ct));

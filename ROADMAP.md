@@ -94,6 +94,7 @@ Work that landed after the 2026-07-27 v1 release but was never folded back into 
 - **Admin tools** — database backup/restore, a guarded "flush database" that preserves Profile/Appearance settings, and an optional sample-data loader.
 - **Icon pack switch** — Tabler → Lucide icons.
 - **Theme set grew from 8 to 12** — Frostline was replaced by **Afterglow** and Nightshade by **Synthwave**; **Sundial, Terracotta, Petal, and Rosewood** were added. See `THEMES.md` for the current authoritative list and source lineage; the "What shipped in v1" list above reflects the original 8 at release time and is now stale.
+- **Recurring Todos** (2026-09-05) — optional recurrence rule (None/Daily/Weekly/Monthly/Custom-N-days) on Todos. Requires a due date; completing a recurring todo auto-spawns the next occurrence with its due date advanced on a fixed schedule anchored to the original due date (not the completion date), carrying forward Title/Description/Project/Priority/EstimatedMinutes/Tags/recurrence settings so it keeps recurring indefinitely. `RecurrenceParentId` tracks lineage as a plain informational column (no FK).
 
 ## Post-v1 (not scheduled)
 

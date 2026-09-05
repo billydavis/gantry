@@ -8,4 +8,6 @@ public record Request(
     string? Status,
     string? Priority,
     int? EstimatedMinutes,
-    DateOnly? DueDate);
+    DateOnly? DueDate,
+    string? RecurrenceType,
+    int? RecurrenceIntervalDays);

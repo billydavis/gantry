@@ -5,6 +5,7 @@ using Gantry.Api.Features.Todos;
 using Gantry.Api.Tests.Infrastructure;
 using Gantry.Api.Tests.Support;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
 
@@ -72,5 +73,47 @@ public class UpdateTodoEndpointTests(DatabaseFixture db) : IntegrationTestBase(d
         var body = await response.Content.ReadFromJsonAsync<TodoResponse>();
         body!.Status.ShouldBe("Todo");
         body.CompletedUtc.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Update_TransitionToComplete_SpawnsNextOccurrence()
+    {
+        await using var dbContext = CreateDbContext();
+        var todo = await TodoFactory.CreateTodoAsync(
+            dbContext, dueDate: new DateOnly(2026, 1, 1), recurrenceType: RecurrenceType.Weekly);
+
+        var response = await Client.PutAsJsonAsync($"/api/todos/{todo.Id}", new
+        {
+            title = todo.Title,
+            status = "Complete",
+            dueDate = "2026-01-01",
+            recurrenceType = "Weekly"
+        });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var next = await dbContext.Todos.SingleAsync(t => t.RecurrenceParentId == todo.Id);
+        next.DueDate.ShouldBe(new DateOnly(2026, 1, 8));
+        next.Status.ShouldBe(TodoStatus.Todo);
+    }
+
+    [Fact]
+    public async Task Update_AlreadyComplete_DoesNotSpawnAgain()
+    {
+        await using var dbContext = CreateDbContext();
+        var todo = await TodoFactory.CreateTodoAsync(
+            dbContext, status: TodoStatus.Complete, dueDate: new DateOnly(2026, 1, 1), recurrenceType: RecurrenceType.Weekly);
+        todo.CompletedUtc = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
+
+        var response = await Client.PutAsJsonAsync($"/api/todos/{todo.Id}", new
+        {
+            title = todo.Title,
+            status = "Complete",
+            dueDate = "2026-01-01",
+            recurrenceType = "Weekly"
+        });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        (await dbContext.Todos.AnyAsync(t => t.RecurrenceParentId == todo.Id)).ShouldBeFalse();
     }
 }

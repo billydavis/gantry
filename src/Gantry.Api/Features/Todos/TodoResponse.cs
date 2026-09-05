@@ -18,6 +18,9 @@ public record TodoResponse(
     DateTime? CompletedUtc,
     DateTime CreatedUtc,
     DateTime UpdatedUtc,
+    string RecurrenceType,
+    int? RecurrenceIntervalDays,
+    Guid? RecurrenceParentId,
     TagResponse[] Tags)
 {
     public static TodoResponse FromEntity(Todo t) => new(
@@ -35,5 +38,8 @@ public record TodoResponse(
         t.CompletedUtc,
         t.CreatedUtc,
         t.UpdatedUtc,
+        t.RecurrenceType.ToString(),
+        t.RecurrenceIntervalDays,
+        t.RecurrenceParentId,
         t.Tags.Select(TagResponse.FromEntity).ToArray());
 }

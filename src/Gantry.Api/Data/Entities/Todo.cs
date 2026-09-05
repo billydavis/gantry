@@ -17,5 +17,8 @@ public class Todo
     public DateTime? DeletedUtc { get; set; }
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }
+    public RecurrenceType RecurrenceType { get; set; } = RecurrenceType.None;
+    public int? RecurrenceIntervalDays { get; set; }
+    public Guid? RecurrenceParentId { get; set; }
     public ICollection<Tag> Tags { get; set; } = [];
 }

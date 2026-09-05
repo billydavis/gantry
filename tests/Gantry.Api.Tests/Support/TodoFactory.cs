@@ -30,7 +30,11 @@ public static class TodoFactory
         TodoStatus status = TodoStatus.Todo,
         Priority priority = Priority.Medium,
         bool isPinned = false,
-        DateTime? deletedUtc = null)
+        DateTime? deletedUtc = null,
+        DateOnly? dueDate = null,
+        RecurrenceType recurrenceType = RecurrenceType.None,
+        int? recurrenceIntervalDays = null,
+        Guid? recurrenceParentId = null)
     {
         var todo = new Todo
         {
@@ -41,6 +45,10 @@ public static class TodoFactory
             Priority = priority,
             IsPinned = isPinned,
             DeletedUtc = deletedUtc,
+            DueDate = dueDate,
+            RecurrenceType = recurrenceType,
+            RecurrenceIntervalDays = recurrenceIntervalDays,
+            RecurrenceParentId = recurrenceParentId,
             CreatedUtc = DateTime.UtcNow,
             UpdatedUtc = DateTime.UtcNow
         };

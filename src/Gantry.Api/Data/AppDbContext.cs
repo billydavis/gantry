@@ -45,6 +45,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion<string>()
                 .HasDefaultValue(Priority.Medium)
                 .HasSentinel(Priority.Low);
+            entity.Property(e => e.RecurrenceType)
+                .HasConversion<string>()
+                .HasDefaultValue(RecurrenceType.None);
 
             entity.Property(e => e.CompletedUtc).HasColumnType("timestamptz");
             entity.Property(e => e.DeletedUtc).HasColumnType("timestamptz");

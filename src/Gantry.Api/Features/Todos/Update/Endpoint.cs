@@ -15,9 +15,11 @@ public static class Endpoint
         if (!validation.IsValid)
             return Results.ValidationProblem(validation.ToDictionary());
 
-        var todo = await db.Todos.Include(t => t.Project).FirstOrDefaultAsync(t => t.Id == id, ct);
+        var todo = await db.Todos.Include(t => t.Project).Include(t => t.Tags).FirstOrDefaultAsync(t => t.Id == id, ct);
         if (todo is null)
             return Results.NotFound("Todo not found.");
+
+        var previousStatus = todo.Status;
 
         todo.ProjectId = request.ProjectId;
         todo.Title = request.Title;
@@ -29,6 +31,10 @@ public static class Endpoint
         if (request.Priority is not null && Enum.TryParse<Priority>(request.Priority, true, out var priority))
             todo.Priority = priority;
 
+        if (request.RecurrenceType is not null && Enum.TryParse<RecurrenceType>(request.RecurrenceType, true, out var recurrenceType))
+            todo.RecurrenceType = recurrenceType;
+        todo.RecurrenceIntervalDays = request.RecurrenceIntervalDays;
+
         if (request.Status is not null && Enum.TryParse<TodoStatus>(request.Status, true, out var status))
         {
             todo.Status = status;
@@ -36,6 +42,13 @@ public static class Endpoint
                 todo.CompletedUtc = DateTime.UtcNow;
             else if (status != TodoStatus.Complete)
                 todo.CompletedUtc = null;
+
+            if (status == TodoStatus.Complete && previousStatus != TodoStatus.Complete)
+            {
+                var nextOccurrence = RecurrenceCalculator.TrySpawnNextOccurrence(todo);
+                if (nextOccurrence is not null)
+                    db.Todos.Add(nextOccurrence);
+            }
         }
 
         todo.UpdatedUtc = DateTime.UtcNow;

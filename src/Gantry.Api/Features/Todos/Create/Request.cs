@@ -7,4 +7,6 @@ public record Request(
     string? Link,
     string? Priority,
     int? EstimatedMinutes,
-    DateOnly? DueDate);
+    DateOnly? DueDate,
+    string? RecurrenceType,
+    int? RecurrenceIntervalDays);

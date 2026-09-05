@@ -1,5 +1,5 @@
 import { ActionIcon, Badge, Group, Loader, Modal, Stack, Text, Tooltip } from '@mantine/core';
-import { CircleCheck, ExternalLink, Pencil, X } from 'lucide-react';
+import { CircleCheck, ExternalLink, Pencil, Repeat, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { todoKeys, todosApi } from './api';
 import type { Todo } from './types';
@@ -18,6 +18,16 @@ interface Props {
 
 const priorityColor = { Low: 'gray', Medium: 'yellow', High: 'red' } as const;
 
+function formatRecurrence(todo: Todo): string | null {
+  switch (todo.recurrenceType) {
+    case 'Daily': return 'Repeats daily';
+    case 'Weekly': return 'Repeats weekly';
+    case 'Monthly': return 'Repeats monthly';
+    case 'Custom': return `Repeats every ${todo.recurrenceIntervalDays} days`;
+    default: return null;
+  }
+}
+
 function todoEmailMetaLines(todo: Todo, due: string | null): string[] {
   return [
     todo.status,
@@ -25,6 +35,7 @@ function todoEmailMetaLines(todo: Todo, due: string | null): string[] {
     due ? `Due ${due}` : null,
     todo.projectName ?? null,
     todo.link ?? null,
+    formatRecurrence(todo),
   ].filter(Boolean) as string[];
 }
 
@@ -105,6 +116,11 @@ export function TodoViewerModal({ todoId, onClose, onOpenEditor }: Props) {
               <Badge size="sm" variant="light">{todo.status}</Badge>
               <Badge size="sm" color={priorityColor[todo.priority]} variant="dot">{todo.priority}</Badge>
               {due && <Text size="sm" c="dimmed">Due {due}</Text>}
+              {formatRecurrence(todo) && (
+                <Badge size="sm" color="grape" variant="light" leftSection={<Repeat size={11} />}>
+                  {formatRecurrence(todo)}
+                </Badge>
+              )}
               {todo.projectName && (
                 <>
                   <Text size="sm" c="dimmed">·</Text>

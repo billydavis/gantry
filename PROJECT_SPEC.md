@@ -132,6 +132,7 @@ Fields:
 - Estimated time (optional)
 - Tags
 - Due date (optional)
+- Recurrence (optional): None, Daily, Weekly, Monthly, or a custom N-day interval. Requires a due date to anchor the schedule. Completing a recurring todo auto-spawns the next occurrence with its due date advanced by the interval, carrying forward title/description/project/priority/estimated time/tags so it keeps recurring without further setup.
 
 The dashboard should be able to answer queries like "show me all 30-minute tasks" or "show me everything for Project X" based on this metadata.
 

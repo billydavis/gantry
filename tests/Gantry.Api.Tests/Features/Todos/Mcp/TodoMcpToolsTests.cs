@@ -19,7 +19,7 @@ public class TodoMcpToolsTests(DatabaseFixture db) : DbContextTestBase(db)
         await using var dbContext = CreateDbContext();
 
         var result = await TodoMcpTools.CreateTodo(
-            new CreateRequest(null, "Ship it", null, null, null, null, null), dbContext, CancellationToken.None);
+            new CreateRequest(null, "Ship it", null, null, null, null, null, null, null), dbContext, CancellationToken.None);
 
         result.Title.ShouldBe("Ship it");
     }
@@ -30,7 +30,7 @@ public class TodoMcpToolsTests(DatabaseFixture db) : DbContextTestBase(db)
         await using var dbContext = CreateDbContext();
 
         var ex = await Should.ThrowAsync<McpToolValidationException>(() => TodoMcpTools.CreateTodo(
-            new CreateRequest(null, "x", null, null, "NotAPriority", null, null), dbContext, CancellationToken.None));
+            new CreateRequest(null, "x", null, null, "NotAPriority", null, null, null, null), dbContext, CancellationToken.None));
 
         ex.Message.ShouldContain("Priority:");
     }
@@ -87,7 +87,7 @@ public class TodoMcpToolsTests(DatabaseFixture db) : DbContextTestBase(db)
 
         var ex = await Should.ThrowAsync<McpException>(() => TodoMcpTools.UpdateTodo(
             Guid.NewGuid(),
-            new UpdateRequest(null, "Title", null, null, null, null, null, null),
+            new UpdateRequest(null, "Title", null, null, null, null, null, null, null, null),
             dbContext, CancellationToken.None));
 
         ex.Message.ShouldBe("Todo not found.");

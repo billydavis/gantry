@@ -35,13 +35,23 @@ PostgreSQL, accessed via Entity Framework Core. Chosen over SQLite for room to g
 | ProjectId | nullable FK → Projects.Id | null = global/unassigned todo not tied to a project |
 | Title | text | |
 | Description | text | |
+| Link | text, nullable | e.g. `vscode://`, ADO work item URL |
 | Status | enum | Todo, InProgress, Waiting, Blocked, Complete |
 | Priority | enum | Low, Medium, High |
 | EstimatedMinutes | int, nullable | |
 | DueDate | date, nullable | |
+| IsPinned | bool | pins the todo to the top of the list |
 | CompletedUtc | timestamptz, nullable | drives the year-in-review timeline |
+| DeletedUtc | timestamptz, nullable | soft delete |
 | CreatedUtc | timestamptz | |
 | UpdatedUtc | timestamptz | |
+| RecurrenceType | enum | None, Daily, Weekly, Monthly, Custom |
+| RecurrenceIntervalDays | int, nullable | only set (and required) when RecurrenceType = Custom |
+| RecurrenceParentId | uuid, nullable | id of the todo this one was auto-spawned from on completion; plain column, no FK constraint (informational lineage only) |
+
+Tags apply via the `TodoTags` many-to-many join table (see [Taggable join tables](#taggable-join-tables) below).
+
+Recurrence requires `DueDate` to be set — the next occurrence's due date is computed as `DueDate + interval` (fixed schedule anchored to the original due date, not the completion date). Monthly recurrence anchors to month-end: if the current due date is the last day of its month (e.g. Jan 31, or Feb 28/29 in a non-leap/leap year), the next occurrence lands on the last day of the *following* month too (Jan 31 → Feb 28 → Mar 31 → Apr 30 → May 31, …), so a month-end todo never drifts down to a fixed day-of-month; a non-month-end date (e.g. the 15th) just adds one calendar month normally (see `RecurrenceCalculator.AddMonthAnchoredToMonthEnd`). Completing a recurring todo (via `POST /complete` or `PUT` with `status: Complete`) inserts a new Todo row with `Status = Todo`, the computed `DueDate`, and `RecurrenceParentId` set to the completed todo's id; it copies Title/Description/Link/ProjectId/Priority/EstimatedMinutes/Tags/RecurrenceType/RecurrenceIntervalDays so the chain keeps recurring indefinitely.
 
 ### Resources
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Group, Modal, NumberInput, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,18 +8,37 @@ import { notifications } from '@mantine/notifications';
 import { todosApi, todoKeys } from './api';
 import { projectsApi, projectKeys } from '../projects/api';
 import { MarkdownField } from '../../components/MarkdownField';
-import type { Todo, Priority, TodoStatus } from './types';
+import { ConfirmModal } from '../../components/ConfirmModal';
+import type { Todo, Priority, TodoStatus, RecurrenceType } from './types';
 
-const schema = z.object({
-  projectId: z.string().uuid().nullable().optional(),
-  title: z.string().min(1, 'Title is required').max(500),
-  description: z.string().nullable().optional(),
-  link: z.string().max(2000).nullable().optional(),
-  priority: z.enum(['Low', 'Medium', 'High']),
-  status: z.enum(['Todo', 'InProgress', 'Waiting', 'Blocked', 'Complete']).optional(),
-  estimatedMinutes: z.number().int().positive().nullable().optional(),
-  dueDate: z.string().nullable().optional(),
-});
+/** True if `dueDate` is a real calendar day after today. */
+function isBeforeDueDate(dueDate: string): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return new Date(dueDate + 'T00:00:00') > today;
+}
+
+const schema = z
+  .object({
+    projectId: z.string().uuid().nullable().optional(),
+    title: z.string().min(1, 'Title is required').max(500),
+    description: z.string().nullable().optional(),
+    link: z.string().max(2000).nullable().optional(),
+    priority: z.enum(['Low', 'Medium', 'High']),
+    status: z.enum(['Todo', 'InProgress', 'Waiting', 'Blocked', 'Complete']).optional(),
+    estimatedMinutes: z.number().int().positive().nullable().optional(),
+    dueDate: z.string().nullable().optional(),
+    recurrenceType: z.enum(['None', 'Daily', 'Weekly', 'Monthly', 'Custom']),
+    recurrenceIntervalDays: z.number().int().positive().nullable().optional(),
+  })
+  .refine((v) => v.recurrenceType !== 'Custom' || !!v.recurrenceIntervalDays, {
+    message: 'Enter how many days between occurrences',
+    path: ['recurrenceIntervalDays'],
+  })
+  .refine((v) => v.recurrenceType === 'None' || !!v.dueDate, {
+    message: 'Set a due date to enable recurrence',
+    path: ['recurrenceType'],
+  });
 
 type FormValues = z.infer<typeof schema>;
 
@@ -45,11 +64,20 @@ const priorityOptions = [
   { value: 'High', label: 'High' },
 ];
 
+const recurrenceOptions = [
+  { value: 'None', label: "Doesn't repeat" },
+  { value: 'Daily', label: 'Daily' },
+  { value: 'Weekly', label: 'Weekly' },
+  { value: 'Monthly', label: 'Monthly' },
+  { value: 'Custom', label: 'Custom interval' },
+];
+
 const inputStyles = { input: { background: 'var(--g-background)', color: 'var(--g-text)' } };
 
 export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
   const isEditing = !!todo;
   const queryClient = useQueryClient();
+  const [pendingEarlyComplete, setPendingEarlyComplete] = useState<FormValues | null>(null);
 
   const { data: allProjects = [] } = useQuery({
     queryKey: projectKeys.list(),
@@ -74,6 +102,8 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
       priority: 'Medium',
       estimatedMinutes: null,
       dueDate: null,
+      recurrenceType: 'None',
+      recurrenceIntervalDays: null,
     },
   });
 
@@ -88,6 +118,8 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
         status: todo?.status as TodoStatus | undefined,
         estimatedMinutes: todo?.estimatedMinutes ?? null,
         dueDate: todo?.dueDate ?? null,
+        recurrenceType: (todo?.recurrenceType ?? 'None') as RecurrenceType,
+        recurrenceIntervalDays: todo?.recurrenceIntervalDays ?? null,
       });
     }
   }, [opened, todo, projectId, reset]);
@@ -110,8 +142,32 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
   const priorityValue = watch('priority');
   const statusValue = watch('status');
   const estimatedValue = watch('estimatedMinutes');
+  const dueDateValue = watch('dueDate');
+  const recurrenceTypeValue = watch('recurrenceType');
+  const recurrenceIntervalValue = watch('recurrenceIntervalDays');
+
+  useEffect(() => {
+    if (!dueDateValue && recurrenceTypeValue !== 'None') {
+      setValue('recurrenceType', 'None');
+      setValue('recurrenceIntervalDays', null);
+    }
+  }, [dueDateValue, recurrenceTypeValue, setValue]);
 
   const onSubmit = (values: FormValues) => {
+    const isEarlyRecurringComplete =
+      isEditing && todo?.status !== 'Complete' && values.status === 'Complete' &&
+      values.recurrenceType !== 'None' && values.dueDate !== null && values.dueDate !== undefined &&
+      isBeforeDueDate(values.dueDate);
+
+    if (isEarlyRecurringComplete) {
+      setPendingEarlyComplete(values);
+      return;
+    }
+
+    submit(values);
+  };
+
+  const submit = (values: FormValues) => {
     const resolvedProjectId = values.projectId || null;
     if (isEditing && todo) {
       updateMutation.mutate({
@@ -125,6 +181,8 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
           priority: values.priority,
           estimatedMinutes: values.estimatedMinutes ?? null,
           dueDate: values.dueDate ?? null,
+          recurrenceType: values.recurrenceType,
+          recurrenceIntervalDays: values.recurrenceType === 'Custom' ? values.recurrenceIntervalDays ?? null : null,
         },
       });
     } else {
@@ -136,6 +194,8 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
         priority: values.priority,
         estimatedMinutes: values.estimatedMinutes ?? null,
         dueDate: values.dueDate ?? null,
+        recurrenceType: values.recurrenceType,
+        recurrenceIntervalDays: values.recurrenceType === 'Custom' ? values.recurrenceIntervalDays ?? null : null,
       });
     }
   };
@@ -222,10 +282,34 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
             <TextInput
               label="Due date"
               type="date"
-              value={watch('dueDate') ?? ''}
+              value={dueDateValue ?? ''}
               onChange={(e) => setValue('dueDate', e.target.value || null)}
               styles={inputStyles}
             />
+          </Group>
+
+          <Group grow align="flex-start">
+            <Select
+              label="Repeats"
+              description={!dueDateValue ? 'Set a due date to enable recurrence' : undefined}
+              data={recurrenceOptions}
+              value={recurrenceTypeValue}
+              onChange={(v) => setValue('recurrenceType', (v ?? 'None') as RecurrenceType)}
+              disabled={!dueDateValue}
+              error={errors.recurrenceType?.message}
+              styles={inputStyles}
+            />
+            {recurrenceTypeValue === 'Custom' && (
+              <NumberInput
+                label="Repeat every (days)"
+                placeholder="e.g. 10"
+                min={1}
+                value={recurrenceIntervalValue ?? ''}
+                onChange={(v) => setValue('recurrenceIntervalDays', v === '' ? null : Number(v))}
+                error={errors.recurrenceIntervalDays?.message}
+                styles={inputStyles}
+              />
+            )}
           </Group>
 
           <Group justify="flex-end" mt="xs">
@@ -240,6 +324,18 @@ export function TodoFormModal({ opened, onClose, projectId, todo }: Props) {
           </Group>
         </Stack>
       </form>
+
+      <ConfirmModal
+        opened={!!pendingEarlyComplete}
+        title="Complete early?"
+        message="This todo isn't due yet. Completing it now will still schedule the next occurrence from its original due date, not from today. Complete it anyway?"
+        confirmLabel="Complete"
+        onConfirm={() => {
+          if (pendingEarlyComplete) submit(pendingEarlyComplete);
+          setPendingEarlyComplete(null);
+        }}
+        onCancel={() => setPendingEarlyComplete(null)}
+      />
     </Modal>
   );
 }

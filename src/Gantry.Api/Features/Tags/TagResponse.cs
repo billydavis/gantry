@@ -2,7 +2,7 @@ using Gantry.Api.Data.Entities;
 
 namespace Gantry.Api.Features.Tags;
 
-public record TagResponse(Guid Id, string Name, string? Color)
+public record TagResponse(Guid Id, string Name, string? Color, int UsageCount)
 {
-    public static TagResponse FromEntity(Tag t) => new(t.Id, t.Name, t.Color);
+    public static TagResponse FromEntity(Tag t, int usageCount = 0) => new(t.Id, t.Name, t.Color, usageCount);
 }

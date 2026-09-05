@@ -34,4 +34,53 @@ public class UpdateTagEndpointTests(DatabaseFixture db) : IntegrationTestBase(db
         var body = await response.Content.ReadAsStringAsync();
         body.ShouldBe("\"Tag not found.\"");
     }
+
+    [Fact]
+    public async Task Update_NameCollidesWithAnotherTag_ReturnsConflictAndLeavesTagUnchanged()
+    {
+        await using var dbContext = CreateDbContext();
+        await TagFactory.CreateTagAsync(dbContext, name: "Work");
+        var tagToRename = await TagFactory.CreateTagAsync(dbContext, name: "Personal");
+
+        var response = await Client.PutAsJsonAsync($"/api/tags/{tagToRename.Id}", new { name = "Work" });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        (await dbContext.Tags.FindAsync(tagToRename.Id))!.Name.ShouldBe("Personal");
+    }
+
+    [Fact]
+    public async Task Update_NameCollidesCaseInsensitively_ReturnsConflict()
+    {
+        await using var dbContext = CreateDbContext();
+        await TagFactory.CreateTagAsync(dbContext, name: "Work");
+        var tagToRename = await TagFactory.CreateTagAsync(dbContext, name: "Personal");
+
+        var response = await Client.PutAsJsonAsync($"/api/tags/{tagToRename.Id}", new { name = "work" });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Update_RenameToOwnCurrentName_Succeeds()
+    {
+        await using var dbContext = CreateDbContext();
+        var tag = await TagFactory.CreateTagAsync(dbContext, name: "Work");
+
+        var response = await Client.PutAsJsonAsync($"/api/tags/{tag.Id}", new { name = "Work" });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Update_RenameToOwnNameWithDifferentCasing_Succeeds()
+    {
+        await using var dbContext = CreateDbContext();
+        var tag = await TagFactory.CreateTagAsync(dbContext, name: "Work");
+
+        var response = await Client.PutAsJsonAsync($"/api/tags/{tag.Id}", new { name = "WORK" });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var body = await response.Content.ReadFromJsonAsync<TagResponse>();
+        body!.Name.ShouldBe("WORK");
+    }
 }

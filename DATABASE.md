@@ -95,11 +95,12 @@ Generalized from a simple "Links" table to cover anything project-related worth 
 | Column | Type | Notes |
 |---|---|---|
 | Id | uuid | PK |
-| Name | text | unique |
+| Name | text | unique (case-insensitive collision check enforced at the API layer on create/rename) |
+| Color | text, nullable | hex color, e.g. `#4dabf7` |
 
 ### Taggable join tables
 
-Given multiple entities are taggable (Projects, Todos, Notes, Resources, Wins), use a generic polymorphic join or one join table per entity type — decide during implementation based on EF Core ergonomics. Simplest starting point is one join table per entity (`ProjectTags`, `TodoTags`, etc.) since it keeps foreign keys clean and avoids a polymorphic `EntityType` discriminator column.
+One join table per taggable entity — `ProjectTags`, `TodoTags`, `NoteTags`, `ResourceTags`, `WinTags`, `ArticleTags` — each a composite-PK (`TagId`, `<Entity>Id`) shadow entity with `OnDelete(DeleteBehavior.Cascade)` on both foreign keys. Deleting a Tag (or a tagged entity) cascades and silently removes the corresponding join rows; the tagged entity itself is untouched. Merging two tags (`POST /api/tags/{sourceId}/merge/{targetId}`) reassigns every join row from the source tag to the target across all six tables — deduping first so an item already carrying both tags ends up with a single join row for the target — then deletes the source tag; this is pure application logic (raw SQL against the join tables), not a schema feature.
 
 ---
 

@@ -8,6 +8,7 @@ public static class Endpoint
     public static async Task<IResult> Handle(AppDbContext db, CancellationToken ct)
     {
         var tags = await db.Tags.OrderBy(t => t.Name).ToListAsync(ct);
-        return Results.Ok(tags.Select(TagResponse.FromEntity));
+        var counts = await TagUsageQueries.GetAllCountsAsync(db, ct);
+        return Results.Ok(tags.Select(t => TagResponse.FromEntity(t, counts.GetValueOrDefault(t.Id))));
     }
 }

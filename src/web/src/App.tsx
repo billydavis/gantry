@@ -11,6 +11,7 @@ import { TimelinePage } from './features/wins/TimelinePage';
 import { ArticlesPage } from './features/articles/ArticlesPage';
 import { ArticleDetailPage } from './features/articles/ArticleDetailPage';
 import { SearchPage } from './features/search/SearchPage';
+import { TagManagementPage } from './features/tags/TagManagementPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 export default function App() {
@@ -25,6 +26,8 @@ export default function App() {
         <Route path="/notes/:id" element={<NoteDetailPage />} />
         <Route path="/wins" element={<WinsPage />} />
         <Route path="/timeline" element={<TimelinePage />} />
+        <Route path="/tags" element={<TagManagementPage />} />
+        <Route path="/tags/:id" element={<TagManagementPage />} />
         <Route path="/wiki" element={<ArticlesPage />} />
         <Route path="/wiki/:id" element={<ArticleDetailPage />} />
         <Route path="/search" element={<SearchPage />} />

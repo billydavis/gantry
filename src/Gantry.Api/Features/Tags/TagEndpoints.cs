@@ -8,6 +8,8 @@ public static class TagEndpoints
         app.MapPost("/api/tags", Create.Endpoint.Handle);
         app.MapPut("/api/tags/{id:guid}", Update.Endpoint.Handle);
         app.MapDelete("/api/tags/{id:guid}", Delete.Endpoint.Handle);
+        app.MapGet("/api/tags/{id:guid}/usage", Usage.Endpoint.Handle);
+        app.MapPost("/api/tags/{sourceId:guid}/merge/{targetId:guid}", Merge.Endpoint.Handle);
 
         app.MapPut("/api/projects/{id:guid}/tags", Assign.Endpoint.AssignToProject);
         app.MapPut("/api/todos/{id:guid}/tags", Assign.Endpoint.AssignToTodo);

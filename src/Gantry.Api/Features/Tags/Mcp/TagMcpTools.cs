@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Gantry.Api.Data;
 using Gantry.Api.Features.Mcp;
+using Gantry.Api.Features.Search;
 using ModelContextProtocol.Server;
 using Assign = Gantry.Api.Features.Tags.Assign;
 
@@ -15,8 +16,8 @@ public class TagMcpTools
 
     [McpServerTool(Name = "update_tag"), Description("Updates an existing tag's name or color.")]
     public static async Task<TagResponse> UpdateTag(
-        [Description("The tag's id.")] Guid id, Update.Request req, AppDbContext db)
-        => McpResultAdapter.Unwrap<TagResponse>(await Update.Endpoint.Handle(id, req, db));
+        [Description("The tag's id.")] Guid id, Update.Request req, AppDbContext db, CancellationToken ct)
+        => McpResultAdapter.Unwrap<TagResponse>(await Update.Endpoint.Handle(id, req, db, ct));
 
     [McpServerTool(Name = "list_tags"), Description("Lists all tags.")]
     public static async Task<IEnumerable<TagResponse>> ListTags(AppDbContext db, CancellationToken ct)
@@ -51,4 +52,20 @@ public class TagMcpTools
     public static async Task<string> AssignTagsToArticle(
         [Description("The article's id.")] Guid id, Assign.AssignRequest req, AppDbContext db)
         => McpResultAdapter.UnwrapNoContent(await Assign.Endpoint.AssignToArticle(id, req, db));
+
+    [McpServerTool(Name = "delete_tag"), Description("Deletes a tag, removing it from every item it was assigned to.")]
+    public static async Task<string> DeleteTag([Description("The tag's id.")] Guid id, AppDbContext db)
+        => McpResultAdapter.UnwrapNoContent(await Delete.Endpoint.Handle(id, db));
+
+    [McpServerTool(Name = "merge_tags"), Description("Merges a source tag into a target tag: every item tagged with the source is retagged with the target (no duplicates), then the source tag is deleted.")]
+    public static async Task<TagResponse> MergeTags(
+        [Description("The tag to merge away (will be deleted).")] Guid sourceId,
+        [Description("The tag to merge into (will remain).")] Guid targetId,
+        AppDbContext db, CancellationToken ct)
+        => McpResultAdapter.Unwrap<TagResponse>(await Merge.Endpoint.Handle(sourceId, targetId, db, ct));
+
+    [McpServerTool(Name = "get_tag_usage"), Description("Lists every item currently tagged with the given tag.")]
+    public static async Task<IEnumerable<SearchResult>> GetTagUsage(
+        [Description("The tag's id.")] Guid id, AppDbContext db, CancellationToken ct)
+        => McpResultAdapter.Unwrap<IEnumerable<SearchResult>>(await Usage.Endpoint.Handle(id, db, ct));
 }

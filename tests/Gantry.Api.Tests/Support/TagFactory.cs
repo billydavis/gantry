@@ -13,4 +13,40 @@ public static class TagFactory
         await db.SaveChangesAsync();
         return tag;
     }
+
+    public static async Task AssignToProjectAsync(AppDbContext db, Project project, Tag tag)
+    {
+        project.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task AssignToTodoAsync(AppDbContext db, Todo todo, Tag tag)
+    {
+        todo.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task AssignToNoteAsync(AppDbContext db, Note note, Tag tag)
+    {
+        note.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task AssignToResourceAsync(AppDbContext db, Resource resource, Tag tag)
+    {
+        resource.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task AssignToWinAsync(AppDbContext db, Win win, Tag tag)
+    {
+        win.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task AssignToArticleAsync(AppDbContext db, Article article, Tag tag)
+    {
+        article.Tags.Add(tag);
+        await db.SaveChangesAsync();
+    }
 }

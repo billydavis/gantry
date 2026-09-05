@@ -24,4 +24,39 @@ public class ListEndpointTests(DatabaseFixture db) : IntegrationTestBase(db)
         var body = await response.Content.ReadFromJsonAsync<TagResponse[]>();
         body!.First().Name.ShouldBe("apple");
     }
+
+    [Fact]
+    public async Task List_UnusedTag_ReturnsZeroUsageCount()
+    {
+        await using var dbContext = CreateDbContext();
+        var tag = await TagFactory.CreateTagAsync(dbContext, name: "unused");
+
+        var response = await Client.GetAsync("/api/tags");
+
+        var body = await response.Content.ReadFromJsonAsync<TagResponse[]>();
+        body!.Single(t => t.Id == tag.Id).UsageCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task List_TagUsedAcrossMultipleEntityTypes_SumsUsageCount()
+    {
+        await using var dbContext = CreateDbContext();
+        var tag = await TagFactory.CreateTagAsync(dbContext, name: "widely-used");
+
+        var project = await ProjectFactory.CreateProjectAsync(dbContext);
+        await TagFactory.AssignToProjectAsync(dbContext, project, tag);
+
+        var todo1 = await TodoFactory.CreateTodoAsync(dbContext);
+        await TagFactory.AssignToTodoAsync(dbContext, todo1, tag);
+        var todo2 = await TodoFactory.CreateTodoAsync(dbContext);
+        await TagFactory.AssignToTodoAsync(dbContext, todo2, tag);
+
+        var note = await NoteFactory.CreateNoteAsync(dbContext);
+        await TagFactory.AssignToNoteAsync(dbContext, note, tag);
+
+        var response = await Client.GetAsync("/api/tags");
+
+        var body = await response.Content.ReadFromJsonAsync<TagResponse[]>();
+        body!.Single(t => t.Id == tag.Id).UsageCount.ShouldBe(4);
+    }
 }

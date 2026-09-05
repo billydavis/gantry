@@ -4,6 +4,7 @@ import type { SearchResult, Tag } from './types';
 export const tagKeys = {
   all: ['tags'] as const,
   list: () => [...tagKeys.all, 'list'] as const,
+  usage: (id: string) => [...tagKeys.all, 'usage', id] as const,
   search: (q: string) => ['search', q] as const,
 };
 
@@ -22,6 +23,10 @@ export const tagsApi = {
     entityId: string,
     tagIds: string[]
   ) => api.put<void>(`/${entityType}/${entityId}/tags`, { tagIds }),
+
+  merge: (sourceId: string, targetId: string) => api.post<Tag>(`/tags/${sourceId}/merge/${targetId}`, {}),
+
+  usage: (id: string) => api.get<SearchResult[]>(`/tags/${id}/usage`),
 
   search: (q: string) => api.get<SearchResult[]>(`/search?q=${encodeURIComponent(q)}`),
 };

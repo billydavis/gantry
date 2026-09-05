@@ -15,7 +15,7 @@ export function TagBadge({ tag, size = 'xs', onRemove }: Props) {
   return (
     <Badge
       size={size}
-      onClick={() => navigate(`/search?q=${encodeURIComponent(tag.name)}`)}
+      onClick={() => navigate(`/tags/${tag.id}`)}
       style={{
         background: `${color}22`,
         color,

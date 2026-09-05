@@ -49,6 +49,8 @@ public static class Endpoint
         db.Resources.Add(resource);
         await db.SaveChangesAsync(ct);
 
+        await db.Entry(resource).Reference(r => r.Environment).LoadAsync(ct);
+
         return Results.Created($"/api/resources/{resource.Id}", ResourceResponse.FromEntity(resource));
     }
 }

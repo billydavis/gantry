@@ -28,6 +28,8 @@ public static class Endpoint
         db.Notes.Add(note);
         await db.SaveChangesAsync(ct);
 
+        await db.Entry(note).Reference(n => n.Project).LoadAsync(ct);
+
         return Results.Created($"/api/notes/{note.Id}", NoteResponse.FromEntity(note));
     }
 }

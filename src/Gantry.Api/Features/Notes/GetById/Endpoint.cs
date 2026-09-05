@@ -15,6 +15,6 @@ public static class Endpoint
             .Include(n => n.Tags)
             .FirstOrDefaultAsync(n => n.Id == id, ct);
 
-        return note is null ? Results.NotFound() : Results.Ok(NoteResponse.FromEntity(note));
+        return note is null ? Results.NotFound("Note not found.") : Results.Ok(NoteResponse.FromEntity(note));
     }
 }

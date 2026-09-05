@@ -11,7 +11,7 @@ public static class Endpoint
     private static async Task<IResult> Handle(AppDbContext db, Guid id, CancellationToken ct)
     {
         var article = await db.Articles.FirstOrDefaultAsync(a => a.Id == id, ct);
-        if (article is null) return Results.NotFound();
+        if (article is null) return Results.NotFound("Article not found.");
 
         db.Articles.Remove(article);
         await db.SaveChangesAsync(ct);

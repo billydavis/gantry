@@ -15,7 +15,7 @@ public static class Endpoint
             return Results.ValidationProblem(validation.ToDictionary());
 
         var article = await db.Articles.Include(a => a.Tags).FirstOrDefaultAsync(a => a.Id == id, ct);
-        if (article is null) return Results.NotFound();
+        if (article is null) return Results.NotFound("Article not found.");
 
         article.Title = request.Title;
         article.Content = request.Content;

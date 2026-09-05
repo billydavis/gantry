@@ -14,6 +14,6 @@ public static class Endpoint
             .Include(a => a.Tags)
             .FirstOrDefaultAsync(a => a.Id == id, ct);
 
-        return article is null ? Results.NotFound() : Results.Ok(ArticleResponse.FromEntity(article));
+        return article is null ? Results.NotFound("Article not found.") : Results.Ok(ArticleResponse.FromEntity(article));
     }
 }

@@ -12,7 +12,7 @@ public static class Endpoint
             return Results.ValidationProblem(validation.ToDictionary());
 
         var win = await db.Wins.Include(w => w.Project).Include(w => w.Tags).FirstOrDefaultAsync(w => w.Id == id);
-        if (win is null) return Results.NotFound();
+        if (win is null) return Results.NotFound("Win not found.");
 
         win.Title = req.Title.Trim();
         win.Description = req.Description?.Trim();

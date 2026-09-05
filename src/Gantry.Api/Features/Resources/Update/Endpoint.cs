@@ -16,7 +16,7 @@ public static class Endpoint
 
         var resource = await db.Resources.FindAsync([id], ct);
         if (resource is null)
-            return Results.NotFound();
+            return Results.NotFound("Resource not found.");
 
         if (!Enum.TryParse<ResourceType>(request.Type, out var resourceType))
             return Results.BadRequest("Invalid resource type.");

@@ -12,7 +12,7 @@ public static class Endpoint
     {
         var todo = await db.Todos.Include(t => t.Project).FirstOrDefaultAsync(t => t.Id == id && t.DeletedUtc == null, ct);
         return todo is null
-            ? Results.NotFound()
+            ? Results.NotFound("Todo not found.")
             : Results.Ok(TodoResponse.FromEntity(todo));
     }
 }

@@ -11,7 +11,7 @@ public static class Endpoint
     {
         var resource = await db.Resources.FindAsync([id], ct);
         if (resource is null)
-            return Results.NotFound();
+            return Results.NotFound("Resource not found.");
 
         db.Resources.Remove(resource);
         await db.SaveChangesAsync(ct);

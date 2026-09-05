@@ -13,7 +13,7 @@ public static class Endpoint
             return Results.ValidationProblem(validation.ToDictionary());
 
         var exists = await db.Tags.AnyAsync(t => t.Name.ToLower() == req.Name.ToLower().Trim());
-        if (exists) return Results.Conflict(new { error = "A tag with that name already exists." });
+        if (exists) return Results.Conflict(new { title = "A tag with that name already exists." });
 
         var tag = new Tag { Id = Guid.NewGuid(), Name = req.Name.Trim(), Color = req.Color };
         db.Tags.Add(tag);

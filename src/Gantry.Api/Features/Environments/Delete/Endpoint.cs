@@ -11,7 +11,7 @@ public static class Endpoint
     {
         var env = await db.Environments.FindAsync([id], ct);
         if (env is null)
-            return Results.NotFound();
+            return Results.NotFound("Environment not found.");
 
         db.Environments.Remove(env);
         await db.SaveChangesAsync(ct);

@@ -56,17 +56,45 @@ public static class McpResultAdapter
         if (result is not IStatusCodeHttpResult { StatusCode: >= 400 } statusResult)
             return;
 
-        var message = result is IValueHttpResult { Value: not null } valueResult
-            ? valueResult.Value switch
-            {
-                string s => s,
-                var v => JsonSerializer.Serialize(v)
-            }
-            : "The request failed.";
+        var message = ExtractMessage(result) ?? DefaultMessage(statusResult.StatusCode!.Value);
 
         if (statusResult.StatusCode == StatusCodes.Status404NotFound)
             throw new McpException(message);
 
         throw new McpToolValidationException(message);
     }
+
+    /// <summary>
+    /// Pulls a human-readable sentence out of the result's value, if it has one worth showing.
+    /// A bare string is used as-is; an anonymous/POCO error body is checked for a "title", "error",
+    /// or "message" string property (the shapes used across our endpoints). Anything else falls
+    /// through to the status-code default rather than dumping raw JSON at the caller.
+    /// </summary>
+    private static string? ExtractMessage(IResult result)
+    {
+        if (result is not IValueHttpResult { Value: not null } valueResult)
+            return null;
+
+        if (valueResult.Value is string s)
+            return s;
+
+        var element = JsonSerializer.SerializeToElement(valueResult.Value);
+        if (element.ValueKind != JsonValueKind.Object)
+            return null;
+
+        foreach (var propertyName in new[] { "title", "error", "message" })
+        {
+            if (element.TryGetProperty(propertyName, out var prop) && prop.ValueKind == JsonValueKind.String)
+                return prop.GetString();
+        }
+
+        return null;
+    }
+
+    private static string DefaultMessage(int statusCode) => statusCode switch
+    {
+        StatusCodes.Status404NotFound => "The requested resource was not found.",
+        StatusCodes.Status409Conflict => "The request could not be completed due to a conflict.",
+        _ => "The request was invalid."
+    };
 }

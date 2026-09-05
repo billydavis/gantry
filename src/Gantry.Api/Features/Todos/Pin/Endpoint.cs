@@ -11,7 +11,7 @@ public static class Endpoint
     {
         var todo = await db.Todos.FindAsync([id], ct);
         if (todo is null || todo.DeletedUtc is not null)
-            return Results.NotFound();
+            return Results.NotFound("Todo not found.");
 
         todo.IsPinned = !todo.IsPinned;
         todo.UpdatedUtc = DateTime.UtcNow;

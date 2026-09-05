@@ -15,7 +15,7 @@ public static class Endpoint
             return Results.ValidationProblem(validation.ToDictionary());
 
         var note = await db.Notes.Include(n => n.Project).Include(n => n.Tags).FirstOrDefaultAsync(n => n.Id == id, ct);
-        if (note is null) return Results.NotFound();
+        if (note is null) return Results.NotFound("Note not found.");
 
         note.ProjectId = request.ProjectId;
         note.Title = request.Title;

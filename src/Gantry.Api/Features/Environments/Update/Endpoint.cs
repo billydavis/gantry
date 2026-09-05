@@ -15,7 +15,7 @@ public static class Endpoint
 
         var env = await db.Environments.FindAsync([id], ct);
         if (env is null)
-            return Results.NotFound();
+            return Results.NotFound("Environment not found.");
 
         env.Name = request.Name;
         env.BaseUrl = request.BaseUrl;

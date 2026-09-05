@@ -10,7 +10,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToProject(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Projects.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Project not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();
@@ -19,7 +19,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToTodo(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Todos.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Todo not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();
@@ -28,7 +28,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToNote(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Notes.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Note not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();
@@ -37,7 +37,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToResource(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Resources.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Resource not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();
@@ -46,7 +46,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToWin(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Wins.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Win not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();
@@ -55,7 +55,7 @@ public static class Endpoint
     public static async Task<IResult> AssignToArticle(Guid id, AssignRequest req, AppDbContext db)
     {
         var entity = await db.Articles.Include(e => e.Tags).FirstOrDefaultAsync(e => e.Id == id);
-        if (entity is null) return Results.NotFound();
+        if (entity is null) return Results.NotFound("Article not found.");
         await ApplyTags(entity.Tags, req.TagIds, db);
         await db.SaveChangesAsync();
         return Results.NoContent();

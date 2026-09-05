@@ -21,7 +21,7 @@ public static class Endpoint
 
         var project = await db.Projects.FindAsync([id], ct);
         if (project is null)
-            return Results.NotFound();
+            return Results.NotFound("Project not found.");
 
         project.ParentProjectId = request.ParentProjectId;
         project.Name = request.Name;

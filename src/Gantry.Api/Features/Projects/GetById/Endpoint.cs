@@ -14,7 +14,7 @@ public static class Endpoint
             .Include(p => p.Tags)
             .FirstOrDefaultAsync(p => p.Id == id, ct);
         return project is null
-            ? Results.NotFound()
+            ? Results.NotFound("Project not found.")
             : Results.Ok(ProjectResponse.FromEntity(project));
     }
 }

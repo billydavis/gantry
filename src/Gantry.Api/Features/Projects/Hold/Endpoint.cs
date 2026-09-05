@@ -15,7 +15,7 @@ public static class Endpoint
 
         var target = all.FirstOrDefault(p => p.Id == id);
         if (target is null)
-            return Results.NotFound();
+            return Results.NotFound("Project not found.");
 
         var toUpdate = Descendants(all, id);
         toUpdate.Add(target);

@@ -17,7 +17,7 @@ public static class Endpoint
 
         var todo = await db.Todos.Include(t => t.Project).FirstOrDefaultAsync(t => t.Id == id, ct);
         if (todo is null)
-            return Results.NotFound();
+            return Results.NotFound("Todo not found.");
 
         todo.ProjectId = request.ProjectId;
         todo.Title = request.Title;

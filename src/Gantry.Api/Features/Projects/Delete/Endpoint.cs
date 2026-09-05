@@ -13,7 +13,7 @@ public static class Endpoint
     {
         var project = await db.Projects.FirstOrDefaultAsync(p => p.Id == id, ct);
         if (project is null)
-            return Results.NotFound();
+            return Results.NotFound("Project not found.");
 
         if (project.Status != ProjectStatus.Archived)
             return Results.Conflict(new { title = "Only archived projects can be permanently deleted." });

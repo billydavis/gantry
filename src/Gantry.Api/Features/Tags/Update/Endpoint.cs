@@ -11,7 +11,7 @@ public static class Endpoint
             return Results.ValidationProblem(validation.ToDictionary());
 
         var tag = await db.Tags.FindAsync(id);
-        if (tag is null) return Results.NotFound();
+        if (tag is null) return Results.NotFound("Tag not found.");
 
         tag.Name = req.Name.Trim();
         tag.Color = req.Color;
